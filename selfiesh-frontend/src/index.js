@@ -1,12 +1,20 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
-import * as serviceWorker from './serviceWorker';
+import ReactDOM from "react-dom";
+import React, { Component } from "react";
+import { Provider } from "react-redux";
+import store from "./store/index";
+import WebSocketContainer from "./components/containers/WebSocketConnection";
 
-ReactDOM.render(<App />, document.getElementById('root'));
+class App extends Component {
+  render() {
+    return <div>Test... </div>;
+  }
+}
 
-// If you want your app to work offline and load faster, you can change
-// unregister() to register() below. Note this comes with some pitfalls.
-// Learn more about service workers: https://bit.ly/CRA-PWA
-serviceWorker.unregister();
+ReactDOM.render(
+  <Provider store={store}>
+    <WebSocketContainer host="ws://localhost:8000/tracking" autoconnect={true}>
+      <App />
+    </WebSocketContainer>
+  </Provider>,
+  document.getElementById("root")
+);
