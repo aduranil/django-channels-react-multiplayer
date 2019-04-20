@@ -1,6 +1,7 @@
 # selfiesh
 
-Every girl starts with 0 followers. The girl that gets to 100 followers first wins and wins an advertisement deal with flat tummy tea! Everyone else sets their account to private :(
+## Every girl starts with 0 followers. The girl that gets to 100 followers first wins and wins an advertisement deal with flat tummy tea! Everyone else sets their account to private :(
+
 Each round is 10 seconds
 Moves
 Post a selfie - move that gains 10 followers. But if someone leaves a mean comment when you post a selfie, you lose 5 followers
