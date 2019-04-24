@@ -71,7 +71,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'selfiesh.wsgi.application'
 
-ASGI_APPLICATION = "selfiesh.routing.application"
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 
