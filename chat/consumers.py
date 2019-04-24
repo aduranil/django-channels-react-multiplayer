@@ -1,37 +1,46 @@
+from asgiref.sync import async_to_sync
+from channels.generic.websocket import WebsocketConsumer
 import json
 
-from channels import Group
-from channels.sessions import channel_session
+class ChatConsumer(WebsocketConsumer):
+    def connect(self):
+        self.room_name = self.scope['url_route']['kwargs']['room_name']
+        self.room_group_name = 'chat_%s' % self.room_name
 
+        # Join room group
+        async_to_sync(self.channel_layer.group_add)(
+            self.room_group_name,
+            self.channel_name
+        )
 
-# Connected to websocket.connect
-@channel_session
-def ws_connect(message):
-    # Accept connection
-    message.reply_channel.send({"accept": True})
-    # Work out room name from path (ignore slashes)
-    room = message.content['path'].strip("/")
-    # Save room in session and add us to the group
-    message.channel_session['room'] = room
-    Group("chat-%s" % room).add(message.reply_channel)
+        self.accept()
 
-    Group("chat-%s" % room).send({
-        "text": json.dumps({
-            "type": "WS_HEALTH",
-            "status": "All Good!!"
-        })
-    })
+    def disconnect(self, close_code):
+        # Leave room group
+        async_to_sync(self.channel_layer.group_discard)(
+            self.room_group_name,
+            self.channel_name
+        )
 
+    # Receive message from WebSocket
+    def receive(self, text_data):
+        text_data_json = json.loads(text_data)
+        message = text_data_json['message']
 
-# Connected to websocket.receive
-@channel_session
-def ws_message(message):
-    Group("chat-%s" % message.channel_session['room']).send({
-        "text": message['text'],
-    })
+        # Send message to room group
+        async_to_sync(self.channel_layer.group_send)(
+            self.room_group_name,
+            {
+                'type': 'chat_message',
+                'message': message
+            }
+        )
 
+    # Receive message from room group
+    def chat_message(self, event):
+        message = event['message']
 
-# Connected to websocket.disconnect
-@channel_session
-def ws_disconnect(message):
-    Group("chat-%s" % message.channel_session['room']).discard(message.reply_channel)
+        # Send message to WebSocket
+        self.send(text_data=json.dumps({
+            'message': message
+        }))
