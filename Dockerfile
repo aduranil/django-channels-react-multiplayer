@@ -2,12 +2,12 @@
 FROM python:3.7
 
 # Set work directory
-WORKDIR /selfiesh/
+WORKDIR /selfies/
 
 # Install dependencies
 RUN pip install pipenv
-COPY requirements.txt /selfiesh/
+COPY requirements.txt /selfies/
 RUN pip install -r requirements.txt
 
 # Copy project
-COPY . /selfiesh/
+COPY . /selfies/
