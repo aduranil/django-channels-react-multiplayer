@@ -71,6 +71,15 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'selfiesh.wsgi.application'
 
+ASGI_APPLICATION = 'selfiesh.routing.application'
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('redis', 6379)],
+        },
+    },
+}
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 
@@ -122,13 +131,3 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
 STATIC_URL = '/static/'
-
-ASGI_APPLICATION = 'selfiesh.routing.application'
-CHANNEL_LAYERS = {
-    'default': {
-        'BACKEND': 'channels_redis.core.RedisChannelLayer',
-        'CONFIG': {
-            "hosts": [('127.0.0.1', 6379)],
-        },
-    },
-}
