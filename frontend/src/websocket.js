@@ -26,7 +26,7 @@ class WebSocketService {
     this.socketRef.onmessage = e => {
       this.socketNewMessage(e.data);
     };
-    this.socket.onerror = e => {
+    this.socketRef.onerror = e => {
       console.log(e.message);
     };
     this.socketRef.onclose = () => {

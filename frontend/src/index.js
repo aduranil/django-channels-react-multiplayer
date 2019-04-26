@@ -1,14 +1,29 @@
 import React from "react";
-import ReactDom from "react-dom";
+import ReactDOM from "react-dom";
 import Chat from "./Chat";
 import WebSocketInstance from "./websocket";
+import { Grommet } from "grommet";
+
+const theme = {
+  global: {
+    font: {
+      family: "Crafty Girls",
+      size: "14px",
+      height: "20px"
+    }
+  }
+};
 
 class App extends React.Component {
   componentDidMount() {
     WebSocketInstance.connect();
   }
   render() {
-    return <Chat />;
+    return (
+      <Grommet theme={theme}>
+        <div> hi</div>
+      </Grommet>
+    );
   }
 }
 
