@@ -63798,7 +63798,19 @@ function (_React$Component) {
     value: function render() {
       return _react.default.createElement(_grommet.Grommet, {
         theme: theme
-      }, _react.default.createElement("div", null, " hi"));
+      }, _react.default.createElement(_grommet.Box, {
+        justify: "center",
+        height: "100%",
+        align: "center",
+        pad: "none",
+        width: "50%",
+        margin: {
+          horizontal: "auto"
+        },
+        background: "linear-gradient(102.77deg, #865ED6 -9.18%, #18BAB9 209.09%)"
+      }, _react.default.createElement(_grommet.Text, {
+        color: "white"
+      }, "I have a linear gradient background")));
     }
   }]);
 
