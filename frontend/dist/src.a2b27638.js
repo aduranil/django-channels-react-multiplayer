@@ -63809,8 +63809,9 @@ function (_React$Component) {
         },
         background: "linear-gradient(102.77deg, #865ED6 -9.18%, #18BAB9 209.09%)"
       }, _react.default.createElement(_grommet.Text, {
-        color: "white"
-      }, "I have a linear gradient background")));
+        color: "accent-1",
+        size: "77px"
+      }, "SELFIES 2020")));
     }
   }]);
 
@@ -63846,7 +63847,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "56597" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "49552" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

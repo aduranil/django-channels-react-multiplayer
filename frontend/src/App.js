@@ -30,11 +30,13 @@ class App extends React.Component {
           margin={{ horizontal: "auto" }}
           background="linear-gradient(102.77deg, #865ED6 -9.18%, #18BAB9 209.09%)"
         >
-          <Text color="white">I have a linear gradient background</Text>
+          <Text color="accent-1" size="77px">
+            SELFIES 2020
+          </Text>
         </Box>
       </Grommet>
     );
   }
 }
 
-ReactDOM.render(<App />, document.getElementById("app"));
+export default App;
