@@ -25748,274 +25748,7 @@ if ("development" === 'production') {
 } else {
   module.exports = require('./cjs/react-dom.development.js');
 }
-},{"./cjs/react-dom.development.js":"node_modules/react-dom/cjs/react-dom.development.js"}],"src/websocket.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; var ownKeys = Object.keys(source); if (typeof Object.getOwnPropertySymbols === 'function') { ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) { return Object.getOwnPropertyDescriptor(source, sym).enumerable; })); } ownKeys.forEach(function (key) { _defineProperty(target, key, source[key]); }); } return target; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
-var WebSocketService =
-/*#__PURE__*/
-function () {
-  _createClass(WebSocketService, null, [{
-    key: "getInstance",
-    value: function getInstance() {
-      if (!WebSocketService.instance) {
-        WebSocketService.instance = new WebSocketService();
-      }
-
-      return WebSocketService.instance;
-    }
-  }]);
-
-  function WebSocketService() {
-    _classCallCheck(this, WebSocketService);
-
-    _defineProperty(this, "callbacks", {});
-
-    this.socketRef = null;
-  }
-
-  _createClass(WebSocketService, [{
-    key: "connect",
-    value: function connect() {
-      var _this = this;
-
-      var path = "ws://127.0.0.1:8000/ws/chat/test/";
-      this.socketRef = new WebSocket(path);
-
-      this.socketRef.onopen = function () {
-        console.log("websocket open");
-      };
-
-      this.socketNewMessage(JSON.stringify({
-        command: "fetch_messages"
-      }));
-
-      this.socketRef.onmessage = function (e) {
-        _this.socketNewMessage(e.data);
-      };
-
-      this.socketRef.onerror = function (e) {
-        console.log(e.message);
-      };
-
-      this.socketRef.onclose = function () {
-        console.log("websocket is closed");
-
-        _this.connect();
-      };
-    }
-  }, {
-    key: "socketNewMessage",
-    value: function socketNewMessage(data) {
-      var parsedData = JSON.parse(data);
-      var command = parsedData.command;
-
-      if (Object.keys(this.callbacks).length == 0) {
-        return;
-      }
-
-      if (command === "messages") {
-        this.callbacks[command](parsedData.messages);
-      }
-
-      if (command === "new_message") {
-        this.callbacks[command](parsedData.message);
-      }
-    }
-  }, {
-    key: "fetchMessages",
-    value: function fetchMessages(username) {
-      this.sendMessage({
-        command: "fetch_messages",
-        username: username
-      });
-    }
-  }, {
-    key: "newChatMessage",
-    value: function newChatMessage(message) {
-      this.sendMessage({
-        command: "new_message",
-        from: message.from,
-        message: message.content
-      });
-    }
-  }, {
-    key: "addCallbacks",
-    value: function addCallbacks(messagesCallback, newMessageCallback) {
-      this.callbacks["messages"] = messagesCallback;
-      this.callbacks["new_message"] = newMessageCallback;
-    }
-  }, {
-    key: "sendMessage",
-    value: function sendMessage(data) {
-      try {
-        this.socketRef.sendJSON.stringify(_objectSpread({}, data));
-      } catch (err) {
-        console.log(err.messages);
-      }
-    }
-  }, {
-    key: "state",
-    value: function state() {
-      return this.socketRef.readyState;
-    }
-  }, {
-    key: "waitForSocketConnection",
-    value: function waitForSocketConnection(callback) {
-      var socket = this.socketRef;
-      var recursion = this.waitForSocketConnection;
-      setTimeout(function () {
-        if (socket.readyState === 1) {
-          console.log("connection is secure");
-
-          if (callback != null) {
-            callback();
-          }
-
-          return;
-        } else {
-          console.log("waiting for conection...");
-          recursion(callback);
-        }
-      }, 1);
-    }
-  }]);
-
-  return WebSocketService;
-}();
-
-_defineProperty(WebSocketService, "instance", null);
-
-var WebSocketInstance = WebSocketService.getInstance();
-var _default = WebSocketInstance;
-exports.default = _default;
-},{}],"src/Chat.js":[function(require,module,exports) {
-"use strict";
-
-var _react = _interopRequireDefault(require("react"));
-
-var _websocket = _interopRequireDefault(require("./websocket"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
-
-function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }
-
-function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance"); }
-
-function _iterableToArray(iter) { if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter); }
-
-function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
-
-function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
-
-function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
-
-function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
-
-function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
-var Chat =
-/*#__PURE__*/
-function (_React$Component) {
-  _inherits(Chat, _React$Component);
-
-  function Chat(props) {
-    var _this;
-
-    _classCallCheck(this, Chat);
-
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(Chat).call(this, props));
-
-    _defineProperty(_assertThisInitialized(_this), "addMessage", function (message) {
-      _this.setState({
-        messages: [].concat(_toConsumableArray(_this.state.messages), [message])
-      });
-    });
-
-    _defineProperty(_assertThisInitialized(_this), "setMessages", function (messages) {
-      _this.setState({
-        messages: messages.reverse()
-      });
-    });
-
-    _defineProperty(_assertThisInitialized(_this), "renderMessages", function (messages) {
-      var currentUser = "admin";
-      return messages.map(function (message, i) {
-        return _react.default.createElement("li", {
-          key: message.id,
-          className: message.author === currentUser ? "sent" : "replies"
-        }, _react.default.createElement("img", {
-          src: "http://emilcarlsson.se/assets/mikeross.png"
-        }), _react.default.createElement("p", null, message.content, _react.default.createElement("br", null), _react.default.createElement("small", {
-          className: message.author === currentUser ? "sent" : "replies"
-        }, Math.round((new Date().getTime() - new Date(message.timestamp).getTime()) / 60000), " ", "minutes ago")));
-      });
-    });
-
-    _this.state = {};
-
-    _this.waitForSocketConnection();
-
-    _this.waitForSocketConnection(function () {
-      _websocket.default.addCallbacks(_this.setMessages.bind(_assertThisInitialized(_this)), _this.addMessage.bind(_assertThisInitialized(_this)));
-
-      _websocket.default.fetchMessages(_this.props.currentUser);
-    });
-
-    return _this;
-  }
-
-  _createClass(Chat, [{
-    key: "waitForSocketConnection",
-    value: function waitForSocketConnection(callback) {
-      var component = this;
-      setTimeout(function () {
-        if (_websocket.default.state() === 1) {
-          console.log("Connection is made");
-          callback();
-          return;
-        } else {
-          console.log("wait for connection...");
-          component.waitForSocketConnection(callback);
-        }
-      }, 100);
-    }
-  }, {
-    key: "render",
-    value: function render() {
-      return _react.default.createElement("div", null);
-    }
-  }]);
-
-  return Chat;
-}(_react.default.Component);
-},{"react":"node_modules/react/index.js","./websocket":"src/websocket.js"}],"node_modules/@babel/runtime/helpers/esm/extends.js":[function(require,module,exports) {
+},{"./cjs/react-dom.development.js":"node_modules/react-dom/cjs/react-dom.development.js"}],"node_modules/@babel/runtime/helpers/esm/extends.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -63734,98 +63467,7 @@ Object.keys(_themes).forEach(function (key) {
     }
   });
 });
-},{"./components":"node_modules/grommet/es6/components/index.js","./contexts":"node_modules/grommet/es6/contexts/index.js","./default-props":"node_modules/grommet/es6/default-props.js","./themes":"node_modules/grommet/es6/themes/index.js"}],"src/App.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-
-var _react = _interopRequireDefault(require("react"));
-
-var _reactDom = _interopRequireDefault(require("react-dom"));
-
-var _Chat = _interopRequireDefault(require("./Chat"));
-
-var _websocket = _interopRequireDefault(require("./websocket"));
-
-var _grommet = require("grommet");
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
-
-function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
-
-function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
-
-function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
-
-function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
-
-var theme = {
-  global: {
-    font: {
-      family: "Crafty Girls",
-      size: "14px",
-      height: "20px"
-    }
-  }
-};
-
-var App =
-/*#__PURE__*/
-function (_React$Component) {
-  _inherits(App, _React$Component);
-
-  function App() {
-    _classCallCheck(this, App);
-
-    return _possibleConstructorReturn(this, _getPrototypeOf(App).apply(this, arguments));
-  }
-
-  _createClass(App, [{
-    key: "componentDidMount",
-    value: function componentDidMount() {
-      _websocket.default.connect();
-    }
-  }, {
-    key: "render",
-    value: function render() {
-      return _react.default.createElement(_grommet.Grommet, {
-        theme: theme
-      }, _react.default.createElement(_grommet.Box, {
-        justify: "center",
-        height: "100%",
-        align: "center",
-        pad: "none",
-        width: "50%",
-        margin: {
-          horizontal: "auto"
-        },
-        background: "linear-gradient(102.77deg, #865ED6 -9.18%, #18BAB9 209.09%)"
-      }, _react.default.createElement(_grommet.Text, {
-        color: "accent-1",
-        size: "77px"
-      }, "SELFIES 2020")));
-    }
-  }]);
-
-  return App;
-}(_react.default.Component);
-
-var _default = App;
-exports.default = _default;
-},{"react":"node_modules/react/index.js","react-dom":"node_modules/react-dom/index.js","./Chat":"src/Chat.js","./websocket":"src/websocket.js","grommet":"node_modules/grommet/es6/index.js"}],"node_modules/gud/index.js":[function(require,module,exports) {
+},{"./components":"node_modules/grommet/es6/components/index.js","./contexts":"node_modules/grommet/es6/contexts/index.js","./default-props":"node_modules/grommet/es6/default-props.js","./themes":"node_modules/grommet/es6/themes/index.js"}],"node_modules/gud/index.js":[function(require,module,exports) {
 var global = arguments[3];
 'use strict';
 
@@ -66755,7 +66397,393 @@ if ("development" !== "production") {
     style: _propTypes.default.object
   });
 }
-},{"@babel/runtime/helpers/esm/inheritsLoose":"node_modules/@babel/runtime/helpers/esm/inheritsLoose.js","react":"node_modules/react/index.js","react-router":"node_modules/react-router/esm/react-router.js","history":"node_modules/history/esm/history.js","prop-types":"node_modules/prop-types/index.js","tiny-warning":"node_modules/tiny-warning/dist/tiny-warning.esm.js","@babel/runtime/helpers/esm/extends":"node_modules/@babel/runtime/helpers/esm/extends.js","@babel/runtime/helpers/esm/objectWithoutPropertiesLoose":"node_modules/@babel/runtime/helpers/esm/objectWithoutPropertiesLoose.js","tiny-invariant":"node_modules/tiny-invariant/dist/tiny-invariant.esm.js"}],"index.js":[function(require,module,exports) {
+},{"@babel/runtime/helpers/esm/inheritsLoose":"node_modules/@babel/runtime/helpers/esm/inheritsLoose.js","react":"node_modules/react/index.js","react-router":"node_modules/react-router/esm/react-router.js","history":"node_modules/history/esm/history.js","prop-types":"node_modules/prop-types/index.js","tiny-warning":"node_modules/tiny-warning/dist/tiny-warning.esm.js","@babel/runtime/helpers/esm/extends":"node_modules/@babel/runtime/helpers/esm/extends.js","@babel/runtime/helpers/esm/objectWithoutPropertiesLoose":"node_modules/@babel/runtime/helpers/esm/objectWithoutPropertiesLoose.js","tiny-invariant":"node_modules/tiny-invariant/dist/tiny-invariant.esm.js"}],"src/LoginOrSignup.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _react = _interopRequireDefault(require("react"));
+
+var _grommet = require("grommet");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+var LoginOrSignup =
+/*#__PURE__*/
+function (_React$Component) {
+  _inherits(LoginOrSignup, _React$Component);
+
+  function LoginOrSignup() {
+    _classCallCheck(this, LoginOrSignup);
+
+    return _possibleConstructorReturn(this, _getPrototypeOf(LoginOrSignup).apply(this, arguments));
+  }
+
+  _createClass(LoginOrSignup, [{
+    key: "render",
+    value: function render() {
+      return _react.default.createElement(_react.default.Fragment, null, _react.default.createElement(_grommet.Form, null, _react.default.createElement(_grommet.FormField, {
+        label: "email",
+        name: "email",
+        required: true
+      }), _react.default.createElement(_grommet.FormField, {
+        label: "password",
+        name: "password",
+        required: true
+      }), _react.default.createElement(_grommet.Button, {
+        type: "submit",
+        primary: true,
+        label: "Submit"
+      })));
+    }
+  }]);
+
+  return LoginOrSignup;
+}(_react.default.Component);
+
+var _default = LoginOrSignup;
+exports.default = _default;
+},{"react":"node_modules/react/index.js","grommet":"node_modules/grommet/es6/index.js"}],"src/images/Door.png":[function(require,module,exports) {
+module.exports = "/Door.3c1dccc9.png";
+},{}],"src/Entrance.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _react = _interopRequireDefault(require("react"));
+
+var _reactDom = _interopRequireDefault(require("react-dom"));
+
+var _grommet = require("grommet");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+var Entrance =
+/*#__PURE__*/
+function (_React$Component) {
+  _inherits(Entrance, _React$Component);
+
+  function Entrance() {
+    _classCallCheck(this, Entrance);
+
+    return _possibleConstructorReturn(this, _getPrototypeOf(Entrance).apply(this, arguments));
+  }
+
+  _createClass(Entrance, [{
+    key: "render",
+    value: function render() {
+      return _react.default.createElement(_react.default.Fragment, null, _react.default.createElement(_grommet.Text, {
+        color: "accent-1",
+        size: "77px"
+      }, "SELFIES 2020"), _react.default.createElement("a", {
+        href: "/loginorsignup"
+      }, _react.default.createElement("img", {
+        src: require("./images/Door.png")
+      })));
+    }
+  }]);
+
+  return Entrance;
+}(_react.default.Component);
+
+var _default = Entrance;
+exports.default = _default;
+},{"react":"node_modules/react/index.js","react-dom":"node_modules/react-dom/index.js","grommet":"node_modules/grommet/es6/index.js","./images/Door.png":"src/images/Door.png"}],"src/websocket.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; var ownKeys = Object.keys(source); if (typeof Object.getOwnPropertySymbols === 'function') { ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) { return Object.getOwnPropertyDescriptor(source, sym).enumerable; })); } ownKeys.forEach(function (key) { _defineProperty(target, key, source[key]); }); } return target; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+var WebSocketService =
+/*#__PURE__*/
+function () {
+  _createClass(WebSocketService, null, [{
+    key: "getInstance",
+    value: function getInstance() {
+      if (!WebSocketService.instance) {
+        WebSocketService.instance = new WebSocketService();
+      }
+
+      return WebSocketService.instance;
+    }
+  }]);
+
+  function WebSocketService() {
+    _classCallCheck(this, WebSocketService);
+
+    _defineProperty(this, "callbacks", {});
+
+    this.socketRef = null;
+  }
+
+  _createClass(WebSocketService, [{
+    key: "connect",
+    value: function connect() {
+      var _this = this;
+
+      var path = "ws://127.0.0.1:8000/ws/chat/test/";
+      this.socketRef = new WebSocket(path);
+
+      this.socketRef.onopen = function () {
+        console.log("websocket open");
+      };
+
+      this.socketNewMessage(JSON.stringify({
+        command: "fetch_messages"
+      }));
+
+      this.socketRef.onmessage = function (e) {
+        _this.socketNewMessage(e.data);
+      };
+
+      this.socketRef.onerror = function (e) {
+        console.log(e.message);
+      };
+
+      this.socketRef.onclose = function () {
+        console.log("websocket is closed");
+
+        _this.connect();
+      };
+    }
+  }, {
+    key: "socketNewMessage",
+    value: function socketNewMessage(data) {
+      var parsedData = JSON.parse(data);
+      var command = parsedData.command;
+
+      if (Object.keys(this.callbacks).length == 0) {
+        return;
+      }
+
+      if (command === "messages") {
+        this.callbacks[command](parsedData.messages);
+      }
+
+      if (command === "new_message") {
+        this.callbacks[command](parsedData.message);
+      }
+    }
+  }, {
+    key: "fetchMessages",
+    value: function fetchMessages(username) {
+      this.sendMessage({
+        command: "fetch_messages",
+        username: username
+      });
+    }
+  }, {
+    key: "newChatMessage",
+    value: function newChatMessage(message) {
+      this.sendMessage({
+        command: "new_message",
+        from: message.from,
+        message: message.content
+      });
+    }
+  }, {
+    key: "addCallbacks",
+    value: function addCallbacks(messagesCallback, newMessageCallback) {
+      this.callbacks["messages"] = messagesCallback;
+      this.callbacks["new_message"] = newMessageCallback;
+    }
+  }, {
+    key: "sendMessage",
+    value: function sendMessage(data) {
+      try {
+        this.socketRef.sendJSON.stringify(_objectSpread({}, data));
+      } catch (err) {
+        console.log(err.messages);
+      }
+    }
+  }, {
+    key: "state",
+    value: function state() {
+      return this.socketRef.readyState;
+    }
+  }, {
+    key: "waitForSocketConnection",
+    value: function waitForSocketConnection(callback) {
+      var socket = this.socketRef;
+      var recursion = this.waitForSocketConnection;
+      setTimeout(function () {
+        if (socket.readyState === 1) {
+          console.log("connection is secure");
+
+          if (callback != null) {
+            callback();
+          }
+
+          return;
+        } else {
+          console.log("waiting for conection...");
+          recursion(callback);
+        }
+      }, 1);
+    }
+  }]);
+
+  return WebSocketService;
+}();
+
+_defineProperty(WebSocketService, "instance", null);
+
+var WebSocketInstance = WebSocketService.getInstance();
+var _default = WebSocketInstance;
+exports.default = _default;
+},{}],"src/App.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _react = _interopRequireDefault(require("react"));
+
+var _grommet = require("grommet");
+
+var _reactRouterDom = require("react-router-dom");
+
+var _LoginOrSignup = _interopRequireDefault(require("./LoginOrSignup"));
+
+var _Entrance = _interopRequireDefault(require("./Entrance"));
+
+var _websocket = _interopRequireDefault(require("./websocket"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+var theme = {
+  global: {
+    font: {
+      family: "Luckiest Guy",
+      size: "14px",
+      height: "20px"
+    }
+  }
+};
+
+var App =
+/*#__PURE__*/
+function (_React$Component) {
+  _inherits(App, _React$Component);
+
+  function App() {
+    _classCallCheck(this, App);
+
+    return _possibleConstructorReturn(this, _getPrototypeOf(App).apply(this, arguments));
+  }
+
+  _createClass(App, [{
+    key: "componentDidMount",
+    value: function componentDidMount() {
+      _websocket.default.connect();
+    }
+  }, {
+    key: "render",
+    value: function render() {
+      return _react.default.createElement(_grommet.Grommet, {
+        theme: theme
+      }, _react.default.createElement(_grommet.Box, {
+        justify: "center",
+        height: "100%",
+        align: "center",
+        width: "50%",
+        margin: {
+          horizontal: "auto"
+        },
+        elevation: "medium",
+        background: "linear-gradient(102.77deg, #865ED6 -9.18%, #18BAB9 209.09%)"
+      }, _react.default.createElement(_reactRouterDom.Switch, null, _react.default.createElement(_reactRouterDom.Route, {
+        exact: true,
+        path: "/",
+        component: _Entrance.default
+      }), _react.default.createElement(_reactRouterDom.Route, {
+        exact: true,
+        path: "/loginorsignup",
+        component: _LoginOrSignup.default
+      }))));
+    }
+  }]);
+
+  return App;
+}(_react.default.Component);
+
+var _default = App;
+exports.default = _default;
+},{"react":"node_modules/react/index.js","grommet":"node_modules/grommet/es6/index.js","react-router-dom":"node_modules/react-router-dom/esm/react-router-dom.js","./LoginOrSignup":"src/LoginOrSignup.js","./Entrance":"src/Entrance.js","./websocket":"src/websocket.js"}],"index.js":[function(require,module,exports) {
 "use strict";
 
 var _react = _interopRequireDefault(require("react"));
@@ -66804,7 +66832,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "49552" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "49561" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

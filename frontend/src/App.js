@@ -1,13 +1,14 @@
 import React from "react";
-import ReactDOM from "react-dom";
-import Chat from "./Chat";
+import { Grommet, Box } from "grommet";
+import { Switch, Route } from "react-router-dom";
+import LoginOrSignup from "./LoginOrSignup";
+import Entrance from "./Entrance";
 import WebSocketInstance from "./websocket";
-import { Grommet, Box, Text, Grid } from "grommet";
 
 const theme = {
   global: {
     font: {
-      family: "Crafty Girls",
+      family: "Luckiest Guy",
       size: "14px",
       height: "20px"
     }
@@ -18,6 +19,7 @@ class App extends React.Component {
   componentDidMount() {
     WebSocketInstance.connect();
   }
+
   render() {
     return (
       <Grommet theme={theme}>
@@ -25,14 +27,15 @@ class App extends React.Component {
           justify="center"
           height="100%"
           align="center"
-          pad="none"
           width="50%"
           margin={{ horizontal: "auto" }}
+          elevation="medium"
           background="linear-gradient(102.77deg, #865ED6 -9.18%, #18BAB9 209.09%)"
         >
-          <Text color="accent-1" size="77px">
-            SELFIES 2020
-          </Text>
+          <Switch>
+            <Route exact path="/" component={Entrance} />
+            <Route exact path="/loginorsignup" component={LoginOrSignup} />
+          </Switch>
         </Box>
       </Grommet>
     );
