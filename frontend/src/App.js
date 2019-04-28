@@ -29,7 +29,7 @@ class App extends React.Component {
           width="60%"
           margin={{ horizontal: "auto" }}
           elevation="medium"
-          background="linear-gradient(102.77deg, #865ED6 -9.18%, #18BAB9 209.09%)"
+          background="linear-gradient(102.77deg, #a387db -9.18%, #18BAB9 209.09%)"
         >
           <Switch>
             <Route exact path="/" component={Entrance} />

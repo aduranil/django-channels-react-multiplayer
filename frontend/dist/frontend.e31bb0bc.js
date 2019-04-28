@@ -66444,14 +66444,41 @@ function (_React$Component) {
     key: "render",
     value: function render() {
       return _react.default.createElement(_react.default.Fragment, null, _react.default.createElement(_grommet.Box, {
+        gap: "medium",
+        width: "medium",
         elevation: "medium",
         pad: "medium",
-        round: "large"
-      }, _react.default.createElement(_grommet.Form, null, _react.default.createElement(_grommet.FormField, {
+        round: "small",
+        margin: "15px"
+      }, _react.default.createElement(_grommet.Text, {
+        textAlign: "center",
+        color: "white",
+        margin: {
+          left: "small"
+        }
+      }, "NEW USERS"), _react.default.createElement(_grommet.Text, {
+        margin: {
+          left: "small"
+        }
+      }, "Click here to create your user!")), _react.default.createElement(_grommet.Box, {
+        width: "medium",
+        elevation: "medium",
+        pad: "medium",
+        round: "small"
+      }, _react.default.createElement(_grommet.Text, {
+        textAlign: "center",
+        color: "white",
+        margin: {
+          left: "small"
+        }
+      }, "RETURNING USERS"), _react.default.createElement(_grommet.Form, {
+        color: "blue"
+      }, _react.default.createElement(_grommet.FormField, {
         label: "email",
         name: "email",
         required: true
       }), _react.default.createElement(_grommet.FormField, {
+        type: "password",
         label: "password",
         name: "password",
         required: true
@@ -66772,7 +66799,7 @@ function (_React$Component) {
           horizontal: "auto"
         },
         elevation: "medium",
-        background: "linear-gradient(102.77deg, #865ED6 -9.18%, #18BAB9 209.09%)"
+        background: "linear-gradient(102.77deg, #a387db -9.18%, #18BAB9 209.09%)"
       }, _react.default.createElement(_reactRouterDom.Switch, null, _react.default.createElement(_reactRouterDom.Route, {
         exact: true,
         path: "/",
