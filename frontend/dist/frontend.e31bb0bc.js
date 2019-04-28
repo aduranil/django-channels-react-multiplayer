@@ -66443,7 +66443,11 @@ function (_React$Component) {
   _createClass(LoginOrSignup, [{
     key: "render",
     value: function render() {
-      return _react.default.createElement(_react.default.Fragment, null, _react.default.createElement(_grommet.Form, null, _react.default.createElement(_grommet.FormField, {
+      return _react.default.createElement(_react.default.Fragment, null, _react.default.createElement(_grommet.Box, {
+        elevation: "medium",
+        pad: "medium",
+        round: "large"
+      }, _react.default.createElement(_grommet.Form, null, _react.default.createElement(_grommet.FormField, {
         label: "email",
         name: "email",
         required: true
@@ -66455,7 +66459,7 @@ function (_React$Component) {
         type: "submit",
         primary: true,
         label: "Submit"
-      })));
+      }))));
     }
   }]);
 
@@ -66728,9 +66732,7 @@ function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || func
 var theme = {
   global: {
     font: {
-      family: "Luckiest Guy",
-      size: "14px",
-      height: "20px"
+      family: "Luckiest Guy"
     }
   }
 };
@@ -66757,10 +66759,15 @@ function (_React$Component) {
       return _react.default.createElement(_grommet.Grommet, {
         theme: theme
       }, _react.default.createElement(_grommet.Box, {
+        border: {
+          color: "brand",
+          style: "double",
+          size: "large"
+        },
         justify: "center",
         height: "100%",
         align: "center",
-        width: "50%",
+        width: "60%",
         margin: {
           horizontal: "auto"
         },

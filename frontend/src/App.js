@@ -8,9 +8,7 @@ import WebSocketInstance from "./websocket";
 const theme = {
   global: {
     font: {
-      family: "Luckiest Guy",
-      size: "14px",
-      height: "20px"
+      family: "Luckiest Guy"
     }
   }
 };
@@ -24,10 +22,11 @@ class App extends React.Component {
     return (
       <Grommet theme={theme}>
         <Box
+          border={{ color: "brand", style: "double", size: "large" }}
           justify="center"
           height="100%"
           align="center"
-          width="50%"
+          width="60%"
           margin={{ horizontal: "auto" }}
           elevation="medium"
           background="linear-gradient(102.77deg, #865ED6 -9.18%, #18BAB9 209.09%)"
