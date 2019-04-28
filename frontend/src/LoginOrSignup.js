@@ -1,5 +1,6 @@
 import React from "react";
 import { Form, FormField, Button, Box, Text } from "grommet";
+import { Link } from "react-router-dom";
 
 class LoginOrSignup extends React.Component {
   render() {
@@ -17,7 +18,11 @@ class LoginOrSignup extends React.Component {
             NEW USERS
           </Text>
           <Text margin={{ left: "small" }}>
-            Click here to create your user!
+            Click{" "}
+            <Link to="/signup" activeClassName="active">
+              here
+            </Link>{" "}
+            to create your user!
           </Text>
         </Box>
         <Box width="medium" elevation="medium" pad="medium" round="small">
