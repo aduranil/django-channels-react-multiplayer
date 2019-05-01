@@ -2,7 +2,7 @@ var REACT_ELEMENT_TYPE;
 
 function _createRawReactElement(type, props, key, children) {
   if (!REACT_ELEMENT_TYPE) {
-    REACT_ELEMENT_TYPE = typeof Symbol === "function" && Symbol.for && Symbol.for("react.element") || 0xeac7;
+    REACT_ELEMENT_TYPE = typeof Symbol === "function" && Symbol["for"] && Symbol["for"]("react.element") || 0xeac7;
   }
 
   var defaultProps = type && type.defaultProps;

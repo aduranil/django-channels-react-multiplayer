@@ -30,8 +30,8 @@ export default function _asyncGeneratorDelegate(inner, awaitWrap) {
     return pump("next", value);
   };
 
-  if (typeof inner.throw === "function") {
-    iter.throw = function (value) {
+  if (typeof inner["throw"] === "function") {
+    iter["throw"] = function (value) {
       if (waiting) {
         waiting = false;
         throw value;
@@ -41,8 +41,8 @@ export default function _asyncGeneratorDelegate(inner, awaitWrap) {
     };
   }
 
-  if (typeof inner.return === "function") {
-    iter.return = function (value) {
+  if (typeof inner["return"] === "function") {
+    iter["return"] = function (value) {
       return pump("return", value);
     };
   }

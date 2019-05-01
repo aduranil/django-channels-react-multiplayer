@@ -73,8 +73,8 @@ export default function AsyncGenerator(gen) {
 
   this._invoke = send;
 
-  if (typeof gen.return !== "function") {
-    this.return = undefined;
+  if (typeof gen["return"] !== "function") {
+    this["return"] = undefined;
   }
 }
 
@@ -88,10 +88,10 @@ AsyncGenerator.prototype.next = function (arg) {
   return this._invoke("next", arg);
 };
 
-AsyncGenerator.prototype.throw = function (arg) {
+AsyncGenerator.prototype["throw"] = function (arg) {
   return this._invoke("throw", arg);
 };
 
-AsyncGenerator.prototype.return = function (arg) {
+AsyncGenerator.prototype["return"] = function (arg) {
   return this._invoke("return", arg);
 };

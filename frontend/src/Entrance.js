@@ -1,6 +1,5 @@
-import React from "react";
-import ReactDOM from "react-dom";
-import { Text } from "grommet";
+import React from 'react';
+import { Text } from 'grommet';
 
 class Entrance extends React.Component {
   render() {
@@ -10,7 +9,7 @@ class Entrance extends React.Component {
           SELFIES 2020
         </Text>
         <a href="/loginorsignup">
-          <img src={require("./images/Door.png")} />
+          <img src={require('./images/Door.png')} />
         </a>
       </React.Fragment>
     );
