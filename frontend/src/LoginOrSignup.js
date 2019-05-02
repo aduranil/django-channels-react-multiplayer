@@ -1,6 +1,8 @@
-import React from "react";
-import { Form, FormField, Button, Box, Text } from "grommet";
-import { Link } from "react-router-dom";
+import React from 'react';
+import {
+  Form, FormField, Button, Box, Text,
+} from 'grommet';
+import { Link } from 'react-router-dom';
 
 class LoginOrSignup extends React.Component {
   render() {
@@ -14,29 +16,26 @@ class LoginOrSignup extends React.Component {
           round="small"
           margin="15px"
         >
-          <Text textAlign="center" color="white" margin={{ left: "small" }}>
+          <Text textAlign="center" color="white" margin={{ left: 'small' }}>
             NEW USERS
           </Text>
-          <Text margin={{ left: "small" }}>
-            Click{" "}
+          <Text margin={{ left: 'small' }}>
+            Click
+            {' '}
             <Link to="/signup" activeClassName="active">
               here
-            </Link>{" "}
+            </Link>
+            {' '}
             to create your user!
           </Text>
         </Box>
         <Box width="medium" elevation="medium" pad="medium" round="small">
-          <Text textAlign="center" color="white" margin={{ left: "small" }}>
+          <Text textAlign="center" color="white" margin={{ left: 'small' }}>
             RETURNING USERS
           </Text>
           <Form color="blue">
             <FormField label="email" name="email" required />
-            <FormField
-              type="password"
-              label="password"
-              name="password"
-              required
-            />
+            <FormField type="password" label="password" name="password" required />
             <Button type="submit" primary label="Submit" />
           </Form>
         </Box>
