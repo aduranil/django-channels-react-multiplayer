@@ -31806,7 +31806,8 @@ var handleLogin = function handleLogin(e, data) {
     fetch('http://localhost:8000/token-auth/', {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        Accept: 'application/json'
       },
       body: JSON.stringify(data)
     }).then(function (res) {
@@ -31828,12 +31829,14 @@ var handleSignup = function handleSignup(username, password) {
     fetch('http://localhost:8000/chat/users/', {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        Accept: 'application/json'
       },
       body: JSON.stringify(username, password)
     }).then(function (res) {
       return res.json();
     }).then(function (json) {
+      debugger;
       localStorage.setItem('token', json.token);
       return dispatch({
         type: 'SET_CURRENT_USER',

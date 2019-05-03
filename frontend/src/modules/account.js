@@ -3,6 +3,7 @@ export const handleLogin = (e, data) => (dispatch) => {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
+      Accept: 'application/json',
     },
     body: JSON.stringify(data),
   })
@@ -18,11 +19,13 @@ export const handleSignup = (username, password) => (dispatch) => {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
+      Accept: 'application/json',
     },
     body: JSON.stringify(username, password),
   })
     .then(res => res.json())
     .then((json) => {
+      debugger;
       localStorage.setItem('token', json.token);
       return dispatch({ type: 'SET_CURRENT_USER', json });
     });

@@ -2,6 +2,7 @@
 from django.urls import path
 
 from . import views
+from .views import current_user, UserList
 
 urlpatterns = [
     path('', views.index, name='index'),
