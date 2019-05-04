@@ -31826,7 +31826,7 @@ exports.handleLogin = handleLogin;
 
 var handleSignup = function handleSignup(username, password) {
   return function (dispatch) {
-    fetch('http://localhost:8000/chat/users/', {
+    fetch('http://localhost:8000/app/users/', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

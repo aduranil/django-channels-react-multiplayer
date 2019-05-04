@@ -15,7 +15,7 @@ export const handleLogin = (e, data) => (dispatch) => {
 };
 
 export const handleSignup = (username, password) => (dispatch) => {
-  fetch('http://localhost:8000/chat/users/', {
+  fetch('http://localhost:8000/app/users/', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
