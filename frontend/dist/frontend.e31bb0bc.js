@@ -31836,7 +31836,6 @@ var handleSignup = function handleSignup(username, password) {
     }).then(function (res) {
       return res.json();
     }).then(function (json) {
-      debugger;
       localStorage.setItem('token', json.token);
       return dispatch({
         type: 'SET_CURRENT_USER',
@@ -31856,8 +31855,8 @@ var authReducer = function authReducer() {
   switch (action.type) {
     case 'SET_CURRENT_USER':
       return _objectSpread({}, state, {
-        loggedIn: action.loggedIn,
-        username: action.userName
+        loggedIn: true,
+        username: action.json.username
       });
 
     default:
@@ -68662,7 +68661,7 @@ function (_React$Component) {
     _this = _possibleConstructorReturn(this, (_getPrototypeOf2 = _getPrototypeOf(Signup)).call.apply(_getPrototypeOf2, [this].concat(args)));
 
     _defineProperty(_assertThisInitialized(_this), "state", {
-      email: '',
+      username: '',
       password: ''
     });
 
@@ -68679,11 +68678,7 @@ function (_React$Component) {
     });
 
     _defineProperty(_assertThisInitialized(_this), "handleSubmit", function () {
-      var _this$state = _this.state,
-          email = _this$state.email,
-          password = _this$state.password;
-
-      _this.props.dispatch((0, _account.handleSignup)(email, password));
+      _this.props.dispatch((0, _account.handleSignup)(_this.state));
     });
 
     return _this;
@@ -68692,9 +68687,9 @@ function (_React$Component) {
   _createClass(Signup, [{
     key: "render",
     value: function render() {
-      var _this$state2 = this.state,
-          email = _this$state2.email,
-          password = _this$state2.password;
+      var _this$state = this.state,
+          username = _this$state.username,
+          password = _this$state.password;
       return _react.default.createElement(_react.default.Fragment, null, _react.default.createElement(_grommet.Box, {
         width: "medium",
         elevation: "medium",
@@ -68711,9 +68706,9 @@ function (_React$Component) {
         color: "blue"
       }, _react.default.createElement(_grommet.FormField, {
         label: "email",
-        name: "email",
+        name: "username",
         required: true,
-        value: email,
+        value: username,
         onChange: this.handleChange
       }), _react.default.createElement(_grommet.FormField, {
         type: "password",
@@ -69019,7 +69014,7 @@ var _App = _interopRequireDefault(require("./src/App"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var store = (0, _redux.createStore)(_reducers.default, (0, _redux.applyMiddleware)(_reduxThunk.default));
+var store = (0, _redux.createStore)(_reducers.default, (0, _redux.compose)((0, _redux.applyMiddleware)(_reduxThunk.default), window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()));
 
 var Root = function Root(_ref) {
   var store = _ref.store;

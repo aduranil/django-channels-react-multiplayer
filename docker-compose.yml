@@ -21,7 +21,7 @@ services:
     ports:
       - 8000:8000
     stdin_open: true
-    tty: true 
+    tty: true
     depends_on:
       - db
       - redis

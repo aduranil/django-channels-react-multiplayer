@@ -25,7 +25,6 @@ export const handleSignup = (username, password) => (dispatch) => {
   })
     .then(res => res.json())
     .then((json) => {
-      debugger;
       localStorage.setItem('token', json.token);
       return dispatch({ type: 'SET_CURRENT_USER', json });
     });
@@ -36,7 +35,7 @@ const initialState = {};
 const authReducer = (state = { ...initialState }, action) => {
   switch (action.type) {
     case 'SET_CURRENT_USER':
-      return { ...state, loggedIn: action.loggedIn, username: action.userName };
+      return { ...state, loggedIn: true, username: action.json.username };
     default:
       return state;
   }

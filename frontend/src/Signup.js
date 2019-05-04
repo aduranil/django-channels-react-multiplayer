@@ -7,7 +7,7 @@ import { handleSignup } from './modules/account';
 
 class Signup extends React.Component {
   state = {
-    email: '',
+    username: '',
     password: '',
   };
 
@@ -22,12 +22,11 @@ class Signup extends React.Component {
   };
 
   handleSubmit = () => {
-    const { email, password } = this.state;
-    this.props.dispatch(handleSignup(email, password));
+    this.props.dispatch(handleSignup(this.state));
   };
 
   render() {
-    const { email, password } = this.state;
+    const { username, password } = this.state;
     return (
       <React.Fragment>
         <Box width="medium" elevation="medium" pad="medium" round="small">
@@ -37,9 +36,9 @@ class Signup extends React.Component {
           <Form onSubmit={this.handleSubmit} color="blue">
             <FormField
               label="email"
-              name="email"
+              name="username"
               required
-              value={email}
+              value={username}
               onChange={this.handleChange}
             />
             <FormField

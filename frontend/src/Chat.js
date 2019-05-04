@@ -13,6 +13,14 @@ class Chat extends React.Component {
     });
   }
 
+  addMessage = (message) => {
+    this.setState({ messages: [...this.state.messages, message] });
+  };
+
+  setMessages = (messages) => {
+    this.setState({ messages: messages.reverse() });
+  };
+
   waitForSocketConnection(callback) {
     const component = this;
     setTimeout(() => {
@@ -26,19 +34,11 @@ class Chat extends React.Component {
     }, 100);
   }
 
-  addMessage = (message) => {
-    this.setState({ messages: [...this.state.messages, message] });
-  };
-
-  setMessages = (messages) => {
-    this.setState({ messages: messages.reverse() });
-  };
-
   renderMessages = (messages) => {
     const currentUser = 'admin';
     return messages.map((message, i) => (
       <li key={message.id} className={message.author === currentUser ? 'sent' : 'replies'}>
-        <img src="http://emilcarlsson.se/assets/mikeross.png" />
+        <img alt="" src="http://emilcarlsson.se/assets/mikeross.png" />
         <p>
           {message.content}
           <br />
