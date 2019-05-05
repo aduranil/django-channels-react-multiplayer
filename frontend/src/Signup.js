@@ -23,6 +23,7 @@ class Signup extends React.Component {
 
   handleSubmit = () => {
     this.props.dispatch(handleSignup(this.state));
+    this.props.history.push('/games');
   };
 
   render() {

@@ -8,6 +8,11 @@ from rest_framework.views import APIView
 from .serializers import UserSerializer, UserSerializerWithToken
 from rest_framework.authentication import TokenAuthentication
 
+
+@api_view(['POST'])
+def create_game(request):
+    return
+
 # Create your views here.
 @api_view(['GET'])
 def current_user(request):

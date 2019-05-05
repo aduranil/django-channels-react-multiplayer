@@ -5,6 +5,7 @@
   "dependencies": {
     "babel-eslint": "^10.0.1",
     "grommet": "^2.6.6",
+    "grommet-icons": "^4.2.0",
     "images": "^3.0.2",
     "parcel": "^1.12.3",
     "prop-types": "^15.7.2",

@@ -26,7 +26,22 @@ export const handleSignup = (username, password) => (dispatch) => {
     .then(res => res.json())
     .then((json) => {
       localStorage.setItem('token', json.token);
-      return dispatch({ type: 'SET_CURRENT_USER', json });
+      dispatch({ type: 'SET_CURRENT_USER', json });
+    });
+};
+
+export const createGame = name => (dispatch) => {
+  fetch('http://localhost:8000/app/game/', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Accept: 'application/json',
+    },
+    body: JSON.stringify(name),
+  })
+    .then(res => res.json())
+    .then((json) => {
+      dispatch({ type: 'SET_GAME', json });
     });
 };
 
