@@ -31847,15 +31847,17 @@ var handleSignup = function handleSignup(username, password) {
 
 exports.handleSignup = handleSignup;
 
-var createGame = function createGame(name) {
+var createGame = function createGame(roomName) {
   return function (dispatch) {
     fetch('http://localhost:8000/app/game/', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Accept: 'application/json'
+        Authorization: localStorage.getItem('token')
       },
-      body: JSON.stringify(name)
+      body: JSON.stringify({
+        room_name: roomName
+      })
     }).then(function (res) {
       return res.json();
     }).then(function (json) {

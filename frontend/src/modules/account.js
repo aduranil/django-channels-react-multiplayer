@@ -30,14 +30,14 @@ export const handleSignup = (username, password) => (dispatch) => {
     });
 };
 
-export const createGame = name => (dispatch) => {
+export const createGame = roomName => (dispatch) => {
   fetch('http://localhost:8000/app/game/', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      Accept: 'application/json',
+      Authorization: localStorage.getItem('token'),
     },
-    body: JSON.stringify(name),
+    body: JSON.stringify({ room_name: roomName }),
   })
     .then(res => res.json())
     .then((json) => {
