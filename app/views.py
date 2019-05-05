@@ -12,7 +12,7 @@ from rest_framework.permissions import IsAuthenticated
 
 class GameList(APIView):
     authentication_classes = (TokenAuthentication,)
-    permission_classes = (permissions.IsAuthenticated,)
+    permission_classes = (permissions.AllowAny,)
     def post(self, request):
         import pdb; pdb.set_trace()
         return
