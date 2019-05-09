@@ -14,14 +14,14 @@ export const handleLogin = (e, data) => (dispatch) => {
     });
 };
 
-export const handleSignup = json => (dispatch) => {
+export const handleSignup = jsonData => (dispatch) => {
   fetch('http://localhost:8000/app/users/', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       Accept: 'application/json',
     },
-    body: JSON.stringify(json),
+    body: JSON.stringify(jsonData),
   })
     .then(res => res.json())
     .then((json) => {
@@ -35,7 +35,7 @@ export const createGame = roomName => (dispatch) => {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: localStorage.getItem('token'),
+      Authorization: `Token ${localStorage.getItem('token')}`,
     },
     body: JSON.stringify({ room_name: roomName }),
   })

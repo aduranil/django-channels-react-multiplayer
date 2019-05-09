@@ -17,8 +17,8 @@ class GameList(APIView):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (permissions.IsAuthenticated,)
     def post(self, request):
-        import pdb; pdb.set_trace()
-        return
+        return Response({}, status=status.HTTP_201_CREATED)
+
 
 
 class GetUser(ObtainAuthToken):
@@ -31,7 +31,6 @@ class GetUser(ObtainAuthToken):
     def post(self, request, *args, **kwargs):
         serializer = self.serializer_class(data=request.data,
                                            context={'request': request})
-        import pdb; pdb.set_trace()
         serializer.is_valid(raise_exception=True)
         user = serializer.validated_data['user']
         token, created = Token.objects.get_or_create(user=user)
@@ -51,4 +50,7 @@ class UserList(ObtainAuthToken):
         if serializer.is_valid():
             user = serializer.save()
             if user:
-                return Response(serializer.data, status=status.HTTP_201_CREATED)
+                token = Token.objects.create(user=user)
+                response = serializer.data
+                response['token'] = token.key
+                return Response(response, status=status.HTTP_201_CREATED)

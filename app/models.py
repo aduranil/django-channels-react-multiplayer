@@ -9,9 +9,3 @@ from django.conf import settings
 class Game(models.Model):
     room_name = models.CharField(max_length=50)
     # users = models.ManyToManyField(User)
-
-# This code is triggered whenever a new user has been created and saved to the database
-@receiver(post_save, sender=settings.AUTH_USER_MODEL)
-def create_auth_token(sender, instance=None, created=False, **kwargs):
-    if created:
-        Token.objects.create(user=instance)

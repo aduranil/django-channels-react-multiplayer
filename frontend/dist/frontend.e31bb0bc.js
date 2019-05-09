@@ -31824,7 +31824,7 @@ var handleLogin = function handleLogin(e, data) {
 
 exports.handleLogin = handleLogin;
 
-var handleSignup = function handleSignup(json) {
+var handleSignup = function handleSignup(jsonData) {
   return function (dispatch) {
     fetch('http://localhost:8000/app/users/', {
       method: 'POST',
@@ -31832,7 +31832,7 @@ var handleSignup = function handleSignup(json) {
         'Content-Type': 'application/json',
         Accept: 'application/json'
       },
-      body: JSON.stringify(json)
+      body: JSON.stringify(jsonData)
     }).then(function (res) {
       return res.json();
     }).then(function (json) {
@@ -31853,7 +31853,7 @@ var createGame = function createGame(roomName) {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: localStorage.getItem('token')
+        Authorization: "Token ".concat(localStorage.getItem('token'))
       },
       body: JSON.stringify({
         room_name: roomName
