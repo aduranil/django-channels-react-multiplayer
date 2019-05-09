@@ -31824,7 +31824,7 @@ var handleLogin = function handleLogin(e, data) {
 
 exports.handleLogin = handleLogin;
 
-var handleSignup = function handleSignup(username, password) {
+var handleSignup = function handleSignup(json) {
   return function (dispatch) {
     fetch('http://localhost:8000/app/users/', {
       method: 'POST',
@@ -31832,7 +31832,7 @@ var handleSignup = function handleSignup(username, password) {
         'Content-Type': 'application/json',
         Accept: 'application/json'
       },
-      body: JSON.stringify(username, password)
+      body: JSON.stringify(json)
     }).then(function (res) {
       return res.json();
     }).then(function (json) {
@@ -68685,13 +68685,20 @@ function (_React$Component) {
     _this = _possibleConstructorReturn(this, (_getPrototypeOf2 = _getPrototypeOf(Signup)).call.apply(_getPrototypeOf2, [this].concat(args)));
 
     _defineProperty(_assertThisInitialized(_this), "state", {
-      username: '',
-      password: ''
+      email: '',
+      password: '',
+      username: ''
     });
 
     _defineProperty(_assertThisInitialized(_this), "handleChange", function (e) {
       var name = e.target.name;
       var value = e.target.value;
+
+      if (name === 'email') {
+        _this.setState({
+          username: value
+        });
+      }
 
       _this.setState(function (prevstate) {
         var newState = _objectSpread({}, prevstate);
@@ -68714,7 +68721,7 @@ function (_React$Component) {
     key: "render",
     value: function render() {
       var _this$state = this.state,
-          username = _this$state.username,
+          email = _this$state.email,
           password = _this$state.password;
       return _react.default.createElement(_react.default.Fragment, null, _react.default.createElement(_grommet.Box, {
         width: "medium",
@@ -68732,9 +68739,9 @@ function (_React$Component) {
         color: "blue"
       }, _react.default.createElement(_grommet.FormField, {
         label: "email",
-        name: "username",
+        name: "email",
         required: true,
-        value: username,
+        value: email,
         onChange: this.handleChange
       }), _react.default.createElement(_grommet.FormField, {
         type: "password",

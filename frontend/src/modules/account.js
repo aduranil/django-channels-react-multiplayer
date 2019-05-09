@@ -14,14 +14,14 @@ export const handleLogin = (e, data) => (dispatch) => {
     });
 };
 
-export const handleSignup = (username, password) => (dispatch) => {
+export const handleSignup = json => (dispatch) => {
   fetch('http://localhost:8000/app/users/', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       Accept: 'application/json',
     },
-    body: JSON.stringify(username, password),
+    body: JSON.stringify(json),
   })
     .then(res => res.json())
     .then((json) => {
