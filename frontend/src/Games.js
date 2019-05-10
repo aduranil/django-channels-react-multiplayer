@@ -7,7 +7,7 @@ import withAuth from './modules/authWrapper';
 
 class Games extends React.Component {
   componentDidMount() {
-    this.props.dispatch(createGame());
+    this.props.dispatch(createGame('NOSEDIVE'));
   }
 
   render() {

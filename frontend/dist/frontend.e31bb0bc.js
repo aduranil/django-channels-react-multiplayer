@@ -31795,7 +31795,7 @@ exports.default = _default;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.default = exports.createGame = exports.handleSignup = exports.handleLogin = exports.getCurrentUser = void 0;
+exports.default = exports.createGame = exports.logoutUser = exports.handleSignup = exports.handleLogin = exports.getCurrentUser = void 0;
 
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; var ownKeys = Object.keys(source); if (typeof Object.getOwnPropertySymbols === 'function') { ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) { return Object.getOwnPropertyDescriptor(source, sym).enumerable; })); } ownKeys.forEach(function (key) { _defineProperty(target, key, source[key]); }); } return target; }
 
@@ -31809,13 +31809,13 @@ var API_ROOT = 'http://localhost:8000';
 
 var getCurrentUser = function getCurrentUser() {
   return function (dispatch) {
-    fetch("".concat(API_ROOT, "/app/user/"), {
+    return fetch("".concat(API_ROOT, "/app/user/"), {
       method: 'GET',
       headers: headers
     }).then(function (res) {
       return res.json();
     }).then(function (json) {
-      dispatch({
+      return dispatch({
         type: 'SET_CURRENT_USER',
         json: json
       });
@@ -31827,7 +31827,7 @@ exports.getCurrentUser = getCurrentUser;
 
 var handleLogin = function handleLogin(e, data) {
   return function (dispatch) {
-    fetch('http://localhost:8000/token-auth/', {
+    return fetch('http://localhost:8000/token-auth/', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -31850,7 +31850,7 @@ exports.handleLogin = handleLogin;
 
 var handleSignup = function handleSignup(jsonData) {
   return function (dispatch) {
-    fetch('http://localhost:8000/app/users/', {
+    return fetch('http://localhost:8000/app/users/', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -31861,7 +31861,7 @@ var handleSignup = function handleSignup(jsonData) {
       return res.json();
     }).then(function (json) {
       localStorage.setItem('token', json.token);
-      dispatch({
+      return dispatch({
         type: 'SET_CURRENT_USER',
         json: json
       });
@@ -31871,9 +31871,20 @@ var handleSignup = function handleSignup(jsonData) {
 
 exports.handleSignup = handleSignup;
 
+var logoutUser = function logoutUser() {
+  return function (dispatch) {
+    localStorage.removeItem('token');
+    return dispatch({
+      type: 'LOGOUT_USER'
+    });
+  };
+};
+
+exports.logoutUser = logoutUser;
+
 var createGame = function createGame(roomName) {
   return function (dispatch) {
-    fetch('http://localhost:8000/app/game/', {
+    return fetch('http://localhost:8000/app/game/', {
       method: 'POST',
       headers: headers,
       body: JSON.stringify({
@@ -31902,6 +31913,12 @@ var authReducer = function authReducer() {
       return _objectSpread({}, state, {
         loggedIn: true,
         username: action.json.username
+      });
+
+    case 'LOGOUT_USER':
+      return _objectSpread({}, state, {
+        loggedIn: false,
+        username: null
       });
 
     default:
@@ -100879,7 +100896,7 @@ function (_React$Component) {
   _createClass(Games, [{
     key: "componentDidMount",
     value: function componentDidMount() {
-      this.props.dispatch((0, _account.createGame)());
+      this.props.dispatch((0, _account.createGame)('NOSEDIVE'));
     }
   }, {
     key: "render",
