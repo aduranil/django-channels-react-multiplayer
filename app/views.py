@@ -21,23 +21,12 @@ class GameList(APIView):
 
 
 
-class GetUser(ObtainAuthToken):
-    """
-    Create a new user. It's called 'UserList' because normally we'd have a get
-    method here too, for retrieving a list of all User objects.
-    """
+class GetUser(APIView):
     authentication_classes = (TokenAuthentication,)
-    permission_classes = (permissions.AllowAny,)
-    def post(self, request, *args, **kwargs):
-        serializer = self.serializer_class(data=request.data,
-                                           context={'request': request})
-        serializer.is_valid(raise_exception=True)
-        user = serializer.validated_data['user']
-        token, created = Token.objects.get_or_create(user=user)
+    def get(self, request, *args, **kwargs):
         return Response({
-            'token': token.key,
-            'user_id': user.pk,
-            'email': user.email
+            'username': request.user.username,
+            'email': request.user.email,
         })
 
 

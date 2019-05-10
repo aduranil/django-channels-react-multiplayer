@@ -1,3 +1,21 @@
+const headers = {
+  'Content-Type': 'application/json',
+  Authorization: `Token ${localStorage.getItem('token')}`,
+};
+
+const API_ROOT = 'http://localhost:8000';
+
+export const getCurrentUser = () => (dispatch) => {
+  fetch(`${API_ROOT}/app/user/`, {
+    method: 'GET',
+    headers,
+  })
+    .then(res => res.json())
+    .then((json) => {
+      dispatch({ type: 'SET_CURRENT_USER', json });
+    });
+};
+
 export const handleLogin = (e, data) => (dispatch) => {
   fetch('http://localhost:8000/token-auth/', {
     method: 'POST',
@@ -33,10 +51,7 @@ export const handleSignup = jsonData => (dispatch) => {
 export const createGame = roomName => (dispatch) => {
   fetch('http://localhost:8000/app/game/', {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Token ${localStorage.getItem('token')}`,
-    },
+    headers,
     body: JSON.stringify({ room_name: roomName }),
   })
     .then(res => res.json())

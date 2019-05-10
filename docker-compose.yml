@@ -15,12 +15,15 @@ services:
       - 6379
   web:
     build: .
+    restart: always
     command: python manage.py runserver 0.0.0.0:8000
     volumes:
       - .:/selfies
     ports:
       - 8000:8000
     stdin_open: true
+    expose:
+      - 8000
     tty: true
     depends_on:
       - db
