@@ -68580,8 +68580,7 @@ function (_React$Component) {
           left: 'small'
         }
       }, "Click", ' ', _react.default.createElement(_reactRouterDom.Link, {
-        to: "/signup",
-        activeClassName: "active"
+        to: "/signup"
       }, "here"), ' ', "to create your user!")), _react.default.createElement(_grommet.Box, {
         width: "medium",
         elevation: "medium",
@@ -68730,9 +68729,9 @@ function (_React$Component) {
     });
 
     _defineProperty(_assertThisInitialized(_this), "handleSubmit", function () {
-      _this.props.dispatch((0, _account.handleSignup)(_this.state));
-
-      _this.props.history.push('/games');
+      _this.props.dispatch((0, _account.handleSignup)(_this.state)).then(function () {
+        return _this.props.history.push('/games');
+      });
     });
 
     return _this;

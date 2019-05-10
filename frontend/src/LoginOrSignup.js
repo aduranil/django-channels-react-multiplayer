@@ -22,11 +22,9 @@ class LoginOrSignup extends React.Component {
           <Text margin={{ left: 'small' }}>
             Click
             {' '}
-            <Link to="/signup" activeClassName="active">
-              here
-            </Link>
+            <Link to="/signup">here</Link>
             {' '}
-            to create your user!
+to create your user!
           </Text>
         </Box>
         <Box width="medium" elevation="medium" pad="medium" round="small">
