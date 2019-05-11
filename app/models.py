@@ -8,4 +8,4 @@ from django.conf import settings
 # Create your models here.
 class Game(models.Model):
     room_name = models.CharField(max_length=50)
-    # users = models.ManyToManyField(User)
+    users = models.ManyToManyField(User)

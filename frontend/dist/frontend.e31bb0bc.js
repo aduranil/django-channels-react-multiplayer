@@ -68761,6 +68761,7 @@ function (_React$Component) {
           email = _this$state.email,
           password = _this$state.password;
       return _react.default.createElement(_react.default.Fragment, null, _react.default.createElement(_grommet.Box, {
+        margin: "medium",
         width: "medium",
         elevation: "medium",
         pad: "medium",
@@ -100874,13 +100875,23 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 
 function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
 
-function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
-
 function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
 
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+var theme = {
+  button: {
+    padding: {
+      horizontal: '4px'
+    }
+  }
+};
 
 var Games =
 /*#__PURE__*/
@@ -100888,23 +100899,72 @@ function (_React$Component) {
   _inherits(Games, _React$Component);
 
   function Games() {
+    var _getPrototypeOf2;
+
+    var _this;
+
     _classCallCheck(this, Games);
 
-    return _possibleConstructorReturn(this, _getPrototypeOf(Games).apply(this, arguments));
+    for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
+      args[_key] = arguments[_key];
+    }
+
+    _this = _possibleConstructorReturn(this, (_getPrototypeOf2 = _getPrototypeOf(Games)).call.apply(_getPrototypeOf2, [this].concat(args)));
+
+    _defineProperty(_assertThisInitialized(_this), "state", {
+      roomName: '',
+      showTextInput: ''
+    });
+
+    _defineProperty(_assertThisInitialized(_this), "onClick", function () {
+      _this.props.dispatch((0, _account.createGame)(_this.state.roomName));
+    });
+
+    return _this;
   }
 
   _createClass(Games, [{
-    key: "componentDidMount",
-    value: function componentDidMount() {
-      this.props.dispatch((0, _account.createGame)('NOSEDIVE'));
-    }
-  }, {
     key: "render",
     value: function render() {
-      return _react.default.createElement(_grommet.Button, {
+      var _this2 = this;
+
+      var roomName = this.state.roomName;
+      return _react.default.createElement(_react.default.Fragment, null, _react.default.createElement(_grommet.Box, {
+        round: "xsmall",
+        margin: "medium",
+        width: "medium",
+        pad: "medium",
+        background: "accent-2"
+      }, _react.default.createElement(_grommet.Grid, {
+        columns: {
+          count: 2
+        }
+      }, _react.default.createElement(_grommet.Grommet, {
+        theme: theme
+      }, _react.default.createElement(_grommet.Button, {
+        margin: {
+          right: '5px'
+        },
+        label: "join"
+      }), ' ', _react.default.createElement(_grommet.Text, null, " Nose Dive ")))), _react.default.createElement(_grommet.Grid, {
+        columns: {
+          count: 2,
+          size: 'auto'
+        },
+        gap: "small"
+      }, _react.default.createElement(_grommet.TextInput, {
+        placeholder: "room name",
+        value: roomName,
+        onChange: function onChange(event) {
+          return _this2.setState({
+            roomName: event.target.value
+          });
+        }
+      }), _react.default.createElement(_grommet.Button, {
+        onClick: this.onClick,
         icon: _react.default.createElement(_grommetIcons.Gamepad, null),
         label: "Create new game"
-      });
+      })));
     }
   }]);
 

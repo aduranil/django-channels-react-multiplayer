@@ -33,7 +33,7 @@ class Signup extends React.Component {
     const { email, password } = this.state;
     return (
       <React.Fragment>
-        <Box width="medium" elevation="medium" pad="medium" round="small">
+        <Box margin="medium" width="medium" elevation="medium" pad="medium" round="small">
           <Text textAlign="center" color="white" margin={{ left: 'small' }}>
             NEW USERS
           </Text>
