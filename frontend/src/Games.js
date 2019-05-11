@@ -29,7 +29,23 @@ class Games extends React.Component {
     const { roomName } = this.state;
     return (
       <React.Fragment>
-        <Box round="xsmall" margin="medium" width="medium" pad="medium" background="accent-2">
+        <Grid alignSelf="stretch" columns={['large', 'small']}>
+          <Text margin={{ left: '20px' }} alignSelf="start">
+            {' '}
+            SELFIES 2020
+            {' '}
+          </Text>
+          <Button alignSelf="end" label="logout" />
+        </Grid>
+        <Box
+          round="xsmall"
+          height="medium"
+          margin="medium"
+          width="600px"
+          pad="medium"
+          elevation="medium"
+          background="accent-2"
+        >
           <Grid columns={{ count: 2 }}>
             <Grommet theme={theme}>
               <Button margin={{ right: '5px' }} label="join" />

@@ -100929,11 +100929,24 @@ function (_React$Component) {
       var _this2 = this;
 
       var roomName = this.state.roomName;
-      return _react.default.createElement(_react.default.Fragment, null, _react.default.createElement(_grommet.Box, {
+      return _react.default.createElement(_react.default.Fragment, null, _react.default.createElement(_grommet.Grid, {
+        alignSelf: "stretch",
+        columns: ['large', 'small']
+      }, _react.default.createElement(_grommet.Text, {
+        margin: {
+          left: '20px'
+        },
+        alignSelf: "start"
+      }, ' ', "SELFIES 2020", ' '), _react.default.createElement(_grommet.Button, {
+        alignSelf: "end",
+        label: "logout"
+      })), _react.default.createElement(_grommet.Box, {
         round: "xsmall",
+        height: "medium",
         margin: "medium",
-        width: "medium",
+        width: "600px",
         pad: "medium",
+        elevation: "medium",
         background: "accent-2"
       }, _react.default.createElement(_grommet.Grid, {
         columns: {
@@ -101203,20 +101216,16 @@ function (_React$Component) {
       return _react.default.createElement(_grommet.Grommet, {
         theme: theme
       }, _react.default.createElement(_grommet.Box, {
-        border: {
-          color: 'brand',
-          style: 'double',
-          size: 'large'
-        },
         justify: "center",
         height: "100%",
         align: "center",
-        width: "60%",
+        padding: {
+          top: '20px'
+        },
         margin: {
           horizontal: 'auto'
         },
-        elevation: "medium",
-        background: "linear-gradient(102.77deg, #a387db -9.18%, #18BAB9 209.09%)"
+        round: "xsmall"
       }, _react.default.createElement(_reactRouterDom.Switch, null, _react.default.createElement(_reactRouterDom.Route, {
         exact: true,
         path: "/",

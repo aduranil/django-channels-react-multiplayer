@@ -24,14 +24,12 @@ class App extends React.Component {
     return (
       <Grommet theme={theme}>
         <Box
-          border={{ color: 'brand', style: 'double', size: 'large' }}
           justify="center"
           height="100%"
           align="center"
-          width="60%"
+          padding={{ top: '20px' }}
           margin={{ horizontal: 'auto' }}
-          elevation="medium"
-          background="linear-gradient(102.77deg, #a387db -9.18%, #18BAB9 209.09%)"
+          round="xsmall"
         >
           <Switch>
             <Route exact path="/" component={Entrance} />
