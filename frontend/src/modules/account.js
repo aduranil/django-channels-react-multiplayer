@@ -12,7 +12,7 @@ export const getCurrentUser = () => dispatch => fetch(`${API_ROOT}/app/user/`, {
   .then(res => res.json())
   .then(json => dispatch({ type: 'SET_CURRENT_USER', json }));
 
-export const handleLogin = (e, data) => dispatch => fetch('http://localhost:8000/token-auth/', {
+export const handleLogin = data => dispatch => fetch('http://localhost:8000/app/login/', {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json',

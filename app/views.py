@@ -12,6 +12,8 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
+from django.contrib.auth.models import User
+from django.contrib.auth import authenticate, login
 
 
 class GameList(APIView):
@@ -23,27 +25,28 @@ class GameList(APIView):
         game.users.add(user)
         return Response({
             'room_name': game.room_name,
-            'player': user.email, 
+            'player': user.email,
         }, status=status.HTTP_201_CREATED)
 
+
+class LoginUser(ObtainAuthToken):
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (permissions.AllowAny,)
+    def post(self, request, *args, **kwargs):
+        serializer = UserSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        token, created = Token.objects.get_or_create(user=serializer)
+        return Response({
+            'token': token.key,
+            'username': serializer.validated_data['username'],
+            'email': serializer.validated_data['email'],
+        })
 
 
 class GetUser(ObtainAuthToken):
     authentication_classes = (TokenAuthentication,)
     def get(self, request, *args, **kwargs):
         return Response({
-            'username': request.user.username,
-            'email': request.user.email,
-        })
-
-    def post(self, request, *args, **kwargs):
-        serializer = self.serializer_class(data=request.data,
-                                   context={'request': request})
-        serializer.is_valid(raise_exception=True)
-        user = serializer.validated_data['user']
-        token, created = Token.objects.get_or_create(user=user)
-        return Response({
-            'token': token.key,
             'username': request.user.username,
             'email': request.user.email,
         })

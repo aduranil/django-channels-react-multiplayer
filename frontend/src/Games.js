@@ -4,7 +4,7 @@ import {
 } from 'grommet';
 import { Gamepad } from 'grommet-icons';
 import { connect } from 'react-redux';
-import { createGame } from './modules/account';
+import { createGame, logoutUser } from './modules/account';
 import withAuth from './modules/authWrapper';
 
 const theme = {
@@ -25,6 +25,11 @@ class Games extends React.Component {
     this.props.dispatch(createGame(this.state.roomName));
   };
 
+  onLogout = () => {
+    this.props.dispatch(logoutUser());
+    this.props.history.push('/loginorsignup');
+  };
+
   render() {
     const { roomName } = this.state;
     return (
@@ -35,7 +40,7 @@ class Games extends React.Component {
             SELFIES 2020
             {' '}
           </Text>
-          <Button alignSelf="end" label="logout" />
+          <Button onClick={this.onLogout} alignSelf="end" label="logout" />
         </Grid>
         <Box
           round="xsmall"
