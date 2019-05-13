@@ -3,8 +3,6 @@ FROM python:3.7
 
 ENV PYTHONUNBUFFERED 1
 
-EXPOSE 8000
-
 # Set work directory
 WORKDIR /selfies/
 
@@ -13,4 +11,8 @@ COPY requirements.txt /selfies/
 RUN pip install -r requirements.txt
 
 # Copy project
-COPY . /selfies/
+ADD . /selfies/
+
+EXPOSE 8000
+
+ENTRYPOINT ["/app/bin/docker-entrypoint.sh"]
