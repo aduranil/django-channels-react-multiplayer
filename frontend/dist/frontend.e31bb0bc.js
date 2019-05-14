@@ -31817,7 +31817,7 @@ var getCurrentUser = function getCurrentUser() {
     }).then(function (json) {
       return dispatch({
         type: 'SET_CURRENT_USER',
-        json: json
+        data: json
       });
     });
   };
@@ -31840,7 +31840,7 @@ var handleLogin = function handleLogin(data) {
       localStorage.setItem('token', json.token);
       return dispatch({
         type: 'SET_CURRENT_USER',
-        data: data
+        data: json
       });
     });
   };
@@ -31863,7 +31863,7 @@ var handleSignup = function handleSignup(jsonData) {
       localStorage.setItem('token', json.token);
       return dispatch({
         type: 'SET_CURRENT_USER',
-        json: json
+        data: json
       });
     });
   };
@@ -31895,7 +31895,7 @@ var createGame = function createGame(roomName) {
     }).then(function (json) {
       dispatch({
         type: 'SET_GAME',
-        json: json
+        data: json
       });
     });
   };
@@ -31912,7 +31912,7 @@ var authReducer = function authReducer() {
     case 'SET_CURRENT_USER':
       return _objectSpread({}, state, {
         loggedIn: true,
-        username: action.json.username
+        username: action.data.username
       });
 
     case 'LOGOUT_USER':
@@ -101270,12 +101270,10 @@ function (_React$Component) {
   }
 
   _createClass(App, [{
-    key: "componentDidMount",
-    value: function componentDidMount() {
-      _websocket.default.connect();
-    }
-  }, {
     key: "render",
+    // componentDidMount() {
+    //   WebSocketInstance.connect();
+    // }
     value: function render() {
       return _react.default.createElement(_grommet.Grommet, {
         theme: theme

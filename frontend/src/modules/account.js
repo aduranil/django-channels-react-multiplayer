@@ -10,7 +10,7 @@ export const getCurrentUser = () => dispatch => fetch(`${API_ROOT}/app/user/`, {
   headers,
 })
   .then(res => res.json())
-  .then(json => dispatch({ type: 'SET_CURRENT_USER', json }));
+  .then(json => dispatch({ type: 'SET_CURRENT_USER', data: json }));
 
 export const handleLogin = data => dispatch => fetch('http://localhost:8000/app/login/', {
   method: 'POST',
@@ -23,7 +23,7 @@ export const handleLogin = data => dispatch => fetch('http://localhost:8000/app/
   .then(res => res.json())
   .then((json) => {
     localStorage.setItem('token', json.token);
-    return dispatch({ type: 'SET_CURRENT_USER', data });
+    return dispatch({ type: 'SET_CURRENT_USER', data: json });
   });
 
 export const handleSignup = jsonData => dispatch => fetch('http://localhost:8000/app/users/', {
@@ -37,7 +37,7 @@ export const handleSignup = jsonData => dispatch => fetch('http://localhost:8000
   .then(res => res.json())
   .then((json) => {
     localStorage.setItem('token', json.token);
-    return dispatch({ type: 'SET_CURRENT_USER', json });
+    return dispatch({ type: 'SET_CURRENT_USER', data: json });
   });
 
 export const logoutUser = () => (dispatch) => {
@@ -52,7 +52,7 @@ export const createGame = roomName => dispatch => fetch('http://localhost:8000/a
 })
   .then(res => res.json())
   .then((json) => {
-    dispatch({ type: 'SET_GAME', json });
+    dispatch({ type: 'SET_GAME', data: json });
   });
 
 const initialState = {};
@@ -60,7 +60,7 @@ const initialState = {};
 const authReducer = (state = { ...initialState }, action) => {
   switch (action.type) {
     case 'SET_CURRENT_USER':
-      return { ...state, loggedIn: true, username: action.json.username };
+      return { ...state, loggedIn: true, username: action.data.username };
     case 'LOGOUT_USER':
       return { ...state, loggedIn: false, username: null };
     default:

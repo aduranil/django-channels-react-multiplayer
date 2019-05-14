@@ -1,7 +1,5 @@
 # Pull base image
-FROM python:3.7
-
-ENV PYTHONUNBUFFERED 1
+FROM python:3.6.5-stretch
 
 # Set work directory
 WORKDIR /selfies/
@@ -9,10 +7,3 @@ WORKDIR /selfies/
 # Install dependencies
 COPY requirements.txt /selfies/
 RUN pip install -r requirements.txt
-
-# Copy project
-ADD . /selfies/
-
-EXPOSE 8000
-
-ENTRYPOINT ["/app/bin/docker-entrypoint.sh"]

@@ -16,9 +16,9 @@ const theme = {
 };
 
 class App extends React.Component {
-  componentDidMount() {
-    WebSocketInstance.connect();
-  }
+  // componentDidMount() {
+  //   WebSocketInstance.connect();
+  // }
 
   render() {
     return (
