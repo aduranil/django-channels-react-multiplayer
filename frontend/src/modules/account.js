@@ -12,6 +12,13 @@ export const getCurrentUser = () => dispatch => fetch(`${API_ROOT}/app/user/`, {
   .then(res => res.json())
   .then(json => dispatch({ type: 'SET_CURRENT_USER', data: json }));
 
+function status(res) {
+  if (!res.ok) {
+    throw new Error(res.status);
+  }
+  return res;
+}
+
 export const handleLogin = data => dispatch => fetch('http://localhost:8000/app/login/', {
   method: 'POST',
   headers: {
@@ -20,11 +27,13 @@ export const handleLogin = data => dispatch => fetch('http://localhost:8000/app/
   },
   body: JSON.stringify(data),
 })
+  .then(status)
   .then(res => res.json())
   .then((json) => {
     localStorage.setItem('token', json.token);
     return dispatch({ type: 'SET_CURRENT_USER', data: json });
-  });
+  })
+  .catch(() => dispatch({ type: 'SET_ERROR', data: 'User not found' }));
 
 export const handleSignup = jsonData => dispatch => fetch('http://localhost:8000/app/users/', {
   method: 'POST',
@@ -63,6 +72,8 @@ const authReducer = (state = { ...initialState }, action) => {
       return { ...state, loggedIn: true, username: action.data.username };
     case 'LOGOUT_USER':
       return { ...state, loggedIn: false, username: null };
+    case 'SET_ERROR':
+      return { ...state, errorMessage: action.data };
     default:
       return state;
   }

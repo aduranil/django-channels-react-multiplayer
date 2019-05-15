@@ -13,18 +13,18 @@ services:
       - "6379:6379"
     expose:
       - 6379
-  web:
-    build: .
-    command: python manage.py runserver 0.0.0.0:8000
-    volumes:
-      - .:/selfies/
-    ports:
-      - "8000:8000"
-    expose:
-      - 8000
-    depends_on:
-      - db
-      - redis
+  # web:
+  #   build: .
+  #   command: python manage.py runserver 0.0.0.0:8000
+  #   volumes:
+  #     - .:/selfies/
+  #   ports:
+  #     - "8000:8000"
+  #   expose:
+  #     - 8000
+  #   depends_on:
+  #     - db
+  #     - redis
 
 volumes:
   postgres_data:

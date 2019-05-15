@@ -16,7 +16,7 @@ class GameList(APIView):
 
     def post(self, request):
         user = request.user
-        game = Game.create(romm_name=request.room_name)
+        game = Game.objects.create(room_name=request.data['room_name'])
         game.users.add(user)
         return Response({
             'room_name': game.room_name,
@@ -31,13 +31,16 @@ class LoginUser(ObtainAuthToken):
     def post(self, request, *args, **kwargs):
         serializer = UserSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        user = User.objects.get(username=request.data['username'])
-        token, created = Token.objects.get_or_create(user=user)
-        return Response({
-            'token': token.key,
-            'username': serializer.validated_data['username'],
-            'email': serializer.validated_data['email'],
-        }, status=status.HTTP_200_OK)
+        try:
+            user = User.objects.get(username=request.data['username'])
+            token, created = Token.objects.get_or_create(user=user)
+            return Response({
+                'token': token.key,
+                'username': serializer.validated_data['username'],
+                'email': serializer.validated_data['email'],
+            }, status=status.HTTP_200_OK)
+        except:
+            return Response({}, status=status.HTTP_404_NOT_FOUND)
 
 
 class GetUser(ObtainAuthToken):

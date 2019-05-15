@@ -31825,6 +31825,14 @@ var getCurrentUser = function getCurrentUser() {
 
 exports.getCurrentUser = getCurrentUser;
 
+function status(res) {
+  if (!res.ok) {
+    throw new Error(res.status);
+  }
+
+  return res;
+}
+
 var handleLogin = function handleLogin(data) {
   return function (dispatch) {
     return fetch('http://localhost:8000/app/login/', {
@@ -31834,13 +31842,18 @@ var handleLogin = function handleLogin(data) {
         Accept: 'application/json'
       },
       body: JSON.stringify(data)
-    }).then(function (res) {
+    }).then(status).then(function (res) {
       return res.json();
     }).then(function (json) {
       localStorage.setItem('token', json.token);
       return dispatch({
         type: 'SET_CURRENT_USER',
         data: json
+      });
+    }).catch(function () {
+      return dispatch({
+        type: 'SET_ERROR',
+        data: 'User not found'
       });
     });
   };
@@ -31919,6 +31932,11 @@ var authReducer = function authReducer() {
       return _objectSpread({}, state, {
         loggedIn: false,
         username: null
+      });
+
+    case 'SET_ERROR':
+      return _objectSpread({}, state, {
+        errorMessage: action.data
       });
 
     default:
@@ -101051,7 +101069,27 @@ function (_React$Component) {
 var _default = (0, _authWrapper.default)((0, _reactRedux.connect)()(Games));
 
 exports.default = _default;
-},{"react":"node_modules/react/index.js","grommet":"node_modules/grommet/es6/index.js","grommet-icons":"node_modules/grommet-icons/es6/index.js","react-redux":"node_modules/react-redux/es/index.js","./modules/account":"src/modules/account.js","./modules/authWrapper":"src/modules/authWrapper.js"}],"src/websocket.js":[function(require,module,exports) {
+},{"react":"node_modules/react/index.js","grommet":"node_modules/grommet/es6/index.js","grommet-icons":"node_modules/grommet-icons/es6/index.js","react-redux":"node_modules/react-redux/es/index.js","./modules/account":"src/modules/account.js","./modules/authWrapper":"src/modules/authWrapper.js"}],"src/Game.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _react = _interopRequireDefault(require("react"));
+
+var _grommet = require("grommet");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var Game = function Game() {
+  return _react.default.createElement(_react.default.Fragment, null, "placeholder");
+};
+
+var _default = Game;
+exports.default = _default;
+},{"react":"node_modules/react/index.js","grommet":"node_modules/grommet/es6/index.js"}],"src/websocket.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -101228,6 +101266,8 @@ var _Signup = _interopRequireDefault(require("./Signup"));
 
 var _Games = _interopRequireDefault(require("./Games"));
 
+var _Game = _interopRequireDefault(require("./Game"));
+
 var _websocket = _interopRequireDefault(require("./websocket"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
@@ -101297,6 +101337,9 @@ function (_React$Component) {
         path: "/games",
         component: _Games.default
       }), _react.default.createElement(_reactRouterDom.Route, {
+        path: "/game/:id",
+        component: _Games.default
+      }), _react.default.createElement(_reactRouterDom.Route, {
         exact: true,
         path: "/loginorsignup",
         component: _LoginOrSignup.default
@@ -101313,7 +101356,7 @@ function (_React$Component) {
 
 var _default = App;
 exports.default = _default;
-},{"react":"node_modules/react/index.js","grommet":"node_modules/grommet/es6/index.js","react-router-dom":"node_modules/react-router-dom/esm/react-router-dom.js","./LoginOrSignup":"src/LoginOrSignup.js","./Entrance":"src/Entrance.js","./Signup":"src/Signup.js","./Games":"src/Games.js","./websocket":"src/websocket.js"}],"index.js":[function(require,module,exports) {
+},{"react":"node_modules/react/index.js","grommet":"node_modules/grommet/es6/index.js","react-router-dom":"node_modules/react-router-dom/esm/react-router-dom.js","./LoginOrSignup":"src/LoginOrSignup.js","./Entrance":"src/Entrance.js","./Signup":"src/Signup.js","./Games":"src/Games.js","./Game":"src/Game.js","./websocket":"src/websocket.js"}],"index.js":[function(require,module,exports) {
 "use strict";
 
 var _react = _interopRequireDefault(require("react"));
