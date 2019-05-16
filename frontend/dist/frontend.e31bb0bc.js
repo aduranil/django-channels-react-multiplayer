@@ -31910,6 +31910,7 @@ var createGame = function createGame(roomName) {
         type: 'SET_GAME',
         data: json
       });
+      return "/game/".concat(json.id);
     });
   };
 };
@@ -31932,6 +31933,11 @@ var authReducer = function authReducer() {
       return _objectSpread({}, state, {
         loggedIn: false,
         username: null
+      });
+
+    case 'SET_GAME':
+      return _objectSpread({}, state, {
+        roomName: action.data.room_name
       });
 
     case 'SET_ERROR':
@@ -100992,7 +100998,9 @@ function (_React$Component) {
     });
 
     _defineProperty(_assertThisInitialized(_this), "onClick", function () {
-      _this.props.dispatch((0, _account.createGame)(_this.state.roomName));
+      _this.props.dispatch((0, _account.createGame)(_this.state.roomName)).then(function (data) {
+        _this.props.history.push(data);
+      });
     });
 
     _defineProperty(_assertThisInitialized(_this), "onLogout", function () {
@@ -101338,7 +101346,7 @@ function (_React$Component) {
         component: _Games.default
       }), _react.default.createElement(_reactRouterDom.Route, {
         path: "/game/:id",
-        component: _Games.default
+        component: _Game.default
       }), _react.default.createElement(_reactRouterDom.Route, {
         exact: true,
         path: "/loginorsignup",

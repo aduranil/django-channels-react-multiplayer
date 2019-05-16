@@ -22,7 +22,9 @@ class Games extends React.Component {
   };
 
   onClick = () => {
-    this.props.dispatch(createGame(this.state.roomName));
+    this.props.dispatch(createGame(this.state.roomName)).then((data) => {
+      this.props.history.push(data);
+    });
   };
 
   onLogout = () => {

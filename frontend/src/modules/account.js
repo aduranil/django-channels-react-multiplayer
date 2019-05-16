@@ -62,6 +62,7 @@ export const createGame = roomName => dispatch => fetch('http://localhost:8000/a
   .then(res => res.json())
   .then((json) => {
     dispatch({ type: 'SET_GAME', data: json });
+    return `/game/${json.id}`;
   });
 
 const initialState = {};
@@ -72,6 +73,8 @@ const authReducer = (state = { ...initialState }, action) => {
       return { ...state, loggedIn: true, username: action.data.username };
     case 'LOGOUT_USER':
       return { ...state, loggedIn: false, username: null };
+    case 'SET_GAME':
+      return { ...state, roomName: action.data.room_name };
     case 'SET_ERROR':
       return { ...state, errorMessage: action.data };
     default:

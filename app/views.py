@@ -8,6 +8,8 @@ from rest_framework.views import APIView
 from .serializers import UserSerializer
 from .models import Game
 from django.contrib.auth.models import User
+from django.contrib.auth import authenticate
+from django.contrib.auth import get_user_model
 
 
 class GameList(APIView):
@@ -19,8 +21,9 @@ class GameList(APIView):
         game = Game.objects.create(room_name=request.data['room_name'])
         game.users.add(user)
         return Response({
+            'id': game.id,
             'room_name': game.room_name,
-            'player': user.email,
+            'player': user.username,
         }, status=status.HTTP_201_CREATED)
 
 
@@ -29,18 +32,14 @@ class LoginUser(ObtainAuthToken):
     permission_classes = (permissions.AllowAny,)
 
     def post(self, request, *args, **kwargs):
-        serializer = UserSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        try:
-            user = User.objects.get(username=request.data['username'])
+        user = authenticate(username=request.data['username'], password=request.data['password'])
+        if user is not None:
             token, created = Token.objects.get_or_create(user=user)
             return Response({
                 'token': token.key,
-                'username': serializer.validated_data['username'],
-                'email': serializer.validated_data['email'],
+                'username': user.username,
             }, status=status.HTTP_200_OK)
-        except:
-            return Response({}, status=status.HTTP_404_NOT_FOUND)
+        return Response({}, status=status.HTTP_404_NOT_FOUND)
 
 
 class GetUser(ObtainAuthToken):
