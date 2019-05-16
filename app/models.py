@@ -10,3 +10,4 @@ from django.conf import settings
 class Game(models.Model):
     room_name = models.CharField(max_length=50)
     users = models.ManyToManyField(User)
+    game_status = models.CharField(max_length=50)
