@@ -31795,7 +31795,7 @@ exports.default = _default;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.default = exports.createGame = exports.logoutUser = exports.handleSignup = exports.handleLogin = exports.getCurrentUser = void 0;
+exports.gameReducer = exports.authReducer = exports.getGames = exports.createGame = exports.logoutUser = exports.handleSignup = exports.handleLogin = exports.getCurrentUser = void 0;
 
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; var ownKeys = Object.keys(source); if (typeof Object.getOwnPropertySymbols === 'function') { ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) { return Object.getOwnPropertyDescriptor(source, sym).enumerable; })); } ownKeys.forEach(function (key) { _defineProperty(target, key, source[key]); }); } return target; }
 
@@ -31916,6 +31916,24 @@ var createGame = function createGame(roomName) {
 };
 
 exports.createGame = createGame;
+
+var getGames = function getGames() {
+  return function (dispatch) {
+    return fetch('http://localhost:8000/app/games', {
+      method: 'GET',
+      headers: headers
+    }).then(function (res) {
+      return res.json();
+    }).then(function (json) {
+      dispatch({
+        type: 'SHOW_GAMES',
+        data: json
+      });
+    });
+  };
+};
+
+exports.getGames = getGames;
 var initialState = {};
 
 var authReducer = function authReducer() {
@@ -31935,11 +31953,6 @@ var authReducer = function authReducer() {
         username: null
       });
 
-    case 'SET_GAME':
-      return _objectSpread({}, state, {
-        roomName: action.data.room_name
-      });
-
     case 'SET_ERROR':
       return _objectSpread({}, state, {
         errorMessage: action.data
@@ -31950,8 +31963,32 @@ var authReducer = function authReducer() {
   }
 };
 
-var _default = authReducer;
-exports.default = _default;
+exports.authReducer = authReducer;
+var gameInitialState = {
+  games: null
+};
+
+var gameReducer = function gameReducer() {
+  var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : _objectSpread({}, gameInitialState);
+  var action = arguments.length > 1 ? arguments[1] : undefined;
+
+  switch (action.type) {
+    case 'SET_GAME':
+      return _objectSpread({}, state, {
+        roomName: action.data.room_name
+      });
+
+    case 'SHOW_GAMES':
+      return _objectSpread({}, state, {
+        games: action.data
+      });
+
+    default:
+      return state;
+  }
+};
+
+exports.gameReducer = gameReducer;
 },{}],"src/modules/reducers.js":[function(require,module,exports) {
 "use strict";
 
@@ -31962,12 +31999,11 @@ exports.default = void 0;
 
 var _redux = require("redux");
 
-var _account = _interopRequireDefault(require("./account"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+var _account = require("./account");
 
 var rootReducer = (0, _redux.combineReducers)({
-  auth: _account.default
+  auth: _account.authReducer,
+  games: _account.gameReducer
 });
 var _default = rootReducer;
 exports.default = _default;
@@ -101013,11 +101049,18 @@ function (_React$Component) {
   }
 
   _createClass(Games, [{
+    key: "componentDidMount",
+    value: function componentDidMount() {
+      return this.props.dispatch((0, _account.getGames)());
+    }
+  }, {
     key: "render",
     value: function render() {
       var _this2 = this;
 
+      console.log(this.props);
       var roomName = this.state.roomName;
+      var games = this.props.games;
       return _react.default.createElement(_react.default.Fragment, null, _react.default.createElement(_grommet.Grid, {
         alignSelf: "stretch",
         columns: ['large', 'small']
@@ -101038,18 +101081,20 @@ function (_React$Component) {
         pad: "medium",
         elevation: "medium",
         background: "accent-2"
-      }, _react.default.createElement(_grommet.Grid, {
-        columns: {
-          count: 2
-        }
-      }, _react.default.createElement(_grommet.Grommet, {
-        theme: theme
-      }, _react.default.createElement(_grommet.Button, {
-        margin: {
-          right: '5px'
-        },
-        label: "join"
-      }), ' ', _react.default.createElement(_grommet.Text, null, " Nose Dive ")))), _react.default.createElement(_grommet.Grid, {
+      }, games.games && games.games.map(function (game, index) {
+        return _react.default.createElement(_grommet.Grid, {
+          columns: {
+            count: 2
+          }
+        }, _react.default.createElement(_grommet.Grommet, {
+          theme: theme
+        }, _react.default.createElement(_grommet.Button, {
+          margin: {
+            right: '5px'
+          },
+          label: "join"
+        }), ' ', _react.default.createElement(_grommet.Text, null, ' ', game.room_name, ' ')));
+      })), _react.default.createElement(_grommet.Grid, {
         columns: {
           count: 2,
           size: 'auto'
@@ -101074,7 +101119,13 @@ function (_React$Component) {
   return Games;
 }(_react.default.Component);
 
-var _default = (0, _authWrapper.default)((0, _reactRedux.connect)()(Games));
+var s2p = function s2p(state) {
+  return {
+    games: state.games
+  };
+};
+
+var _default = (0, _authWrapper.default)((0, _reactRedux.connect)(s2p)(Games));
 
 exports.default = _default;
 },{"react":"node_modules/react/index.js","grommet":"node_modules/grommet/es6/index.js","grommet-icons":"node_modules/grommet-icons/es6/index.js","react-redux":"node_modules/react-redux/es/index.js","./modules/account":"src/modules/account.js","./modules/authWrapper":"src/modules/authWrapper.js"}],"src/Game.js":[function(require,module,exports) {

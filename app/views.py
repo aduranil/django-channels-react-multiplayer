@@ -2,17 +2,22 @@ from rest_framework import permissions, status
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
+from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from .serializers import UserSerializer
+import json
+from django.http import HttpResponse
+
 from .models import Game
+from django.core.serializers import serialize
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
 from django.contrib.auth import get_user_model
 
 
-class GameList(APIView):
+class GameCreateView(APIView):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (permissions.IsAuthenticated,)
 
@@ -25,6 +30,16 @@ class GameList(APIView):
             'room_name': game.room_name,
             'player': user.username,
         }, status=status.HTTP_201_CREATED)
+
+
+class GameListView(ListAPIView):
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def get(self, request):
+        game_objects = Game.objects.all().filter(game_status='active')
+        games = [g.as_json() for g in game_objects]
+        return HttpResponse(json.dumps(games), content_type="application/json")
 
 
 class LoginUser(ObtainAuthToken):

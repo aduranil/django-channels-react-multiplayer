@@ -65,16 +65,23 @@ export const createGame = roomName => dispatch => fetch('http://localhost:8000/a
     return `/game/${json.id}`;
   });
 
+export const getGames = () => dispatch => fetch('http://localhost:8000/app/games', {
+  method: 'GET',
+  headers,
+})
+  .then(res => res.json())
+  .then((json) => {
+    dispatch({ type: 'SHOW_GAMES', data: json });
+  });
+
 const initialState = {};
 
-const authReducer = (state = { ...initialState }, action) => {
+export const authReducer = (state = { ...initialState }, action) => {
   switch (action.type) {
     case 'SET_CURRENT_USER':
       return { ...state, loggedIn: true, username: action.data.username };
     case 'LOGOUT_USER':
       return { ...state, loggedIn: false, username: null };
-    case 'SET_GAME':
-      return { ...state, roomName: action.data.room_name };
     case 'SET_ERROR':
       return { ...state, errorMessage: action.data };
     default:
@@ -82,4 +89,15 @@ const authReducer = (state = { ...initialState }, action) => {
   }
 };
 
-export default authReducer;
+const gameInitialState = { games: null };
+
+export const gameReducer = (state = { ...gameInitialState }, action) => {
+  switch (action.type) {
+    case 'SET_GAME':
+      return { ...state, roomName: action.data.room_name };
+    case 'SHOW_GAMES':
+      return { ...state, games: action.data };
+    default:
+      return state;
+  }
+};

@@ -4,7 +4,7 @@ import {
 } from 'grommet';
 import { Gamepad } from 'grommet-icons';
 import { connect } from 'react-redux';
-import { createGame, logoutUser } from './modules/account';
+import { createGame, logoutUser, getGames } from './modules/account';
 import withAuth from './modules/authWrapper';
 
 const theme = {
@@ -32,8 +32,14 @@ class Games extends React.Component {
     this.props.history.push('/loginorsignup');
   };
 
+  componentDidMount() {
+    return this.props.dispatch(getGames());
+  }
+
   render() {
+    console.log(this.props);
     const { roomName } = this.state;
+    const { games } = this.props;
     return (
       <React.Fragment>
         <Grid alignSelf="stretch" columns={['large', 'small']}>
@@ -53,13 +59,20 @@ class Games extends React.Component {
           elevation="medium"
           background="accent-2"
         >
-          <Grid columns={{ count: 2 }}>
-            <Grommet theme={theme}>
-              <Button margin={{ right: '5px' }} label="join" />
-              {' '}
-              <Text> Nose Dive </Text>
-            </Grommet>
-          </Grid>
+          {games.games
+            && games.games.map((game, index) => (
+              <Grid columns={{ count: 2 }}>
+                <Grommet theme={theme}>
+                  <Button margin={{ right: '5px' }} label="join" />
+                  {' '}
+                  <Text>
+                    {' '}
+                    {game.room_name}
+                    {' '}
+                  </Text>
+                </Grommet>
+              </Grid>
+            ))}
         </Box>
         <Grid columns={{ count: 2, size: 'auto' }} gap="small">
           <TextInput
@@ -74,4 +87,7 @@ class Games extends React.Component {
   }
 }
 
-export default withAuth(connect()(Games));
+const s2p = state => ({
+  games: state.games,
+});
+export default withAuth(connect(s2p)(Games));
