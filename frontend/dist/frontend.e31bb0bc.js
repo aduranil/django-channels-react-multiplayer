@@ -101005,7 +101005,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 var theme = {
   button: {
     padding: {
-      horizontal: '4px'
+      horizontal: '6px'
     }
   }
 };
@@ -101058,22 +101058,22 @@ function (_React$Component) {
     value: function render() {
       var _this2 = this;
 
-      console.log(this.props);
       var roomName = this.state.roomName;
       var games = this.props.games;
       return _react.default.createElement(_react.default.Fragment, null, _react.default.createElement(_grommet.Grid, {
-        alignSelf: "stretch",
-        columns: ['large', 'small']
+        alignSelf: "center",
+        columns: ['medium', 'medium']
       }, _react.default.createElement(_grommet.Text, {
-        margin: {
-          left: '20px'
-        },
         alignSelf: "start"
-      }, ' ', "SELFIES 2020", ' '), _react.default.createElement(_grommet.Button, {
+      }, " SELFIES 2020 "), _react.default.createElement(_grommet.Grommet, {
+        theme: theme,
+        style: {
+          textAlign: 'right'
+        }
+      }, _react.default.createElement(_grommet.Button, {
         onClick: this.onLogout,
-        alignSelf: "end",
         label: "logout"
-      })), _react.default.createElement(_grommet.Box, {
+      }))), _react.default.createElement(_grommet.Box, {
         round: "xsmall",
         height: "medium",
         margin: "medium",
@@ -101081,8 +101081,9 @@ function (_React$Component) {
         pad: "medium",
         elevation: "medium",
         background: "accent-2"
-      }, games.games && games.games.map(function (game, index) {
+      }, games.games && games.games.map(function (game) {
         return _react.default.createElement(_grommet.Grid, {
+          key: game.room_name,
           columns: {
             count: 2
           }
@@ -101093,7 +101094,7 @@ function (_React$Component) {
             right: '5px'
           },
           label: "join"
-        }), ' ', _react.default.createElement(_grommet.Text, null, ' ', game.room_name, ' ')));
+        }), _react.default.createElement(_grommet.Text, null, game.room_name)));
       })), _react.default.createElement(_grommet.Grid, {
         columns: {
           count: 2,

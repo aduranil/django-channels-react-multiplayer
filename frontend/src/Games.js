@@ -10,7 +10,7 @@ import withAuth from './modules/authWrapper';
 const theme = {
   button: {
     padding: {
-      horizontal: '4px',
+      horizontal: '6px',
     },
   },
 };
@@ -37,18 +37,15 @@ class Games extends React.Component {
   }
 
   render() {
-    console.log(this.props);
     const { roomName } = this.state;
     const { games } = this.props;
     return (
       <React.Fragment>
-        <Grid alignSelf="stretch" columns={['large', 'small']}>
-          <Text margin={{ left: '20px' }} alignSelf="start">
-            {' '}
-            SELFIES 2020
-            {' '}
-          </Text>
-          <Button onClick={this.onLogout} alignSelf="end" label="logout" />
+        <Grid alignSelf="center" columns={['medium', 'medium']}>
+          <Text alignSelf="start"> SELFIES 2020 </Text>
+          <Grommet theme={theme} style={{ textAlign: 'right' }}>
+            <Button onClick={this.onLogout} label="logout" />
+          </Grommet>
         </Grid>
         <Box
           round="xsmall"
@@ -60,16 +57,11 @@ class Games extends React.Component {
           background="accent-2"
         >
           {games.games
-            && games.games.map((game, index) => (
-              <Grid columns={{ count: 2 }}>
+            && games.games.map(game => (
+              <Grid key={game.room_name} columns={{ count: 2 }}>
                 <Grommet theme={theme}>
                   <Button margin={{ right: '5px' }} label="join" />
-                  {' '}
-                  <Text>
-                    {' '}
-                    {game.room_name}
-                    {' '}
-                  </Text>
+                  <Text>{game.room_name}</Text>
                 </Grommet>
               </Grid>
             ))}
