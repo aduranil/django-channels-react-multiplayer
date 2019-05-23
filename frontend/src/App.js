@@ -1,12 +1,12 @@
 import React from 'react';
 import { Grommet, Box } from 'grommet';
 import { Switch, Route } from 'react-router-dom';
+import { connect } from 'react-redux';
 import LoginOrSignup from './LoginOrSignup';
 import Entrance from './Entrance';
 import Signup from './Signup';
 import Games from './Games';
 import Game from './Game';
-import WebSocketInstance from './websocket';
 
 const theme = {
   global: {
@@ -17,10 +17,6 @@ const theme = {
 };
 
 class App extends React.Component {
-  // componentDidMount() {
-  //   WebSocketInstance.connect();
-  // }
-
   render() {
     return (
       <Grommet theme={theme}>
@@ -45,4 +41,4 @@ class App extends React.Component {
   }
 }
 
-export default App;
+export default connect()(App);

@@ -101039,6 +101039,12 @@ function (_React$Component) {
       });
     });
 
+    _defineProperty(_assertThisInitialized(_this), "onJoin", function (e) {
+      e.preventDefault();
+
+      _this.props.history.push("/game/".concat(e.target.value));
+    });
+
     _defineProperty(_assertThisInitialized(_this), "onLogout", function () {
       _this.props.dispatch((0, _account.logoutUser)());
 
@@ -101083,13 +101089,15 @@ function (_React$Component) {
         background: "accent-2"
       }, games.games && games.games.map(function (game) {
         return _react.default.createElement(_grommet.Grid, {
-          key: game.room_name,
+          key: game.id,
           columns: {
             count: 2
           }
         }, _react.default.createElement(_grommet.Grommet, {
           theme: theme
         }, _react.default.createElement(_grommet.Button, {
+          onClick: _this2.onJoin,
+          value: game.id,
           margin: {
             right: '5px'
           },
@@ -101129,7 +101137,33 @@ var s2p = function s2p(state) {
 var _default = (0, _authWrapper.default)((0, _reactRedux.connect)(s2p)(Games));
 
 exports.default = _default;
-},{"react":"node_modules/react/index.js","grommet":"node_modules/grommet/es6/index.js","grommet-icons":"node_modules/grommet-icons/es6/index.js","react-redux":"node_modules/react-redux/es/index.js","./modules/account":"src/modules/account.js","./modules/authWrapper":"src/modules/authWrapper.js"}],"src/Game.js":[function(require,module,exports) {
+},{"react":"node_modules/react/index.js","grommet":"node_modules/grommet/es6/index.js","grommet-icons":"node_modules/grommet-icons/es6/index.js","react-redux":"node_modules/react-redux/es/index.js","./modules/account":"src/modules/account.js","./modules/authWrapper":"src/modules/authWrapper.js"}],"src/modules/websocket.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.connectToSocket = void 0;
+
+var connectToSocket = function connectToSocket(id) {
+  return function (dispatch) {
+    var path = "ws://127.0.0.1:8000/ws/game/".concat(id);
+    var socket = new WebSocket(path);
+
+    socket.onclose = function () {
+      console.log('websocket is close');
+    };
+
+    socket.onopen = function () {
+      console.log('websocket open');
+    };
+  };
+}; // Set up WebSocket handlers
+// socket.onmessage = onMessage(socket, store);
+
+
+exports.connectToSocket = connectToSocket;
+},{}],"src/Game.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -101141,31 +101175,11 @@ var _react = _interopRequireWildcard(require("react"));
 
 var _grommet = require("grommet");
 
+var _websocket = require("./modules/websocket");
+
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj.default = obj; return newObj; } }
 
-var Game = function Game() {
-  return _react.default.createElement(_react.default.Fragment, null, _react.default.createElement(_grommet.Box, {
-    round: "xsmall",
-    height: "medium",
-    margin: "medium",
-    width: "600px",
-    pad: "medium",
-    elevation: "medium",
-    background: "accent-2"
-  }));
-};
-
-var _default = Game;
-exports.default = _default;
-},{"react":"node_modules/react/index.js","grommet":"node_modules/grommet/es6/index.js"}],"src/websocket.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; var ownKeys = Object.keys(source); if (typeof Object.getOwnPropertySymbols === 'function') { ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) { return Object.getOwnPropertyDescriptor(source, sym).enumerable; })); } ownKeys.forEach(function (key) { _defineProperty(target, key, source[key]); }); } return target; }
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -101173,146 +101187,53 @@ function _defineProperties(target, props) { for (var i = 0; i < props.length; i+
 
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
 
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
 
-var WebSocketService =
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+var Game =
 /*#__PURE__*/
-function () {
-  _createClass(WebSocketService, null, [{
-    key: "getInstance",
-    value: function getInstance() {
-      if (!WebSocketService.instance) {
-        WebSocketService.instance = new WebSocketService();
-      }
+function (_React$Component) {
+  _inherits(Game, _React$Component);
 
-      return WebSocketService.instance;
-    }
-  }]);
+  function Game() {
+    _classCallCheck(this, Game);
 
-  function WebSocketService() {
-    _classCallCheck(this, WebSocketService);
-
-    _defineProperty(this, "callbacks", {});
-
-    this.socketRef = null;
+    return _possibleConstructorReturn(this, _getPrototypeOf(Game).apply(this, arguments));
   }
 
-  _createClass(WebSocketService, [{
-    key: "connect",
-    value: function connect() {
-      var _this = this;
-
-      var path = "ws://127.0.0.1:8000/ws/chat/test/";
-      this.socketRef = new WebSocket(path);
-
-      this.socketRef.onopen = function () {
-        console.log("websocket open");
-      };
-
-      this.socketNewMessage(JSON.stringify({
-        command: "fetch_messages"
+  _createClass(Game, [{
+    key: "componentDidMount",
+    value: function componentDidMount() {
+      this.props.dispatch((0, _websocket.connectToSocket)());
+    }
+  }, {
+    key: "render",
+    value: function render() {
+      return _react.default.createElement(_react.default.Fragment, null, _react.default.createElement(_grommet.Box, {
+        round: "xsmall",
+        height: "medium",
+        margin: "medium",
+        width: "600px",
+        pad: "medium",
+        elevation: "medium",
+        background: "accent-2"
       }));
-
-      this.socketRef.onmessage = function (e) {
-        _this.socketNewMessage(e.data);
-      };
-
-      this.socketRef.onerror = function (e) {
-        console.log(e.message);
-      };
-
-      this.socketRef.onclose = function () {
-        console.log("websocket is closed");
-
-        _this.connect();
-      };
-    }
-  }, {
-    key: "socketNewMessage",
-    value: function socketNewMessage(data) {
-      var parsedData = JSON.parse(data);
-      var command = parsedData.command;
-
-      if (Object.keys(this.callbacks).length == 0) {
-        return;
-      }
-
-      if (command === "messages") {
-        this.callbacks[command](parsedData.messages);
-      }
-
-      if (command === "new_message") {
-        this.callbacks[command](parsedData.message);
-      }
-    }
-  }, {
-    key: "fetchMessages",
-    value: function fetchMessages(username) {
-      this.sendMessage({
-        command: "fetch_messages",
-        username: username
-      });
-    }
-  }, {
-    key: "newChatMessage",
-    value: function newChatMessage(message) {
-      this.sendMessage({
-        command: "new_message",
-        from: message.from,
-        message: message.content
-      });
-    }
-  }, {
-    key: "addCallbacks",
-    value: function addCallbacks(messagesCallback, newMessageCallback) {
-      this.callbacks["messages"] = messagesCallback;
-      this.callbacks["new_message"] = newMessageCallback;
-    }
-  }, {
-    key: "sendMessage",
-    value: function sendMessage(data) {
-      try {
-        this.socketRef.sendJSON.stringify(_objectSpread({}, data));
-      } catch (err) {
-        console.log(err.messages);
-      }
-    }
-  }, {
-    key: "state",
-    value: function state() {
-      return this.socketRef.readyState;
-    }
-  }, {
-    key: "waitForSocketConnection",
-    value: function waitForSocketConnection(callback) {
-      var socket = this.socketRef;
-      var recursion = this.waitForSocketConnection;
-      setTimeout(function () {
-        if (socket.readyState === 1) {
-          console.log("connection is secure");
-
-          if (callback != null) {
-            callback();
-          }
-
-          return;
-        } else {
-          console.log("waiting for conection...");
-          recursion(callback);
-        }
-      }, 1);
     }
   }]);
 
-  return WebSocketService;
-}();
+  return Game;
+}(_react.default.Component);
 
-_defineProperty(WebSocketService, "instance", null);
-
-var WebSocketInstance = WebSocketService.getInstance();
-var _default = WebSocketInstance;
+var _default = Game;
 exports.default = _default;
-},{}],"src/App.js":[function(require,module,exports) {
+},{"react":"node_modules/react/index.js","grommet":"node_modules/grommet/es6/index.js","./modules/websocket":"src/modules/websocket.js"}],"src/App.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -101326,6 +101247,8 @@ var _grommet = require("grommet");
 
 var _reactRouterDom = require("react-router-dom");
 
+var _reactRedux = require("react-redux");
+
 var _LoginOrSignup = _interopRequireDefault(require("./LoginOrSignup"));
 
 var _Entrance = _interopRequireDefault(require("./Entrance"));
@@ -101335,8 +101258,6 @@ var _Signup = _interopRequireDefault(require("./Signup"));
 var _Games = _interopRequireDefault(require("./Games"));
 
 var _Game = _interopRequireDefault(require("./Game"));
-
-var _websocket = _interopRequireDefault(require("./websocket"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -101379,9 +101300,6 @@ function (_React$Component) {
 
   _createClass(App, [{
     key: "render",
-    // componentDidMount() {
-    //   WebSocketInstance.connect();
-    // }
     value: function render() {
       return _react.default.createElement(_grommet.Grommet, {
         theme: theme
@@ -101422,9 +101340,10 @@ function (_React$Component) {
   return App;
 }(_react.default.Component);
 
-var _default = App;
+var _default = (0, _reactRedux.connect)()(App);
+
 exports.default = _default;
-},{"react":"node_modules/react/index.js","grommet":"node_modules/grommet/es6/index.js","react-router-dom":"node_modules/react-router-dom/esm/react-router-dom.js","./LoginOrSignup":"src/LoginOrSignup.js","./Entrance":"src/Entrance.js","./Signup":"src/Signup.js","./Games":"src/Games.js","./Game":"src/Game.js","./websocket":"src/websocket.js"}],"index.js":[function(require,module,exports) {
+},{"react":"node_modules/react/index.js","grommet":"node_modules/grommet/es6/index.js","react-router-dom":"node_modules/react-router-dom/esm/react-router-dom.js","react-redux":"node_modules/react-redux/es/index.js","./LoginOrSignup":"src/LoginOrSignup.js","./Entrance":"src/Entrance.js","./Signup":"src/Signup.js","./Games":"src/Games.js","./Game":"src/Game.js"}],"index.js":[function(require,module,exports) {
 "use strict";
 
 var _react = _interopRequireDefault(require("react"));

@@ -27,6 +27,11 @@ class Games extends React.Component {
     });
   };
 
+  onJoin = (e) => {
+    e.preventDefault();
+    this.props.history.push(`/game/${e.target.value}`);
+  };
+
   onLogout = () => {
     this.props.dispatch(logoutUser());
     this.props.history.push('/loginorsignup');
@@ -58,9 +63,14 @@ class Games extends React.Component {
         >
           {games.games
             && games.games.map(game => (
-              <Grid key={game.room_name} columns={{ count: 2 }}>
+              <Grid key={game.id} columns={{ count: 2 }}>
                 <Grommet theme={theme}>
-                  <Button margin={{ right: '5px' }} label="join" />
+                  <Button
+                    onClick={this.onJoin}
+                    value={game.id}
+                    margin={{ right: '5px' }}
+                    label="join"
+                  />
                   <Text>{game.room_name}</Text>
                 </Grommet>
               </Grid>
