@@ -101175,6 +101175,8 @@ var _react = _interopRequireWildcard(require("react"));
 
 var _grommet = require("grommet");
 
+var _reactRedux = require("react-redux");
+
 var _websocket = require("./modules/websocket");
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj.default = obj; return newObj; } }
@@ -101211,7 +101213,9 @@ function (_React$Component) {
   _createClass(Game, [{
     key: "componentDidMount",
     value: function componentDidMount() {
-      this.props.dispatch((0, _websocket.connectToSocket)());
+      if (this.props.id) {
+        this.props.dispatch((0, _websocket.connectToSocket)(this.props.id));
+      }
     }
   }, {
     key: "render",
@@ -101231,9 +101235,16 @@ function (_React$Component) {
   return Game;
 }(_react.default.Component);
 
-var _default = Game;
+var s2p = function s2p(state, ownProps) {
+  return {
+    id: ownProps.match && ownProps.match.params.id
+  };
+};
+
+var _default = (0, _reactRedux.connect)(s2p)(Game);
+
 exports.default = _default;
-},{"react":"node_modules/react/index.js","grommet":"node_modules/grommet/es6/index.js","./modules/websocket":"src/modules/websocket.js"}],"src/App.js":[function(require,module,exports) {
+},{"react":"node_modules/react/index.js","grommet":"node_modules/grommet/es6/index.js","react-redux":"node_modules/react-redux/es/index.js","./modules/websocket":"src/modules/websocket.js"}],"src/App.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {

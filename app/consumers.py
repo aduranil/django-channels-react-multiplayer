@@ -4,9 +4,8 @@ import json
 
 class GameConsumer(AsyncWebsocketConsumer):
     async def connect(self):
-        import pdb; pdb.set_trace()
-        self.room_name = self.scope['url_route']['kwargs']['room_name']
-        self.room_group_name = 'chat_%s' % self.room_name
+        self.id = self.scope['url_route']['kwargs']['id']
+        self.room_group_name = 'game_%s' % self.id
 
         # Join room group
         await self.channel_layer.group_add(
