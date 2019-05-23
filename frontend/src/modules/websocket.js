@@ -1,6 +1,6 @@
 export const connectToSocket = id => (dispatch) => {
   const path = `ws://127.0.0.1:8000/ws/game/${id}`;
-  const socket = new WebSocket(path, [`${localStorage.getItem('token')}`]);
+  const socket = new WebSocket(path, `${localStorage.getItem('token')}`);
 
   socket.onclose = () => {
     console.log('websocket is close');

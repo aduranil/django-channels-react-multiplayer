@@ -101148,7 +101148,7 @@ exports.connectToSocket = void 0;
 var connectToSocket = function connectToSocket(id) {
   return function (dispatch) {
     var path = "ws://127.0.0.1:8000/ws/game/".concat(id);
-    var socket = new WebSocket(path, ["".concat(localStorage.getItem('token'))]);
+    var socket = new WebSocket(path, "".concat(localStorage.getItem('token')));
 
     socket.onclose = function () {
       console.log('websocket is close');

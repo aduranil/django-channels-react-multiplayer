@@ -4,7 +4,6 @@ import json
 
 class GameConsumer(AsyncWebsocketConsumer):
     async def connect(self):
-        import pdb; pdb.set_trace()
         self.id = self.scope['url_route']['kwargs']['id']
         self.room_group_name = 'game_%s' % self.id
 
