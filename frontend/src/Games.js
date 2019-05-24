@@ -5,6 +5,7 @@ import {
 import { Gamepad } from 'grommet-icons';
 import { connect } from 'react-redux';
 import { createGame, logoutUser, getGames } from './modules/account';
+import { joinRoom, connectToSocket } from './modules/websocket';
 import withAuth from './modules/authWrapper';
 
 const theme = {
@@ -29,7 +30,9 @@ class Games extends React.Component {
 
   onJoin = (e) => {
     e.preventDefault();
+    this.props.dispatch(connectToSocket(e.target.value));
     this.props.history.push(`/game/${e.target.value}`);
+    this.props.dispatch(joinRoom());
   };
 
   onLogout = () => {

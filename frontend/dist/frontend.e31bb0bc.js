@@ -100846,7 +100846,54 @@ Object.keys(_themes).forEach(function (key) {
     }
   });
 });
-},{"./default-props":"node_modules/grommet-icons/es6/default-props.js","./icons":"node_modules/grommet-icons/es6/icons/index.js","./themes":"node_modules/grommet-icons/es6/themes/index.js"}],"src/modules/authWrapper.js":[function(require,module,exports) {
+},{"./default-props":"node_modules/grommet-icons/es6/default-props.js","./icons":"node_modules/grommet-icons/es6/icons/index.js","./themes":"node_modules/grommet-icons/es6/themes/index.js"}],"src/modules/websocket.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.joinRoom = exports.connectToSocket = void 0;
+var socket = null;
+
+var connectToSocket = function connectToSocket(id) {
+  return function (dispatch) {
+    var path = "ws://127.0.0.1:8000/ws/game/".concat(id, "?token=").concat(localStorage.getItem('token'));
+    var socket = new WebSocket(path);
+
+    socket.onclose = function () {
+      console.log('websocket is close');
+    };
+
+    socket.onmessage = function (e) {
+      debugger;
+      joinRoom(socket);
+    };
+
+    socket.onopen = function () {
+      console.log('websocket open');
+    };
+  };
+};
+
+exports.connectToSocket = connectToSocket;
+
+var joinRoom = function joinRoom(socket) {
+  return function (dispatch) {
+    try {
+      socket.send(JSON.stringify({
+        command: 'join',
+        id: id
+      }));
+    } catch (err) {
+      console.log(err.message);
+    }
+  };
+}; // Set up WebSocket handlers
+// socket.onmessage = onMessage(socket, store);
+
+
+exports.joinRoom = joinRoom;
+},{}],"src/modules/authWrapper.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -100978,6 +101025,8 @@ var _reactRedux = require("react-redux");
 
 var _account = require("./modules/account");
 
+var _websocket = require("./modules/websocket");
+
 var _authWrapper = _interopRequireDefault(require("./modules/authWrapper"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
@@ -101042,7 +101091,11 @@ function (_React$Component) {
     _defineProperty(_assertThisInitialized(_this), "onJoin", function (e) {
       e.preventDefault();
 
+      _this.props.dispatch((0, _websocket.connectToSocket)(e.target.value));
+
       _this.props.history.push("/game/".concat(e.target.value));
+
+      _this.props.dispatch((0, _websocket.joinRoom)());
     });
 
     _defineProperty(_assertThisInitialized(_this), "onLogout", function () {
@@ -101137,33 +101190,7 @@ var s2p = function s2p(state) {
 var _default = (0, _authWrapper.default)((0, _reactRedux.connect)(s2p)(Games));
 
 exports.default = _default;
-},{"react":"node_modules/react/index.js","grommet":"node_modules/grommet/es6/index.js","grommet-icons":"node_modules/grommet-icons/es6/index.js","react-redux":"node_modules/react-redux/es/index.js","./modules/account":"src/modules/account.js","./modules/authWrapper":"src/modules/authWrapper.js"}],"src/modules/websocket.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.connectToSocket = void 0;
-
-var connectToSocket = function connectToSocket(id) {
-  return function (dispatch) {
-    var path = "ws://127.0.0.1:8000/ws/game/".concat(id);
-    var socket = new WebSocket(path, "".concat(localStorage.getItem('token')));
-
-    socket.onclose = function () {
-      console.log('websocket is close');
-    };
-
-    socket.onopen = function () {
-      console.log('websocket open');
-    };
-  };
-}; // Set up WebSocket handlers
-// socket.onmessage = onMessage(socket, store);
-
-
-exports.connectToSocket = connectToSocket;
-},{}],"src/Game.js":[function(require,module,exports) {
+},{"react":"node_modules/react/index.js","grommet":"node_modules/grommet/es6/index.js","grommet-icons":"node_modules/grommet-icons/es6/index.js","react-redux":"node_modules/react-redux/es/index.js","./modules/account":"src/modules/account.js","./modules/websocket":"src/modules/websocket.js","./modules/authWrapper":"src/modules/authWrapper.js"}],"src/Game.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
