@@ -6,7 +6,6 @@ import { connectToSocket } from './modules/websocket';
 class Game extends React.Component {
   componentDidMount() {
     if (this.props.id) {
-      this.props.dispatch(connectToSocket(this.props.id));
     }
   }
 

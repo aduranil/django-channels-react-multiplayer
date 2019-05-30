@@ -31989,6 +31989,79 @@ var gameReducer = function gameReducer() {
 };
 
 exports.gameReducer = gameReducer;
+},{}],"src/modules/websocket.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = exports.joinRoom = exports.connectToSocket = void 0;
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; var ownKeys = Object.keys(source); if (typeof Object.getOwnPropertySymbols === 'function') { ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) { return Object.getOwnPropertyDescriptor(source, sym).enumerable; })); } ownKeys.forEach(function (key) { _defineProperty(target, key, source[key]); }); } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+var connectToSocket = function connectToSocket(id) {
+  return function (dispatch) {
+    var path = "ws://127.0.0.1:8000/ws/game/".concat(id, "?token=").concat(localStorage.getItem('token'));
+    var socket = new WebSocket(path);
+
+    socket.onclose = function () {
+      console.log('websocket is close');
+    };
+
+    socket.onmessage = function (e) {};
+
+    socket.onopen = function () {
+      console.log('websocket open');
+    };
+
+    dispatch({
+      type: 'CONNECT',
+      socket: socket
+    });
+  };
+};
+
+exports.connectToSocket = connectToSocket;
+
+var joinRoom = function joinRoom(socket) {
+  return function (dispatch) {
+    try {
+      socket.send(JSON.stringify({
+        command: 'join',
+        id: id
+      }));
+    } catch (err) {
+      console.log(err.message);
+    }
+  };
+}; // Set up WebSocket handlers
+// socket.onmessage = onMessage(socket, store);
+
+
+exports.joinRoom = joinRoom;
+var socketInitialState = {
+  socket: null
+};
+
+var socketReducer = function socketReducer() {
+  var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : _objectSpread({}, socketInitialState);
+  var action = arguments.length > 1 ? arguments[1] : undefined;
+
+  switch (action.type) {
+    case 'CONNECT':
+      return _objectSpread({}, state, {
+        socket: action.socket
+      });
+
+    default:
+      return state;
+  }
+};
+
+var _default = socketReducer;
+exports.default = _default;
 },{}],"src/modules/reducers.js":[function(require,module,exports) {
 "use strict";
 
@@ -32001,13 +32074,18 @@ var _redux = require("redux");
 
 var _account = require("./account");
 
+var _websocket = _interopRequireDefault(require("./websocket"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 var rootReducer = (0, _redux.combineReducers)({
   auth: _account.authReducer,
-  games: _account.gameReducer
+  games: _account.gameReducer,
+  socket: _websocket.default
 });
 var _default = rootReducer;
 exports.default = _default;
-},{"redux":"node_modules/redux/es/redux.js","./account":"src/modules/account.js"}],"node_modules/fbjs/lib/shallowEqual.js":[function(require,module,exports) {
+},{"redux":"node_modules/redux/es/redux.js","./account":"src/modules/account.js","./websocket":"src/modules/websocket.js"}],"node_modules/fbjs/lib/shallowEqual.js":[function(require,module,exports) {
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
  *
@@ -100846,54 +100924,7 @@ Object.keys(_themes).forEach(function (key) {
     }
   });
 });
-},{"./default-props":"node_modules/grommet-icons/es6/default-props.js","./icons":"node_modules/grommet-icons/es6/icons/index.js","./themes":"node_modules/grommet-icons/es6/themes/index.js"}],"src/modules/websocket.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.joinRoom = exports.connectToSocket = void 0;
-var socket = null;
-
-var connectToSocket = function connectToSocket(id) {
-  return function (dispatch) {
-    var path = "ws://127.0.0.1:8000/ws/game/".concat(id, "?token=").concat(localStorage.getItem('token'));
-    var socket = new WebSocket(path);
-
-    socket.onclose = function () {
-      console.log('websocket is close');
-    };
-
-    socket.onmessage = function (e) {
-      debugger;
-      joinRoom(socket);
-    };
-
-    socket.onopen = function () {
-      console.log('websocket open');
-    };
-  };
-};
-
-exports.connectToSocket = connectToSocket;
-
-var joinRoom = function joinRoom(socket) {
-  return function (dispatch) {
-    try {
-      socket.send(JSON.stringify({
-        command: 'join',
-        id: id
-      }));
-    } catch (err) {
-      console.log(err.message);
-    }
-  };
-}; // Set up WebSocket handlers
-// socket.onmessage = onMessage(socket, store);
-
-
-exports.joinRoom = joinRoom;
-},{}],"src/modules/authWrapper.js":[function(require,module,exports) {
+},{"./default-props":"node_modules/grommet-icons/es6/default-props.js","./icons":"node_modules/grommet-icons/es6/icons/index.js","./themes":"node_modules/grommet-icons/es6/themes/index.js"}],"src/modules/authWrapper.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -101094,8 +101125,6 @@ function (_React$Component) {
       _this.props.dispatch((0, _websocket.connectToSocket)(e.target.value));
 
       _this.props.history.push("/game/".concat(e.target.value));
-
-      _this.props.dispatch((0, _websocket.joinRoom)());
     });
 
     _defineProperty(_assertThisInitialized(_this), "onLogout", function () {
@@ -101240,9 +101269,7 @@ function (_React$Component) {
   _createClass(Game, [{
     key: "componentDidMount",
     value: function componentDidMount() {
-      if (this.props.id) {
-        this.props.dispatch((0, _websocket.connectToSocket)(this.props.id));
-      }
+      if (this.props.id) {}
     }
   }, {
     key: "render",

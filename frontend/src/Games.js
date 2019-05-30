@@ -32,7 +32,6 @@ class Games extends React.Component {
     e.preventDefault();
     this.props.dispatch(connectToSocket(e.target.value));
     this.props.history.push(`/game/${e.target.value}`);
-    this.props.dispatch(joinRoom());
   };
 
   onLogout = () => {
