@@ -31996,15 +31996,15 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.wsDisconnected = exports.wsDisconnect = exports.wsConnected = exports.wsConnecting = exports.wsConnect = exports.WS_DISCONNECTED = exports.WS_DISCONNECT = exports.WS_CONNECTED = exports.WS_CONNECTING = exports.WS_CONNECT = void 0;
-var WS_CONNECT = "WS_CONNECT";
+var WS_CONNECT = 'WS_CONNECT';
 exports.WS_CONNECT = WS_CONNECT;
-var WS_CONNECTING = "WS_CONNECTING";
+var WS_CONNECTING = 'WS_CONNECTING';
 exports.WS_CONNECTING = WS_CONNECTING;
-var WS_CONNECTED = "WS_CONNECTED";
+var WS_CONNECTED = 'WS_CONNECTED';
 exports.WS_CONNECTED = WS_CONNECTED;
-var WS_DISCONNECT = "WS_DISCONNECT";
+var WS_DISCONNECT = 'WS_DISCONNECT';
 exports.WS_DISCONNECT = WS_DISCONNECT;
-var WS_DISCONNECTED = "WS_DISCONNECTED";
+var WS_DISCONNECTED = 'WS_DISCONNECTED';
 exports.WS_DISCONNECTED = WS_DISCONNECTED;
 
 var wsConnect = function wsConnect(host) {
@@ -32057,7 +32057,7 @@ exports.wsDisconnected = wsDisconnected;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.default = exports.joinRoom = exports.connectToSocket = void 0;
+exports.default = void 0;
 
 var actions = _interopRequireWildcard(require("./WSClientActions"));
 
@@ -32067,46 +32067,8 @@ function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { va
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
-var connectToSocket = function connectToSocket(id) {
-  return function (dispatch) {
-    var path = "ws://127.0.0.1:8000/ws/game/".concat(id, "?token=").concat(localStorage.getItem('token'));
-    var socket = new WebSocket(path);
-
-    socket.onclose = function () {
-      console.log('websocket is close');
-    };
-
-    socket.onmessage = function (e) {};
-
-    socket.onopen = function () {
-      console.log('websocket open');
-    };
-
-    dispatch({
-      type: 'CONNECT',
-      socket: socket
-    });
-  };
-};
-
-exports.connectToSocket = connectToSocket;
-
-var joinRoom = function joinRoom(socket) {
-  return function (dispatch) {
-    try {
-      socket.send(JSON.stringify({
-        command: 'join',
-        id: id
-      }));
-    } catch (err) {
-      console.log(err.message);
-    }
-  };
-}; // Set up WebSocket handlers
+// Set up WebSocket handlers
 // socket.onmessage = onMessage(socket, store);
-
-
-exports.joinRoom = joinRoom;
 var socketInitialState = {
   socket: null
 };
@@ -32207,6 +32169,7 @@ var socketMiddleware = function () {
   var onOpen = function onOpen(ws, store, host) {
     return function (event) {
       // Authenticate with Backend... somehow...
+      console.log('websocket open');
       store.dispatch(client_actions.wsConnected(host));
     };
   };
@@ -101323,8 +101286,6 @@ function (_React$Component) {
     _defineProperty(_assertThisInitialized(_this), "onJoin", function (e) {
       e.preventDefault();
 
-      _this.props.dispatch((0, _websocket.connectToSocket)(e.target.value));
-
       _this.props.history.push("/game/".concat(e.target.value));
     });
 
@@ -101420,7 +101381,86 @@ var s2p = function s2p(state) {
 var _default = (0, _authWrapper.default)((0, _reactRedux.connect)(s2p)(Games));
 
 exports.default = _default;
-},{"react":"node_modules/react/index.js","grommet":"node_modules/grommet/es6/index.js","grommet-icons":"node_modules/grommet-icons/es6/index.js","react-redux":"node_modules/react-redux/es/index.js","./modules/account":"src/modules/account.js","./modules/websocket":"src/modules/websocket.js","./modules/authWrapper":"src/modules/authWrapper.js"}],"src/Game.js":[function(require,module,exports) {
+},{"react":"node_modules/react/index.js","grommet":"node_modules/grommet/es6/index.js","grommet-icons":"node_modules/grommet-icons/es6/index.js","react-redux":"node_modules/react-redux/es/index.js","./modules/account":"src/modules/account.js","./modules/websocket":"src/modules/websocket.js","./modules/authWrapper":"src/modules/authWrapper.js"}],"src/WebSocketConnection.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _react = _interopRequireWildcard(require("react"));
+
+var _reactRedux = require("react-redux");
+
+var _WSClientActions = require("./modules/WSClientActions");
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj.default = obj; return newObj; } }
+
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+var WebSocketConnection =
+/*#__PURE__*/
+function (_Component) {
+  _inherits(WebSocketConnection, _Component);
+
+  function WebSocketConnection(props) {
+    var _this;
+
+    _classCallCheck(this, WebSocketConnection);
+
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(WebSocketConnection).call(this, props));
+    _this.autoconnect = !!props.autoconnect;
+    return _this;
+  }
+
+  _createClass(WebSocketConnection, [{
+    key: "componentDidMount",
+    value: function componentDidMount() {
+      if (this.autoconnect) {
+        this.props.wsConnect(this.props.host);
+      }
+    }
+  }, {
+    key: "render",
+    value: function render() {
+      return _react.default.createElement("div", null, this.props.children);
+    }
+  }]);
+
+  return WebSocketConnection;
+}(_react.Component);
+
+var mapStateToProps = function mapStateToProps(state) {
+  return {
+    wsEvents: state.socket
+  };
+};
+
+var mapDispatchToProps = {
+  wsConnect: _WSClientActions.wsConnect
+};
+
+var _default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(WebSocketConnection);
+
+exports.default = _default;
+},{"react":"node_modules/react/index.js","react-redux":"node_modules/react-redux/es/index.js","./modules/WSClientActions":"src/modules/WSClientActions.js"}],"src/Game.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -101434,7 +101474,9 @@ var _grommet = require("grommet");
 
 var _reactRedux = require("react-redux");
 
-var _websocket = require("./modules/websocket");
+var _WebSocketConnection = _interopRequireDefault(require("./WebSocketConnection"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj.default = obj; return newObj; } }
 
@@ -101468,22 +101510,22 @@ function (_React$Component) {
   }
 
   _createClass(Game, [{
-    key: "componentDidMount",
-    value: function componentDidMount() {
-      if (this.props.id) {}
-    }
-  }, {
     key: "render",
     value: function render() {
-      return _react.default.createElement(_react.default.Fragment, null, _react.default.createElement(_grommet.Box, {
-        round: "xsmall",
-        height: "medium",
-        margin: "medium",
-        width: "600px",
-        pad: "medium",
-        elevation: "medium",
-        background: "accent-2"
-      }));
+      if (this.props.id) {
+        return _react.default.createElement(_react.default.Fragment, null, _react.default.createElement(_WebSocketConnection.default, {
+          host: "ws://127.0.0.1:8000/ws/game/".concat(this.props.id, "?token=").concat(localStorage.getItem('token')),
+          autoconnect: true
+        }, _react.default.createElement(_grommet.Box, {
+          round: "xsmall",
+          height: "medium",
+          margin: "medium",
+          width: "600px",
+          pad: "medium",
+          elevation: "medium",
+          background: "accent-2"
+        })));
+      }
     }
   }]);
 
@@ -101499,7 +101541,7 @@ var s2p = function s2p(state, ownProps) {
 var _default = (0, _reactRedux.connect)(s2p)(Game);
 
 exports.default = _default;
-},{"react":"node_modules/react/index.js","grommet":"node_modules/grommet/es6/index.js","react-redux":"node_modules/react-redux/es/index.js","./modules/websocket":"src/modules/websocket.js"}],"src/App.js":[function(require,module,exports) {
+},{"react":"node_modules/react/index.js","grommet":"node_modules/grommet/es6/index.js","react-redux":"node_modules/react-redux/es/index.js","./WebSocketConnection":"src/WebSocketConnection.js"}],"src/App.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -101609,86 +101651,7 @@ function (_React$Component) {
 var _default = (0, _reactRedux.connect)()(App);
 
 exports.default = _default;
-},{"react":"node_modules/react/index.js","grommet":"node_modules/grommet/es6/index.js","react-router-dom":"node_modules/react-router-dom/esm/react-router-dom.js","react-redux":"node_modules/react-redux/es/index.js","./LoginOrSignup":"src/LoginOrSignup.js","./Entrance":"src/Entrance.js","./Signup":"src/Signup.js","./Games":"src/Games.js","./Game":"src/Game.js"}],"src/WebSocketConnection.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-
-var _react = _interopRequireWildcard(require("react"));
-
-var _reactRedux = require("react-redux");
-
-var _WSClientActions = require("./modules/WSClientActions");
-
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj.default = obj; return newObj; } }
-
-function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
-
-function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
-
-function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
-
-function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
-
-function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
-
-var WebSocketConnection =
-/*#__PURE__*/
-function (_Component) {
-  _inherits(WebSocketConnection, _Component);
-
-  function WebSocketConnection(props) {
-    var _this;
-
-    _classCallCheck(this, WebSocketConnection);
-
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(WebSocketConnection).call(this, props));
-    _this.autoconnect = !!props.autoconnect;
-    return _this;
-  }
-
-  _createClass(WebSocketConnection, [{
-    key: "componentDidMount",
-    value: function componentDidMount() {
-      if (this.autoconnect) {
-        this.props.wsConnect(this.props.host);
-      }
-    }
-  }, {
-    key: "render",
-    value: function render() {
-      return _react.default.createElement("div", null, this.props.children);
-    }
-  }]);
-
-  return WebSocketConnection;
-}(_react.Component);
-
-var mapStateToProps = function mapStateToProps(state) {
-  return {
-    wsEvents: state.socket
-  };
-};
-
-var mapDispatchToProps = {
-  wsConnect: _WSClientActions.wsConnect
-};
-
-var _default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(WebSocketConnection);
-
-exports.default = _default;
-},{"react":"node_modules/react/index.js","react-redux":"node_modules/react-redux/es/index.js","./modules/WSClientActions":"src/modules/WSClientActions.js"}],"index.js":[function(require,module,exports) {
+},{"react":"node_modules/react/index.js","grommet":"node_modules/grommet/es6/index.js","react-router-dom":"node_modules/react-router-dom/esm/react-router-dom.js","react-redux":"node_modules/react-redux/es/index.js","./LoginOrSignup":"src/LoginOrSignup.js","./Entrance":"src/Entrance.js","./Signup":"src/Signup.js","./Games":"src/Games.js","./Game":"src/Game.js"}],"index.js":[function(require,module,exports) {
 "use strict";
 
 var _react = _interopRequireDefault(require("react"));
@@ -101709,8 +101672,6 @@ var _middleware = _interopRequireDefault(require("./src/modules/middleware"));
 
 var _App = _interopRequireDefault(require("./src/App"));
 
-var _WebSocketConnection = _interopRequireDefault(require("./src/WebSocketConnection"));
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var middleware = [_reduxThunk.default, _middleware.default];
@@ -101720,19 +101681,16 @@ var Root = function Root(_ref) {
   var store = _ref.store;
   return _react.default.createElement(_reactRouterDom.BrowserRouter, null, _react.default.createElement(_reactRedux.Provider, {
     store: store
-  }, _react.default.createElement(_WebSocketConnection.default, {
-    host: "ws://127.0.0.1:8000/ws/game/1?token=".concat(localStorage.getItem('token')),
-    autoconnect: true
   }, _react.default.createElement(_reactRouterDom.Route, {
     path: "/",
     component: _App.default
-  }))));
+  })));
 };
 
 _reactDom.default.render(_react.default.createElement(Root, {
   store: store
 }), document.getElementById('app'));
-},{"react":"node_modules/react/index.js","react-dom":"node_modules/react-dom/index.js","react-router-dom":"node_modules/react-router-dom/esm/react-router-dom.js","redux":"node_modules/redux/es/redux.js","react-redux":"node_modules/react-redux/es/index.js","redux-thunk":"node_modules/redux-thunk/es/index.js","./src/modules/reducers":"src/modules/reducers.js","./src/modules/middleware":"src/modules/middleware.js","./src/App":"src/App.js","./src/WebSocketConnection":"src/WebSocketConnection.js"}],"node_modules/parcel/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"react":"node_modules/react/index.js","react-dom":"node_modules/react-dom/index.js","react-router-dom":"node_modules/react-router-dom/esm/react-router-dom.js","redux":"node_modules/redux/es/redux.js","react-redux":"node_modules/react-redux/es/index.js","redux-thunk":"node_modules/redux-thunk/es/index.js","./src/modules/reducers":"src/modules/reducers.js","./src/modules/middleware":"src/modules/middleware.js","./src/App":"src/App.js"}],"node_modules/parcel/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;

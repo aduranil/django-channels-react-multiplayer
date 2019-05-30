@@ -7,7 +7,6 @@ import reduxThunk from 'redux-thunk';
 import rootReducer from './src/modules/reducers';
 import wsMiddleware from './src/modules/middleware';
 import App from './src/App';
-import WebSocketConnection from './src/WebSocketConnection';
 
 const middleware = [reduxThunk, wsMiddleware];
 const store = createStore(
@@ -20,12 +19,7 @@ const store = createStore(
 const Root = ({ store }) => (
   <Router>
     <Provider store={store}>
-      <WebSocketConnection
-        host={`ws://127.0.0.1:8000/ws/game/1?token=${localStorage.getItem('token')}`}
-        autoconnect
-      >
-        <Route path="/" component={App} />
-      </WebSocketConnection>
+      <Route path="/" component={App} />
     </Provider>
   </Router>
 );

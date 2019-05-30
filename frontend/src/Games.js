@@ -30,7 +30,6 @@ class Games extends React.Component {
 
   onJoin = (e) => {
     e.preventDefault();
-    this.props.dispatch(connectToSocket(e.target.value));
     this.props.history.push(`/game/${e.target.value}`);
   };
 

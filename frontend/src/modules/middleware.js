@@ -9,6 +9,7 @@ const socketMiddleware = (function () {
    */
   const onOpen = (ws, store, host) => (event) => {
     // Authenticate with Backend... somehow...
+    console.log('websocket open');
     store.dispatch(client_actions.wsConnected(host));
   };
 
