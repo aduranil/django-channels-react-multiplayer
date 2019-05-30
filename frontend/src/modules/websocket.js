@@ -1,3 +1,5 @@
+import * as actions from './WSClientActions';
+
 export const connectToSocket = id => (dispatch) => {
   const path = `ws://127.0.0.1:8000/ws/game/${id}?token=${localStorage.getItem('token')}`;
   const socket = new WebSocket(path);
@@ -24,8 +26,17 @@ const socketInitialState = { socket: null };
 
 const socketReducer = (state = { ...socketInitialState }, action) => {
   switch (action.type) {
-    case 'CONNECT':
-      return { ...state, socket: action.socket };
+    case actions.WS_CONNECT:
+      return { ...state, host: action.host };
+
+    case actions.WS_CONNECTING:
+      return { ...state, host: action.host };
+
+    case actions.WS_CONNECTED:
+      return { ...state, host: action.host };
+
+    case actions.WS_DISCONNECTED:
+      return { ...state, host: action.host };
 
     default:
       return state;

@@ -1,5 +1,5 @@
-import * as client_actions from '../actions/WSClientActions';
-import * as server_actions from '../actions/WSServerActions';
+import * as client_actions from './WSClientActions';
+import * as server_actions from './WSServerActions';
 
 const socketMiddleware = (function () {
   let socket = null;

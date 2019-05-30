@@ -31989,6 +31989,68 @@ var gameReducer = function gameReducer() {
 };
 
 exports.gameReducer = gameReducer;
+},{}],"src/modules/WSClientActions.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.wsDisconnected = exports.wsDisconnect = exports.wsConnected = exports.wsConnecting = exports.wsConnect = exports.WS_DISCONNECTED = exports.WS_DISCONNECT = exports.WS_CONNECTED = exports.WS_CONNECTING = exports.WS_CONNECT = void 0;
+var WS_CONNECT = "WS_CONNECT";
+exports.WS_CONNECT = WS_CONNECT;
+var WS_CONNECTING = "WS_CONNECTING";
+exports.WS_CONNECTING = WS_CONNECTING;
+var WS_CONNECTED = "WS_CONNECTED";
+exports.WS_CONNECTED = WS_CONNECTED;
+var WS_DISCONNECT = "WS_DISCONNECT";
+exports.WS_DISCONNECT = WS_DISCONNECT;
+var WS_DISCONNECTED = "WS_DISCONNECTED";
+exports.WS_DISCONNECTED = WS_DISCONNECTED;
+
+var wsConnect = function wsConnect(host) {
+  return {
+    type: WS_CONNECT,
+    host: host
+  };
+};
+
+exports.wsConnect = wsConnect;
+
+var wsConnecting = function wsConnecting(host) {
+  return {
+    type: WS_CONNECTING,
+    host: host
+  };
+};
+
+exports.wsConnecting = wsConnecting;
+
+var wsConnected = function wsConnected(host) {
+  return {
+    type: WS_CONNECTED,
+    host: host
+  };
+};
+
+exports.wsConnected = wsConnected;
+
+var wsDisconnect = function wsDisconnect(host) {
+  return {
+    type: WS_DISCONNECT,
+    host: host
+  };
+};
+
+exports.wsDisconnect = wsDisconnect;
+
+var wsDisconnected = function wsDisconnected(host) {
+  return {
+    type: WS_DISCONNECTED,
+    host: host
+  };
+};
+
+exports.wsDisconnected = wsDisconnected;
 },{}],"src/modules/websocket.js":[function(require,module,exports) {
 "use strict";
 
@@ -31996,6 +32058,10 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.default = exports.joinRoom = exports.connectToSocket = void 0;
+
+var actions = _interopRequireWildcard(require("./WSClientActions"));
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj.default = obj; return newObj; } }
 
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; var ownKeys = Object.keys(source); if (typeof Object.getOwnPropertySymbols === 'function') { ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) { return Object.getOwnPropertyDescriptor(source, sym).enumerable; })); } ownKeys.forEach(function (key) { _defineProperty(target, key, source[key]); }); } return target; }
 
@@ -32050,9 +32116,24 @@ var socketReducer = function socketReducer() {
   var action = arguments.length > 1 ? arguments[1] : undefined;
 
   switch (action.type) {
-    case 'CONNECT':
+    case actions.WS_CONNECT:
       return _objectSpread({}, state, {
-        socket: action.socket
+        host: action.host
+      });
+
+    case actions.WS_CONNECTING:
+      return _objectSpread({}, state, {
+        host: action.host
+      });
+
+    case actions.WS_CONNECTED:
+      return _objectSpread({}, state, {
+        host: action.host
+      });
+
+    case actions.WS_DISCONNECTED:
+      return _objectSpread({}, state, {
+        host: action.host
       });
 
     default:
@@ -32062,7 +32143,7 @@ var socketReducer = function socketReducer() {
 
 var _default = socketReducer;
 exports.default = _default;
-},{}],"src/modules/reducers.js":[function(require,module,exports) {
+},{"./WSClientActions":"src/modules/WSClientActions.js"}],"src/modules/reducers.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -32085,7 +32166,127 @@ var rootReducer = (0, _redux.combineReducers)({
 });
 var _default = rootReducer;
 exports.default = _default;
-},{"redux":"node_modules/redux/es/redux.js","./account":"src/modules/account.js","./websocket":"src/modules/websocket.js"}],"node_modules/fbjs/lib/shallowEqual.js":[function(require,module,exports) {
+},{"redux":"node_modules/redux/es/redux.js","./account":"src/modules/account.js","./websocket":"src/modules/websocket.js"}],"src/modules/WSServerActions.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.wsHealth = exports.WS_HEALTH = void 0;
+var WS_HEALTH = "WS_HEALTH";
+exports.WS_HEALTH = WS_HEALTH;
+
+var wsHealth = function wsHealth(status) {
+  return {
+    type: WS_HEALTH,
+    status: status
+  };
+};
+
+exports.wsHealth = wsHealth;
+},{}],"src/modules/middleware.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var client_actions = _interopRequireWildcard(require("./WSClientActions"));
+
+var server_actions = _interopRequireWildcard(require("./WSServerActions"));
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj.default = obj; return newObj; } }
+
+var socketMiddleware = function () {
+  var socket = null;
+  /**
+   * Handler for when the WebSocket opens
+   */
+
+  var onOpen = function onOpen(ws, store, host) {
+    return function (event) {
+      // Authenticate with Backend... somehow...
+      store.dispatch(client_actions.wsConnected(host));
+    };
+  };
+  /**
+   * Handler for when the WebSocket closes
+   */
+
+
+  var onClose = function onClose(ws, store) {
+    return function (event) {
+      store.dispatch(client_actions.wsDisconnected(event.host));
+    };
+  };
+  /**
+   * Handler for when a message has been received from the server.
+   */
+
+
+  var onMessage = function onMessage(ws, store) {
+    return function (event) {
+      var payload = JSON.parse(event.data);
+
+      switch (payload.type) {
+        case server_actions.WS_HEALTH:
+          store.dispatch(server_actions.wsHealth(status));
+          break;
+
+        default:
+          console.log('Received unknown server payload', payload);
+          break;
+      }
+    };
+  };
+  /**
+   * Middleware
+   */
+
+
+  return function (store) {
+    return function (next) {
+      return function (action) {
+        switch (action.type) {
+          case client_actions.WS_CONNECT:
+            if (socket !== null) {
+              socket.close();
+            } // Pass action along
+
+
+            next(action); // Tell the store that we're busy connecting...
+
+            store.dispatch(client_actions.wsConnecting(action.host)); // Attempt to connect to the remote host...
+
+            socket = new WebSocket(action.host); // Set up WebSocket handlers
+
+            socket.onmessage = onMessage(socket, store);
+            socket.onclose = onClose(socket, store);
+            socket.onopen = onOpen(socket, store, action.host);
+            break;
+
+          case client_actions.WS_DISCONNECT:
+            if (socket !== null) {
+              socket.close();
+            }
+
+            socket = null; // Tell the store that we've been disconnected...
+
+            store.dispatch(client_actions.wsDisconnected(action.host));
+            break;
+
+          default:
+            return next(action);
+        }
+      };
+    };
+  };
+}();
+
+var _default = socketMiddleware;
+exports.default = _default;
+},{"./WSClientActions":"src/modules/WSClientActions.js","./WSServerActions":"src/modules/WSServerActions.js"}],"node_modules/fbjs/lib/shallowEqual.js":[function(require,module,exports) {
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
  *
@@ -101408,7 +101609,86 @@ function (_React$Component) {
 var _default = (0, _reactRedux.connect)()(App);
 
 exports.default = _default;
-},{"react":"node_modules/react/index.js","grommet":"node_modules/grommet/es6/index.js","react-router-dom":"node_modules/react-router-dom/esm/react-router-dom.js","react-redux":"node_modules/react-redux/es/index.js","./LoginOrSignup":"src/LoginOrSignup.js","./Entrance":"src/Entrance.js","./Signup":"src/Signup.js","./Games":"src/Games.js","./Game":"src/Game.js"}],"index.js":[function(require,module,exports) {
+},{"react":"node_modules/react/index.js","grommet":"node_modules/grommet/es6/index.js","react-router-dom":"node_modules/react-router-dom/esm/react-router-dom.js","react-redux":"node_modules/react-redux/es/index.js","./LoginOrSignup":"src/LoginOrSignup.js","./Entrance":"src/Entrance.js","./Signup":"src/Signup.js","./Games":"src/Games.js","./Game":"src/Game.js"}],"src/WebSocketConnection.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _react = _interopRequireWildcard(require("react"));
+
+var _reactRedux = require("react-redux");
+
+var _WSClientActions = require("./modules/WSClientActions");
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj.default = obj; return newObj; } }
+
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+var WebSocketConnection =
+/*#__PURE__*/
+function (_Component) {
+  _inherits(WebSocketConnection, _Component);
+
+  function WebSocketConnection(props) {
+    var _this;
+
+    _classCallCheck(this, WebSocketConnection);
+
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(WebSocketConnection).call(this, props));
+    _this.autoconnect = !!props.autoconnect;
+    return _this;
+  }
+
+  _createClass(WebSocketConnection, [{
+    key: "componentDidMount",
+    value: function componentDidMount() {
+      if (this.autoconnect) {
+        this.props.wsConnect(this.props.host);
+      }
+    }
+  }, {
+    key: "render",
+    value: function render() {
+      return _react.default.createElement("div", null, this.props.children);
+    }
+  }]);
+
+  return WebSocketConnection;
+}(_react.Component);
+
+var mapStateToProps = function mapStateToProps(state) {
+  return {
+    wsEvents: state.socket
+  };
+};
+
+var mapDispatchToProps = {
+  wsConnect: _WSClientActions.wsConnect
+};
+
+var _default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(WebSocketConnection);
+
+exports.default = _default;
+},{"react":"node_modules/react/index.js","react-redux":"node_modules/react-redux/es/index.js","./modules/WSClientActions":"src/modules/WSClientActions.js"}],"index.js":[function(require,module,exports) {
 "use strict";
 
 var _react = _interopRequireDefault(require("react"));
@@ -101425,26 +101705,34 @@ var _reduxThunk = _interopRequireDefault(require("redux-thunk"));
 
 var _reducers = _interopRequireDefault(require("./src/modules/reducers"));
 
+var _middleware = _interopRequireDefault(require("./src/modules/middleware"));
+
 var _App = _interopRequireDefault(require("./src/App"));
+
+var _WebSocketConnection = _interopRequireDefault(require("./src/WebSocketConnection"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var store = (0, _redux.createStore)(_reducers.default, (0, _redux.compose)((0, _redux.applyMiddleware)(_reduxThunk.default), window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()));
+var middleware = [_reduxThunk.default, _middleware.default];
+var store = (0, _redux.createStore)(_reducers.default, (0, _redux.compose)(_redux.applyMiddleware.apply(void 0, middleware), window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()));
 
 var Root = function Root(_ref) {
   var store = _ref.store;
   return _react.default.createElement(_reactRouterDom.BrowserRouter, null, _react.default.createElement(_reactRedux.Provider, {
     store: store
+  }, _react.default.createElement(_WebSocketConnection.default, {
+    host: "ws://127.0.0.1:8000/ws/game/1?token=".concat(localStorage.getItem('token')),
+    autoconnect: true
   }, _react.default.createElement(_reactRouterDom.Route, {
     path: "/",
     component: _App.default
-  })));
+  }))));
 };
 
 _reactDom.default.render(_react.default.createElement(Root, {
   store: store
 }), document.getElementById('app'));
-},{"react":"node_modules/react/index.js","react-dom":"node_modules/react-dom/index.js","react-router-dom":"node_modules/react-router-dom/esm/react-router-dom.js","redux":"node_modules/redux/es/redux.js","react-redux":"node_modules/react-redux/es/index.js","redux-thunk":"node_modules/redux-thunk/es/index.js","./src/modules/reducers":"src/modules/reducers.js","./src/App":"src/App.js"}],"node_modules/parcel/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"react":"node_modules/react/index.js","react-dom":"node_modules/react-dom/index.js","react-router-dom":"node_modules/react-router-dom/esm/react-router-dom.js","redux":"node_modules/redux/es/redux.js","react-redux":"node_modules/react-redux/es/index.js","redux-thunk":"node_modules/redux-thunk/es/index.js","./src/modules/reducers":"src/modules/reducers.js","./src/modules/middleware":"src/modules/middleware.js","./src/App":"src/App.js","./src/WebSocketConnection":"src/WebSocketConnection.js"}],"node_modules/parcel/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
