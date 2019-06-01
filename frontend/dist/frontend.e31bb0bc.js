@@ -32051,15 +32051,35 @@ var wsDisconnected = function wsDisconnected(host) {
 };
 
 exports.wsDisconnected = wsDisconnected;
+},{}],"src/modules/WSServerActions.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.wsHealth = exports.WS_HEALTH = void 0;
+var WS_HEALTH = "WS_HEALTH";
+exports.WS_HEALTH = WS_HEALTH;
+
+var wsHealth = function wsHealth(status) {
+  return {
+    type: WS_HEALTH,
+    status: status
+  };
+};
+
+exports.wsHealth = wsHealth;
 },{}],"src/modules/websocket.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.default = void 0;
+exports.default = exports.join = void 0;
 
 var actions = _interopRequireWildcard(require("./WSClientActions"));
+
+var serverActions = _interopRequireWildcard(require("./WSServerActions"));
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj.default = obj; return newObj; } }
 
@@ -32069,6 +32089,15 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 // Set up WebSocket handlers
 // socket.onmessage = onMessage(socket, store);
+var join = function join(username, id) {
+  return {
+    type: 'join',
+    username: username,
+    id: id
+  };
+};
+
+exports.join = join;
 var socketInitialState = {
   socket: null
 };
@@ -32078,6 +32107,16 @@ var socketReducer = function socketReducer() {
   var action = arguments.length > 1 ? arguments[1] : undefined;
 
   switch (action.type) {
+    case 'join':
+      return _objectSpread({}, state, {
+        user: action.data
+      });
+
+    case serverActions.WS_HEALTH:
+      return _objectSpread({}, state, {
+        status: action.status
+      });
+
     case actions.WS_CONNECT:
       return _objectSpread({}, state, {
         host: action.host
@@ -32105,7 +32144,7 @@ var socketReducer = function socketReducer() {
 
 var _default = socketReducer;
 exports.default = _default;
-},{"./WSClientActions":"src/modules/WSClientActions.js"}],"src/modules/reducers.js":[function(require,module,exports) {
+},{"./WSClientActions":"src/modules/WSClientActions.js","./WSServerActions":"src/modules/WSServerActions.js"}],"src/modules/reducers.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -32128,25 +32167,7 @@ var rootReducer = (0, _redux.combineReducers)({
 });
 var _default = rootReducer;
 exports.default = _default;
-},{"redux":"node_modules/redux/es/redux.js","./account":"src/modules/account.js","./websocket":"src/modules/websocket.js"}],"src/modules/WSServerActions.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.wsHealth = exports.WS_HEALTH = void 0;
-var WS_HEALTH = "WS_HEALTH";
-exports.WS_HEALTH = WS_HEALTH;
-
-var wsHealth = function wsHealth(status) {
-  return {
-    type: WS_HEALTH,
-    status: status
-  };
-};
-
-exports.wsHealth = wsHealth;
-},{}],"src/modules/middleware.js":[function(require,module,exports) {
+},{"redux":"node_modules/redux/es/redux.js","./account":"src/modules/account.js","./websocket":"src/modules/websocket.js"}],"src/modules/middleware.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -32157,6 +32178,8 @@ exports.default = void 0;
 var client_actions = _interopRequireWildcard(require("./WSClientActions"));
 
 var server_actions = _interopRequireWildcard(require("./WSServerActions"));
+
+var _websocket = require("./websocket");
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj.default = obj; return newObj; } }
 
@@ -32239,6 +32262,14 @@ var socketMiddleware = function () {
             store.dispatch(client_actions.wsDisconnected(action.host));
             break;
 
+          case 'join':
+            socket.send(JSON.stringify({
+              command: 'join',
+              username: action.username,
+              id: action.id
+            }));
+            console.log('sent', action.username, action.id);
+
           default:
             return next(action);
         }
@@ -32249,7 +32280,7 @@ var socketMiddleware = function () {
 
 var _default = socketMiddleware;
 exports.default = _default;
-},{"./WSClientActions":"src/modules/WSClientActions.js","./WSServerActions":"src/modules/WSServerActions.js"}],"node_modules/fbjs/lib/shallowEqual.js":[function(require,module,exports) {
+},{"./WSClientActions":"src/modules/WSClientActions.js","./WSServerActions":"src/modules/WSServerActions.js","./websocket":"src/modules/websocket.js"}],"node_modules/fbjs/lib/shallowEqual.js":[function(require,module,exports) {
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
  *
@@ -101220,8 +101251,6 @@ var _reactRedux = require("react-redux");
 
 var _account = require("./modules/account");
 
-var _websocket = require("./modules/websocket");
-
 var _authWrapper = _interopRequireDefault(require("./modules/authWrapper"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
@@ -101381,7 +101410,7 @@ var s2p = function s2p(state) {
 var _default = (0, _authWrapper.default)((0, _reactRedux.connect)(s2p)(Games));
 
 exports.default = _default;
-},{"react":"node_modules/react/index.js","grommet":"node_modules/grommet/es6/index.js","grommet-icons":"node_modules/grommet-icons/es6/index.js","react-redux":"node_modules/react-redux/es/index.js","./modules/account":"src/modules/account.js","./modules/websocket":"src/modules/websocket.js","./modules/authWrapper":"src/modules/authWrapper.js"}],"src/WebSocketConnection.js":[function(require,module,exports) {
+},{"react":"node_modules/react/index.js","grommet":"node_modules/grommet/es6/index.js","grommet-icons":"node_modules/grommet-icons/es6/index.js","react-redux":"node_modules/react-redux/es/index.js","./modules/account":"src/modules/account.js","./modules/authWrapper":"src/modules/authWrapper.js"}],"src/WebSocketConnection.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -101394,6 +101423,8 @@ var _react = _interopRequireWildcard(require("react"));
 var _reactRedux = require("react-redux");
 
 var _WSClientActions = require("./modules/WSClientActions");
+
+var _WSServerActions = require("./modules/WSServerActions");
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj.default = obj; return newObj; } }
 
@@ -101454,13 +101485,14 @@ var mapStateToProps = function mapStateToProps(state) {
 };
 
 var mapDispatchToProps = {
-  wsConnect: _WSClientActions.wsConnect
+  wsConnect: _WSClientActions.wsConnect,
+  wsHealth: _WSServerActions.wsHealth
 };
 
 var _default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(WebSocketConnection);
 
 exports.default = _default;
-},{"react":"node_modules/react/index.js","react-redux":"node_modules/react-redux/es/index.js","./modules/WSClientActions":"src/modules/WSClientActions.js"}],"src/Game.js":[function(require,module,exports) {
+},{"react":"node_modules/react/index.js","react-redux":"node_modules/react-redux/es/index.js","./modules/WSClientActions":"src/modules/WSClientActions.js","./modules/WSServerActions":"src/modules/WSServerActions.js"}],"src/Game.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -101476,6 +101508,10 @@ var _reactRedux = require("react-redux");
 
 var _WebSocketConnection = _interopRequireDefault(require("./WebSocketConnection"));
 
+var _websocket = require("./modules/websocket");
+
+var _WSClientActions = require("./modules/WSClientActions");
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj.default = obj; return newObj; } }
@@ -101490,13 +101526,15 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 
 function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
 
-function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
-
 function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
 
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 var Game =
 /*#__PURE__*/
@@ -101504,19 +101542,45 @@ function (_React$Component) {
   _inherits(Game, _React$Component);
 
   function Game() {
+    var _getPrototypeOf2;
+
+    var _this;
+
     _classCallCheck(this, Game);
 
-    return _possibleConstructorReturn(this, _getPrototypeOf(Game).apply(this, arguments));
+    for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
+      args[_key] = arguments[_key];
+    }
+
+    _this = _possibleConstructorReturn(this, (_getPrototypeOf2 = _getPrototypeOf(Game)).call.apply(_getPrototypeOf2, [this].concat(args)));
+
+    _defineProperty(_assertThisInitialized(_this), "connectAndJoin", function () {
+      var _this$props = _this.props,
+          id = _this$props.id,
+          dispatch = _this$props.dispatch,
+          username = _this$props.username;
+      var host = "ws://127.0.0.1:8000/ws/game/".concat(id, "?token=").concat(localStorage.getItem('token'));
+      dispatch((0, _WSClientActions.wsConnect)(host));
+      setTimeout(function () {
+        dispatch((0, _websocket.join)(username, id));
+      }, 3000);
+    });
+
+    return _this;
   }
 
   _createClass(Game, [{
+    key: "componentDidMount",
+    value: function componentDidMount() {
+      if (this.props.id) {
+        this.connectAndJoin();
+      }
+    }
+  }, {
     key: "render",
     value: function render() {
       if (this.props.id) {
-        return _react.default.createElement(_react.default.Fragment, null, _react.default.createElement(_WebSocketConnection.default, {
-          host: "ws://127.0.0.1:8000/ws/game/".concat(this.props.id, "?token=").concat(localStorage.getItem('token')),
-          autoconnect: true
-        }, _react.default.createElement(_grommet.Box, {
+        return _react.default.createElement(_react.default.Fragment, null, _react.default.createElement(_grommet.Box, {
           round: "xsmall",
           height: "medium",
           margin: "medium",
@@ -101524,7 +101588,7 @@ function (_React$Component) {
           pad: "medium",
           elevation: "medium",
           background: "accent-2"
-        })));
+        }));
       }
     }
   }]);
@@ -101534,14 +101598,16 @@ function (_React$Component) {
 
 var s2p = function s2p(state, ownProps) {
   return {
-    id: ownProps.match && ownProps.match.params.id
+    id: ownProps.match && ownProps.match.params.id,
+    username: state.auth.username,
+    socket: state.socket.host
   };
 };
 
 var _default = (0, _reactRedux.connect)(s2p)(Game);
 
 exports.default = _default;
-},{"react":"node_modules/react/index.js","grommet":"node_modules/grommet/es6/index.js","react-redux":"node_modules/react-redux/es/index.js","./WebSocketConnection":"src/WebSocketConnection.js"}],"src/App.js":[function(require,module,exports) {
+},{"react":"node_modules/react/index.js","grommet":"node_modules/grommet/es6/index.js","react-redux":"node_modules/react-redux/es/index.js","./WebSocketConnection":"src/WebSocketConnection.js","./modules/websocket":"src/modules/websocket.js","./modules/WSClientActions":"src/modules/WSClientActions.js"}],"src/App.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -101718,7 +101784,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "51677" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "64105" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

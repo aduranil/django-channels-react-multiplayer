@@ -4,6 +4,7 @@
   "main": "index.js",
   "dependencies": {
     "babel-eslint": "^10.0.1",
+    "babel-polyfill": "^6.26.0",
     "grommet": "^2.6.6",
     "grommet-icons": "^4.2.0",
     "images": "^3.0.2",

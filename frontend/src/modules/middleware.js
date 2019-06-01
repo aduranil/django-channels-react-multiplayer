@@ -1,5 +1,6 @@
 import * as client_actions from './WSClientActions';
 import * as server_actions from './WSServerActions';
+import { join } from './websocket';
 
 const socketMiddleware = (function () {
   let socket = null;
@@ -73,6 +74,10 @@ const socketMiddleware = (function () {
         store.dispatch(client_actions.wsDisconnected(action.host));
 
         break;
+
+      case 'join':
+        socket.send(JSON.stringify({ command: 'join', username: action.username, id: action.id }));
+        console.log('sent', action.username, action.id);
 
       default:
         return next(action);

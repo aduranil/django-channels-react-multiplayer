@@ -21,7 +21,8 @@ class GameConsumer(AsyncWebsocketConsumer):
             self.channel_name
         )
 
-    async def join(self):
+    async def join(self, data):
+        import pdb; pdb.set_trace()
         user = self.scope['user']
         game = Game.objects.get(id=self.id)
         game.users.add(user)
@@ -32,6 +33,7 @@ class GameConsumer(AsyncWebsocketConsumer):
             }
         )
     def receive(self, text_data):
+        import pdb; pdb.set_trace()
         data = json.loads(text_data)
         self.commands[data['command']](self, data)
 

@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { wsConnect } from './modules/WSClientActions';
+import { wsHealth } from './modules/WSServerActions';
 
 class WebSocketConnection extends Component {
   constructor(props) {
@@ -23,7 +24,7 @@ const mapStateToProps = state => ({
   wsEvents: state.socket,
 });
 
-const mapDispatchToProps = { wsConnect };
+const mapDispatchToProps = { wsConnect, wsHealth };
 
 export default connect(
   mapStateToProps,

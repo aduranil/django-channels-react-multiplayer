@@ -5,7 +5,6 @@ import {
 import { Gamepad } from 'grommet-icons';
 import { connect } from 'react-redux';
 import { createGame, logoutUser, getGames } from './modules/account';
-import { joinRoom, connectToSocket } from './modules/websocket';
 import withAuth from './modules/authWrapper';
 
 const theme = {
