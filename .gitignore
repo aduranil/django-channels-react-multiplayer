@@ -3,3 +3,4 @@ frontend/.cache/
 backend/app/__pycache__/
 frontend/dist/
 backend/chat/__pycache__/
+.cache 

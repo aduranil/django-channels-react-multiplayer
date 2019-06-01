@@ -1,50 +1,52 @@
 # chat/consumers.py
-from channels.generic.websocket import AsyncWebsocketConsumer
+from channels.generic.websocket import WebsocketConsumer
 import json
 from .models import Game
+from asgiref.sync import async_to_sync
 
-class GameConsumer(AsyncWebsocketConsumer):
-    async def connect(self):
+class GameConsumer(WebsocketConsumer):
+    def connect(self):
         self.id = self.scope['url_route']['kwargs']['id']
         self.room_group_name = 'game_%s' % self.id
-        await self.channel_layer.group_add(
+        async_to_sync(self.channel_layer.group_add)(
             self.room_group_name,
             self.channel_name,
         )
 
-        await self.accept()
+        self.accept()
+        self.join()
 
-    async def disconnect(self, close_code):
+    def disconnect(self, close_code):
         # Leave room group
-        await self.channel_layer.group_discard(
+        async_to_sync(self.channel_layer.group_discard)(
             self.room_group_name,
             self.channel_name
         )
 
-    async def join(self, data):
-        import pdb; pdb.set_trace()
+    def join(self):
         user = self.scope['user']
         game = Game.objects.get(id=self.id)
         game.users.add(user)
-        await self.channel_layer.group_send(
-            self.room_group_name, {
-                'type': 'join',
-                'user': user.username,
-            }
-        )
+        game.save()
+        # self.send(text_data=json.dumps(data))
+        async_to_sync(self.channel_layer.group_send)(self.room_group_name, {
+            'data': {'type': 'join',
+            'username': user.username}
+        })
+
     def receive(self, text_data):
-        import pdb; pdb.set_trace()
         data = json.loads(text_data)
+        print(data)
         self.commands[data['command']](self, data)
 
     # Receive message from room group
-    async def chat_message(self, event):
-        message = event['message']
-
-        # Send message to WebSocket
-        await self.send(text_data=json.dumps({
-            'message': message
-        }))
+    # async def chat_message(self, event):
+    #     message = event['message']
+    #
+    #     # Send message to WebSocket
+    #     await self.send(text_data=json.dumps({
+    #         'message': message
+    #     }))
 
     commands = {
         'join': join,
