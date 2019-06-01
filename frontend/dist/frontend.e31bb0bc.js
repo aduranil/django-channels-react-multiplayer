@@ -32083,23 +32083,31 @@ var serverActions = _interopRequireWildcard(require("./WSServerActions"));
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj.default = obj; return newObj; } }
 
+function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }
+
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance"); }
+
+function _iterableToArray(iter) { if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter); }
+
+function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } }
+
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; var ownKeys = Object.keys(source); if (typeof Object.getOwnPropertySymbols === 'function') { ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) { return Object.getOwnPropertyDescriptor(source, sym).enumerable; })); } ownKeys.forEach(function (key) { _defineProperty(target, key, source[key]); }); } return target; }
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 // Set up WebSocket handlers
 // socket.onmessage = onMessage(socket, store);
-var join = function join(username, id) {
+var join = function join(username) {
   return {
     type: 'join',
-    username: username,
-    id: id
+    username: username
   };
 };
 
 exports.join = join;
 var socketInitialState = {
-  socket: null
+  socket: null,
+  users: []
 };
 
 var socketReducer = function socketReducer() {
@@ -32109,7 +32117,7 @@ var socketReducer = function socketReducer() {
   switch (action.type) {
     case 'join':
       return _objectSpread({}, state, {
-        user: action.data
+        users: [].concat(_toConsumableArray(state.users), [action.username])
       });
 
     case serverActions.WS_HEALTH:
@@ -32220,6 +32228,11 @@ var socketMiddleware = function () {
           store.dispatch(server_actions.wsHealth(status));
           break;
 
+        case 'join':
+          debugger;
+          store.dispatch((0, _websocket.join)(payload.username));
+          break;
+
         default:
           console.log('Received unknown server payload', payload);
           break;
@@ -32261,14 +32274,10 @@ var socketMiddleware = function () {
 
             store.dispatch(client_actions.wsDisconnected(action.host));
             break;
-
-          case 'join':
-            socket.send(JSON.stringify({
-              command: 'join',
-              username: action.username,
-              id: action.id
-            }));
-            console.log('sent', action.username, action.id);
+          // case 'join':
+          //   socket.send(JSON.stringify({ command: 'join', username: action.username, id: action.id }));
+          //   console.log('sent', action.username, action.id);
+          //   break;
 
           default:
             return next(action);
@@ -101560,10 +101569,9 @@ function (_React$Component) {
           dispatch = _this$props.dispatch,
           username = _this$props.username;
       var host = "ws://127.0.0.1:8000/ws/game/".concat(id, "?token=").concat(localStorage.getItem('token'));
-      dispatch((0, _WSClientActions.wsConnect)(host));
-      setTimeout(function () {
-        dispatch((0, _websocket.join)(username, id));
-      }, 3000);
+      dispatch((0, _WSClientActions.wsConnect)(host)); // setTimeout(() => {
+      //   dispatch(join(username, id));
+      // }, 3000);
     });
 
     return _this;
@@ -101577,8 +101585,13 @@ function (_React$Component) {
       }
     }
   }, {
+    key: "componentWillReceiveProps",
+    value: function componentWillReceiveProps(nextProps) {}
+  }, {
     key: "render",
     value: function render() {
+      console.log(this.props.users);
+
       if (this.props.id) {
         return _react.default.createElement(_react.default.Fragment, null, _react.default.createElement(_grommet.Box, {
           round: "xsmall",
@@ -101588,7 +101601,7 @@ function (_React$Component) {
           pad: "medium",
           elevation: "medium",
           background: "accent-2"
-        }));
+        }, this.props.joinedUser));
       }
     }
   }]);
@@ -101600,7 +101613,9 @@ var s2p = function s2p(state, ownProps) {
   return {
     id: ownProps.match && ownProps.match.params.id,
     username: state.auth.username,
-    socket: state.socket.host
+    socket: state.socket.host,
+    joinedUser: state.socket.user,
+    users: state.socket.users
   };
 };
 
@@ -101741,7 +101756,8 @@ var _App = _interopRequireDefault(require("./src/App"));
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var middleware = [_reduxThunk.default, _middleware.default];
-var store = (0, _redux.createStore)(_reducers.default, (0, _redux.compose)(_redux.applyMiddleware.apply(void 0, middleware), window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()));
+var store = (0, _redux.createStore)(_reducers.default, (0, _redux.compose)(_redux.applyMiddleware.apply(void 0, middleware) // window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__(),
+));
 
 var Root = function Root(_ref) {
   var store = _ref.store;
@@ -101784,7 +101800,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "64105" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "64748" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

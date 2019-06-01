@@ -31,7 +31,10 @@ const socketMiddleware = (function () {
       case server_actions.WS_HEALTH:
         store.dispatch(server_actions.wsHealth(status));
         break;
-
+      case 'join':
+        debugger;
+        store.dispatch(join(payload.username));
+        break;
       default:
         console.log('Received unknown server payload', payload);
         break;
@@ -75,10 +78,10 @@ const socketMiddleware = (function () {
 
         break;
 
-      case 'join':
-        socket.send(JSON.stringify({ command: 'join', username: action.username, id: action.id }));
-        console.log('sent', action.username, action.id);
-
+      // case 'join':
+      //   socket.send(JSON.stringify({ command: 'join', username: action.username, id: action.id }));
+      //   console.log('sent', action.username, action.id);
+      //   break;
       default:
         return next(action);
     }

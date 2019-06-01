@@ -3,14 +3,14 @@ import * as serverActions from './WSServerActions';
 // Set up WebSocket handlers
 // socket.onmessage = onMessage(socket, store);
 
-export const join = (username, id) => ({ type: 'join', username, id });
+export const join = username => ({ type: 'join', username });
 
-const socketInitialState = { socket: null };
+const socketInitialState = { socket: null, users: [] };
 
 const socketReducer = (state = { ...socketInitialState }, action) => {
   switch (action.type) {
     case 'join':
-      return { ...state, user: action.data };
+      return { ...state, users: [...state.users, action.username] };
     case serverActions.WS_HEALTH:
       return { ...state, status: action.status };
     case actions.WS_CONNECT:
