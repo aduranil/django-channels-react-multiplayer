@@ -4,6 +4,7 @@
   "main": "index.js",
   "dependencies": {
     "babel-eslint": "^10.0.1",
+    "babel-polyfill": "^6.26.0",
     "grommet": "^2.6.6",
     "grommet-icons": "^4.2.0",
     "images": "^3.0.2",
@@ -15,6 +16,7 @@
     "react-router": "^5.0.0",
     "react-router-dom": "^5.0.0",
     "redux": "^4.0.1",
+    "redux-devtools-extension": "^2.13.8",
     "redux-thunk": "^2.3.0",
     "styled-components": "^4.2.0"
   },

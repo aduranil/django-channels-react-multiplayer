@@ -4,13 +4,13 @@ import {
 } from 'grommet';
 import { Gamepad } from 'grommet-icons';
 import { connect } from 'react-redux';
-import { createGame, logoutUser } from './modules/account';
+import { createGame, logoutUser, getGames } from './modules/account';
 import withAuth from './modules/authWrapper';
 
 const theme = {
   button: {
     padding: {
-      horizontal: '4px',
+      horizontal: '6px',
     },
   },
 };
@@ -22,7 +22,14 @@ class Games extends React.Component {
   };
 
   onClick = () => {
-    this.props.dispatch(createGame(this.state.roomName));
+    this.props.dispatch(createGame(this.state.roomName)).then((data) => {
+      this.props.history.push(data);
+    });
+  };
+
+  onJoin = (e) => {
+    e.preventDefault();
+    this.props.history.push(`/game/${e.target.value}`);
   };
 
   onLogout = () => {
@@ -30,17 +37,20 @@ class Games extends React.Component {
     this.props.history.push('/loginorsignup');
   };
 
+  componentDidMount() {
+    return this.props.dispatch(getGames());
+  }
+
   render() {
     const { roomName } = this.state;
+    const { games } = this.props;
     return (
       <React.Fragment>
-        <Grid alignSelf="stretch" columns={['large', 'small']}>
-          <Text margin={{ left: '20px' }} alignSelf="start">
-            {' '}
-            SELFIES 2020
-            {' '}
-          </Text>
-          <Button onClick={this.onLogout} alignSelf="end" label="logout" />
+        <Grid alignSelf="center" columns={['medium', 'medium']}>
+          <Text alignSelf="start"> SELFIES 2020 </Text>
+          <Grommet theme={theme} style={{ textAlign: 'right' }}>
+            <Button onClick={this.onLogout} label="logout" />
+          </Grommet>
         </Grid>
         <Box
           round="xsmall"
@@ -51,13 +61,20 @@ class Games extends React.Component {
           elevation="medium"
           background="accent-2"
         >
-          <Grid columns={{ count: 2 }}>
-            <Grommet theme={theme}>
-              <Button margin={{ right: '5px' }} label="join" />
-              {' '}
-              <Text> Nose Dive </Text>
-            </Grommet>
-          </Grid>
+          {games.games
+            && games.games.map(game => (
+              <Grid key={game.id} columns={{ count: 2 }}>
+                <Grommet theme={theme}>
+                  <Button
+                    onClick={this.onJoin}
+                    value={game.id}
+                    margin={{ right: '5px' }}
+                    label="join"
+                  />
+                  <Text>{game.room_name}</Text>
+                </Grommet>
+              </Grid>
+            ))}
         </Box>
         <Grid columns={{ count: 2, size: 'auto' }} gap="small">
           <TextInput
@@ -72,4 +89,7 @@ class Games extends React.Component {
   }
 }
 
-export default withAuth(connect()(Games));
+const s2p = state => ({
+  games: state.games,
+});
+export default withAuth(connect(s2p)(Games));
