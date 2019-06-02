@@ -14,7 +14,7 @@ class GameConsumer(WebsocketConsumer):
         )
 
         self.accept()
-        self.join()
+        self.join_game()
 
     def disconnect(self, close_code):
         # Leave room group
@@ -23,16 +23,23 @@ class GameConsumer(WebsocketConsumer):
             self.channel_name
         )
 
-    def join(self):
+    def join_game(self):
         user = self.scope['user']
         game = Game.objects.get(id=self.id)
         game.users.add(user)
         game.save()
-        # self.send(text_data=json.dumps(data))
-        async_to_sync(self.channel_layer.group_send)(self.room_group_name, {
-            'data': {'type': 'join',
-            'username': user.username}
-        })
+        async_to_sync(self.channel_layer.group_send)(
+            self.room_group_name,
+            {
+                'type': 'join',
+                'username': user.username,
+            }
+        )
+
+
+    def join(self, username):
+        self.send(text_data=json.dumps(username))
+        print(username)
 
     def receive(self, text_data):
         data = json.loads(text_data)

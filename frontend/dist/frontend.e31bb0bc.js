@@ -32229,7 +32229,6 @@ var socketMiddleware = function () {
           break;
 
         case 'join':
-          debugger;
           store.dispatch((0, _websocket.join)(payload.username));
           break;
 

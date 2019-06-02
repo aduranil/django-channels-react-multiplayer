@@ -32,7 +32,6 @@ const socketMiddleware = (function () {
         store.dispatch(server_actions.wsHealth(status));
         break;
       case 'join':
-        debugger;
         store.dispatch(join(payload.username));
         break;
       default:
