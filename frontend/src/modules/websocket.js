@@ -10,7 +10,7 @@ const socketInitialState = { socket: null, users: [] };
 const socketReducer = (state = { ...socketInitialState }, action) => {
   switch (action.type) {
     case 'join':
-      return { ...state, users: [...state.users, action.username] };
+      return { ...state, users: [...state.users, action.username], user: action.username };
     case serverActions.WS_HEALTH:
       return { ...state, status: action.status };
     case actions.WS_CONNECT:

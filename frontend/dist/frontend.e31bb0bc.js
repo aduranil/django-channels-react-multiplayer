@@ -32117,7 +32117,8 @@ var socketReducer = function socketReducer() {
   switch (action.type) {
     case 'join':
       return _objectSpread({}, state, {
-        users: [].concat(_toConsumableArray(state.users), [action.username])
+        users: [].concat(_toConsumableArray(state.users), [action.username]),
+        user: action.username
       });
 
     case serverActions.WS_HEALTH:
