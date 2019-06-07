@@ -1,24 +1,20 @@
 import React from 'react';
-import {
-  Form, FormField, Button, Box, Text,
-} from 'grommet';
+import { Box, Text } from 'grommet';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 import { handleLogin } from './modules/account';
+import Login from './components/LoginOrSignup';
 
 class LoginOrSignup extends React.Component {
   state = {
     email: '',
     password: '',
-    username: '',
   };
 
   handleChange = (e) => {
     const { name } = e.target;
     const { value } = e.target;
-    if (name === 'email') {
-      this.setState({ username: value });
-    }
     this.setState((prevstate) => {
       const newState = { ...prevstate };
       newState[name] = value;
@@ -31,7 +27,7 @@ class LoginOrSignup extends React.Component {
   };
 
   render() {
-    const { email, password } = this.state;
+    const { username, email, password } = this.state;
     return (
       <React.Fragment>
         <Box
@@ -57,28 +53,27 @@ to create your user!
           <Text textAlign="center" color="white" margin={{ left: 'small' }}>
             RETURNING USERS
           </Text>
-          <Form onSubmit={this.handleSubmit} color="blue">
-            <FormField
-              onChange={this.handleChange}
-              value={email}
-              label="email"
-              name="email"
-              required
-            />
-            <FormField
-              onChange={this.handleChange}
-              value={password}
-              name="password"
-              type="password"
-              label="password"
-              required
-            />
-            <Button type="submit" primary label="Submit" />
-          </Form>
+          <Login
+            fromLoginOrSignup
+            username={username}
+            password={password}
+            email={email}
+            handleChange={this.handleChange}
+            handleSubmit={this.handleSubmit}
+          />
         </Box>
       </React.Fragment>
     );
   }
 }
 
+LoginOrSignup.propTypes = {
+  history: PropTypes.object,
+  dispatch: PropTypes.func,
+};
+
+LoginOrSignup.defaultProps = {
+  history: PropTypes.object,
+  dispatch: PropTypes.func,
+};
 export default connect()(LoginOrSignup);

@@ -31795,7 +31795,7 @@ exports.default = _default;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.gameReducer = exports.authReducer = exports.getGames = exports.createGame = exports.logoutUser = exports.handleSignup = exports.handleLogin = exports.getCurrentUser = void 0;
+exports.authReducer = exports.logoutUser = exports.handleSignup = exports.handleLogin = exports.getCurrentUser = void 0;
 
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; var ownKeys = Object.keys(source); if (typeof Object.getOwnPropertySymbols === 'function') { ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) { return Object.getOwnPropertyDescriptor(source, sym).enumerable; })); } ownKeys.forEach(function (key) { _defineProperty(target, key, source[key]); }); } return target; }
 
@@ -31835,7 +31835,7 @@ function status(res) {
 
 var handleLogin = function handleLogin(data) {
   return function (dispatch) {
-    return fetch('http://localhost:8000/app/login/', {
+    return fetch("".concat(API_ROOT, "/app/login/"), {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -31863,7 +31863,7 @@ exports.handleLogin = handleLogin;
 
 var handleSignup = function handleSignup(jsonData) {
   return function (dispatch) {
-    return fetch('http://localhost:8000/app/users/', {
+    return fetch("".concat(API_ROOT, "/app/users/"), {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -31894,46 +31894,6 @@ var logoutUser = function logoutUser() {
 };
 
 exports.logoutUser = logoutUser;
-
-var createGame = function createGame(roomName) {
-  return function (dispatch) {
-    return fetch('http://localhost:8000/app/game/', {
-      method: 'POST',
-      headers: headers,
-      body: JSON.stringify({
-        room_name: roomName
-      })
-    }).then(function (res) {
-      return res.json();
-    }).then(function (json) {
-      dispatch({
-        type: 'SET_GAME',
-        data: json
-      });
-      return "/game/".concat(json.id);
-    });
-  };
-};
-
-exports.createGame = createGame;
-
-var getGames = function getGames() {
-  return function (dispatch) {
-    return fetch('http://localhost:8000/app/games', {
-      method: 'GET',
-      headers: headers
-    }).then(function (res) {
-      return res.json();
-    }).then(function (json) {
-      dispatch({
-        type: 'SHOW_GAMES',
-        data: json
-      });
-    });
-  };
-};
-
-exports.getGames = getGames;
 var initialState = {};
 
 var authReducer = function authReducer() {
@@ -31964,6 +31924,63 @@ var authReducer = function authReducer() {
 };
 
 exports.authReducer = authReducer;
+},{}],"src/modules/game.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.gameReducer = exports.getGames = exports.createGame = void 0;
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; var ownKeys = Object.keys(source); if (typeof Object.getOwnPropertySymbols === 'function') { ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) { return Object.getOwnPropertyDescriptor(source, sym).enumerable; })); } ownKeys.forEach(function (key) { _defineProperty(target, key, source[key]); }); } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+var headers = {
+  'Content-Type': 'application/json',
+  Authorization: "Token ".concat(localStorage.getItem('token'))
+};
+var API_ROOT = 'http://localhost:8000';
+
+var createGame = function createGame(roomName) {
+  return function (dispatch) {
+    return fetch("".concat(API_ROOT, "/app/game/"), {
+      method: 'POST',
+      headers: headers,
+      body: JSON.stringify({
+        room_name: roomName
+      })
+    }).then(function (res) {
+      return res.json();
+    }).then(function (json) {
+      dispatch({
+        type: 'SET_GAME',
+        data: json
+      });
+      return "/game/".concat(json.id);
+    });
+  };
+};
+
+exports.createGame = createGame;
+
+var getGames = function getGames() {
+  return function (dispatch) {
+    return fetch("".concat(API_ROOT, "/app/games"), {
+      method: 'GET',
+      headers: headers
+    }).then(function (res) {
+      return res.json();
+    }).then(function (json) {
+      dispatch({
+        type: 'SHOW_GAMES',
+        data: json
+      });
+    });
+  };
+};
+
+exports.getGames = getGames;
 var gameInitialState = {
   games: null
 };
@@ -31989,13 +32006,28 @@ var gameReducer = function gameReducer() {
 };
 
 exports.gameReducer = gameReducer;
-},{}],"src/modules/WSClientActions.js":[function(require,module,exports) {
+},{}],"src/modules/websocket.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.wsDisconnected = exports.wsDisconnect = exports.wsConnected = exports.wsConnecting = exports.wsConnect = exports.WS_DISCONNECTED = exports.WS_DISCONNECT = exports.WS_CONNECTED = exports.WS_CONNECTING = exports.WS_CONNECT = void 0;
+exports.default = exports.wsHealth = exports.join = exports.wsDisconnected = exports.wsDisconnect = exports.wsConnected = exports.wsConnecting = exports.wsConnect = exports.WS_HEALTH = exports.WS_DISCONNECTED = exports.WS_DISCONNECT = exports.WS_CONNECTED = exports.WS_CONNECTING = exports.WS_CONNECT = void 0;
+
+function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }
+
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance"); }
+
+function _iterableToArray(iter) { if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter); }
+
+function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; var ownKeys = Object.keys(source); if (typeof Object.getOwnPropertySymbols === 'function') { ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) { return Object.getOwnPropertyDescriptor(source, sym).enumerable; })); } ownKeys.forEach(function (key) { _defineProperty(target, key, source[key]); }); } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+// Set up WebSocket handlers
+// socket.onmessage = onMessage(socket, store);
 var WS_CONNECT = 'WS_CONNECT';
 exports.WS_CONNECT = WS_CONNECT;
 var WS_CONNECTING = 'WS_CONNECTING';
@@ -32006,6 +32038,8 @@ var WS_DISCONNECT = 'WS_DISCONNECT';
 exports.WS_DISCONNECT = WS_DISCONNECT;
 var WS_DISCONNECTED = 'WS_DISCONNECTED';
 exports.WS_DISCONNECTED = WS_DISCONNECTED;
+var WS_HEALTH = 'WS_HEALTH';
+exports.WS_HEALTH = WS_HEALTH;
 
 var wsConnect = function wsConnect(host) {
   return {
@@ -32051,15 +32085,15 @@ var wsDisconnected = function wsDisconnected(host) {
 };
 
 exports.wsDisconnected = wsDisconnected;
-},{}],"src/modules/WSServerActions.js":[function(require,module,exports) {
-"use strict";
 
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.wsHealth = exports.WS_HEALTH = void 0;
-var WS_HEALTH = "WS_HEALTH";
-exports.WS_HEALTH = WS_HEALTH;
+var join = function join(username) {
+  return {
+    type: 'join',
+    username: username
+  };
+};
+
+exports.join = join;
 
 var wsHealth = function wsHealth(status) {
   return {
@@ -32069,42 +32103,6 @@ var wsHealth = function wsHealth(status) {
 };
 
 exports.wsHealth = wsHealth;
-},{}],"src/modules/websocket.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = exports.join = void 0;
-
-var actions = _interopRequireWildcard(require("./WSClientActions"));
-
-var serverActions = _interopRequireWildcard(require("./WSServerActions"));
-
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj.default = obj; return newObj; } }
-
-function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }
-
-function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance"); }
-
-function _iterableToArray(iter) { if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter); }
-
-function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } }
-
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; var ownKeys = Object.keys(source); if (typeof Object.getOwnPropertySymbols === 'function') { ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) { return Object.getOwnPropertyDescriptor(source, sym).enumerable; })); } ownKeys.forEach(function (key) { _defineProperty(target, key, source[key]); }); } return target; }
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
-// Set up WebSocket handlers
-// socket.onmessage = onMessage(socket, store);
-var join = function join(username) {
-  return {
-    type: 'join',
-    username: username
-  };
-};
-
-exports.join = join;
 var socketInitialState = {
   socket: null,
   users: []
@@ -32121,27 +32119,27 @@ var socketReducer = function socketReducer() {
         user: action.username
       });
 
-    case serverActions.WS_HEALTH:
+    case WS_HEALTH:
       return _objectSpread({}, state, {
         status: action.status
       });
 
-    case actions.WS_CONNECT:
+    case WS_CONNECT:
       return _objectSpread({}, state, {
         host: action.host
       });
 
-    case actions.WS_CONNECTING:
+    case WS_CONNECTING:
       return _objectSpread({}, state, {
         host: action.host
       });
 
-    case actions.WS_CONNECTED:
+    case WS_CONNECTED:
       return _objectSpread({}, state, {
         host: action.host
       });
 
-    case actions.WS_DISCONNECTED:
+    case WS_DISCONNECTED:
       return _objectSpread({}, state, {
         host: action.host
       });
@@ -32153,7 +32151,7 @@ var socketReducer = function socketReducer() {
 
 var _default = socketReducer;
 exports.default = _default;
-},{"./WSClientActions":"src/modules/WSClientActions.js","./WSServerActions":"src/modules/WSServerActions.js"}],"src/modules/reducers.js":[function(require,module,exports) {
+},{}],"src/modules/reducers.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -32165,18 +32163,20 @@ var _redux = require("redux");
 
 var _account = require("./account");
 
+var _game = require("./game");
+
 var _websocket = _interopRequireDefault(require("./websocket"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var rootReducer = (0, _redux.combineReducers)({
   auth: _account.authReducer,
-  games: _account.gameReducer,
+  games: _game.gameReducer,
   socket: _websocket.default
 });
 var _default = rootReducer;
 exports.default = _default;
-},{"redux":"node_modules/redux/es/redux.js","./account":"src/modules/account.js","./websocket":"src/modules/websocket.js"}],"src/modules/middleware.js":[function(require,module,exports) {
+},{"redux":"node_modules/redux/es/redux.js","./account":"src/modules/account.js","./game":"src/modules/game.js","./websocket":"src/modules/websocket.js"}],"src/middleware/middleware.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -32184,11 +32184,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = void 0;
 
-var client_actions = _interopRequireWildcard(require("./WSClientActions"));
-
-var server_actions = _interopRequireWildcard(require("./WSServerActions"));
-
-var _websocket = require("./websocket");
+var actions = _interopRequireWildcard(require("../modules/websocket"));
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj.default = obj; return newObj; } }
 
@@ -32202,7 +32198,7 @@ var socketMiddleware = function () {
     return function (event) {
       // Authenticate with Backend... somehow...
       console.log('websocket open');
-      store.dispatch(client_actions.wsConnected(host));
+      store.dispatch(actions.wsConnected(host));
     };
   };
   /**
@@ -32212,7 +32208,7 @@ var socketMiddleware = function () {
 
   var onClose = function onClose(ws, store) {
     return function (event) {
-      store.dispatch(client_actions.wsDisconnected(event.host));
+      store.dispatch(actions.wsDisconnected(event.host));
     };
   };
   /**
@@ -32225,12 +32221,12 @@ var socketMiddleware = function () {
       var payload = JSON.parse(event.data);
 
       switch (payload.type) {
-        case server_actions.WS_HEALTH:
-          store.dispatch(server_actions.wsHealth(status));
+        case actions.WS_HEALTH:
+          store.dispatch(actions.wsHealth(status));
           break;
 
         case 'join':
-          store.dispatch((0, _websocket.join)(payload.username));
+          store.dispatch((0, actions.join)(payload.username));
           break;
 
         default:
@@ -32248,7 +32244,7 @@ var socketMiddleware = function () {
     return function (next) {
       return function (action) {
         switch (action.type) {
-          case client_actions.WS_CONNECT:
+          case actions.WS_CONNECT:
             if (socket !== null) {
               socket.close();
             } // Pass action along
@@ -32256,7 +32252,7 @@ var socketMiddleware = function () {
 
             next(action); // Tell the store that we're busy connecting...
 
-            store.dispatch(client_actions.wsConnecting(action.host)); // Attempt to connect to the remote host...
+            store.dispatch(actions.wsConnecting(action.host)); // Attempt to connect to the remote host...
 
             socket = new WebSocket(action.host); // Set up WebSocket handlers
 
@@ -32265,14 +32261,14 @@ var socketMiddleware = function () {
             socket.onopen = onOpen(socket, store, action.host);
             break;
 
-          case client_actions.WS_DISCONNECT:
+          case actions.WS_DISCONNECT:
             if (socket !== null) {
               socket.close();
             }
 
             socket = null; // Tell the store that we've been disconnected...
 
-            store.dispatch(client_actions.wsDisconnected(action.host));
+            store.dispatch(actions.wsDisconnected(action.host));
             break;
           // case 'join':
           //   socket.send(JSON.stringify({ command: 'join', username: action.username, id: action.id }));
@@ -32289,7 +32285,7 @@ var socketMiddleware = function () {
 
 var _default = socketMiddleware;
 exports.default = _default;
-},{"./WSClientActions":"src/modules/WSClientActions.js","./WSServerActions":"src/modules/WSServerActions.js","./websocket":"src/modules/websocket.js"}],"node_modules/fbjs/lib/shallowEqual.js":[function(require,module,exports) {
+},{"../modules/websocket":"src/modules/websocket.js"}],"node_modules/fbjs/lib/shallowEqual.js":[function(require,module,exports) {
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
  *
@@ -68873,7 +68869,109 @@ Object.keys(_themes).forEach(function (key) {
     }
   });
 });
-},{"./components":"node_modules/grommet/es6/components/index.js","./contexts":"node_modules/grommet/es6/contexts/index.js","./default-props":"node_modules/grommet/es6/default-props.js","./themes":"node_modules/grommet/es6/themes/index.js"}],"src/LoginOrSignup.js":[function(require,module,exports) {
+},{"./components":"node_modules/grommet/es6/components/index.js","./contexts":"node_modules/grommet/es6/contexts/index.js","./default-props":"node_modules/grommet/es6/default-props.js","./themes":"node_modules/grommet/es6/themes/index.js"}],"src/components/LoginOrSignup.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _react = _interopRequireDefault(require("react"));
+
+var _grommet = require("grommet");
+
+var _propTypes = _interopRequireDefault(require("prop-types"));
+
+var _reactRedux = require("react-redux");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+var Signup =
+/*#__PURE__*/
+function (_React$Component) {
+  _inherits(Signup, _React$Component);
+
+  function Signup() {
+    _classCallCheck(this, Signup);
+
+    return _possibleConstructorReturn(this, _getPrototypeOf(Signup).apply(this, arguments));
+  }
+
+  _createClass(Signup, [{
+    key: "render",
+    value: function render() {
+      var _this$props = this.props,
+          handleSubmit = _this$props.handleSubmit,
+          email = _this$props.email,
+          password = _this$props.password,
+          username = _this$props.username,
+          fromLoginOrSignup = _this$props.fromLoginOrSignup,
+          handleChange = _this$props.handleChange;
+      return _react.default.createElement(_react.default.Fragment, null, _react.default.createElement(_grommet.Form, {
+        onSubmit: handleSubmit,
+        color: "blue"
+      }, _react.default.createElement(_grommet.FormField, {
+        label: "email",
+        name: "email",
+        required: true,
+        value: email,
+        onChange: handleChange
+      }), !fromLoginOrSignup && _react.default.createElement(_grommet.FormField, {
+        label: "username",
+        name: "username",
+        required: true,
+        value: username,
+        onChange: handleChange
+      }), _react.default.createElement(_grommet.FormField, {
+        type: "password",
+        label: "password",
+        name: "password",
+        required: true,
+        value: password,
+        onChange: handleChange
+      }), _react.default.createElement(_grommet.Button, {
+        type: "submit",
+        primary: true,
+        label: "Submit"
+      })));
+    }
+  }]);
+
+  return Signup;
+}(_react.default.Component);
+
+Signup.propTypes = {
+  handleSubmit: _propTypes.default.func,
+  fromLoginOrSignup: _propTypes.default.bool
+};
+Signup.defaultProps = {
+  handleSubmit: _propTypes.default.func,
+  fromLoginOrSignup: _propTypes.default.bool
+};
+
+var _default = (0, _reactRedux.connect)()(Signup);
+
+exports.default = _default;
+},{"react":"node_modules/react/index.js","grommet":"node_modules/grommet/es6/index.js","prop-types":"node_modules/prop-types/index.js","react-redux":"node_modules/react-redux/es/index.js"}],"src/LoginOrSignup.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -68889,7 +68987,11 @@ var _reactRouterDom = require("react-router-dom");
 
 var _reactRedux = require("react-redux");
 
+var _propTypes = _interopRequireDefault(require("prop-types"));
+
 var _account = require("./modules/account");
+
+var _LoginOrSignup = _interopRequireDefault(require("./components/LoginOrSignup"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -68935,19 +69037,12 @@ function (_React$Component) {
 
     _defineProperty(_assertThisInitialized(_this), "state", {
       email: '',
-      password: '',
-      username: ''
+      password: ''
     });
 
     _defineProperty(_assertThisInitialized(_this), "handleChange", function (e) {
       var name = e.target.name;
       var value = e.target.value;
-
-      if (name === 'email') {
-        _this.setState({
-          username: value
-        });
-      }
 
       _this.setState(function (prevstate) {
         var newState = _objectSpread({}, prevstate);
@@ -68970,6 +69065,7 @@ function (_React$Component) {
     key: "render",
     value: function render() {
       var _this$state = this.state,
+          username = _this$state.username,
           email = _this$state.email,
           password = _this$state.password;
       return _react.default.createElement(_react.default.Fragment, null, _react.default.createElement(_grommet.Box, {
@@ -69002,37 +69098,33 @@ function (_React$Component) {
         margin: {
           left: 'small'
         }
-      }, "RETURNING USERS"), _react.default.createElement(_grommet.Form, {
-        onSubmit: this.handleSubmit,
-        color: "blue"
-      }, _react.default.createElement(_grommet.FormField, {
-        onChange: this.handleChange,
-        value: email,
-        label: "email",
-        name: "email",
-        required: true
-      }), _react.default.createElement(_grommet.FormField, {
-        onChange: this.handleChange,
-        value: password,
-        name: "password",
-        type: "password",
-        label: "password",
-        required: true
-      }), _react.default.createElement(_grommet.Button, {
-        type: "submit",
-        primary: true,
-        label: "Submit"
-      }))));
+      }, "RETURNING USERS"), _react.default.createElement(_LoginOrSignup.default, {
+        fromLoginOrSignup: true,
+        username: username,
+        password: password,
+        email: email,
+        handleChange: this.handleChange,
+        handleSubmit: this.handleSubmit
+      })));
     }
   }]);
 
   return LoginOrSignup;
 }(_react.default.Component);
 
+LoginOrSignup.propTypes = {
+  history: _propTypes.default.object,
+  dispatch: _propTypes.default.func
+};
+LoginOrSignup.defaultProps = {
+  history: _propTypes.default.object,
+  dispatch: _propTypes.default.func
+};
+
 var _default = (0, _reactRedux.connect)()(LoginOrSignup);
 
 exports.default = _default;
-},{"react":"node_modules/react/index.js","grommet":"node_modules/grommet/es6/index.js","react-router-dom":"node_modules/react-router-dom/esm/react-router-dom.js","react-redux":"node_modules/react-redux/es/index.js","./modules/account":"src/modules/account.js"}],"src/images/Door.png":[function(require,module,exports) {
+},{"react":"node_modules/react/index.js","grommet":"node_modules/grommet/es6/index.js","react-router-dom":"node_modules/react-router-dom/esm/react-router-dom.js","react-redux":"node_modules/react-redux/es/index.js","prop-types":"node_modules/prop-types/index.js","./modules/account":"src/modules/account.js","./components/LoginOrSignup":"src/components/LoginOrSignup.js"}],"src/images/Door.png":[function(require,module,exports) {
 module.exports = "/Door.3c1dccc9.png";
 },{}],"src/Entrance.js":[function(require,module,exports) {
 "use strict";
@@ -69046,23 +69138,89 @@ var _react = _interopRequireDefault(require("react"));
 
 var _grommet = require("grommet");
 
+var _propTypes = _interopRequireDefault(require("prop-types"));
+
+var _reactRedux = require("react-redux");
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var Entrance = function Entrance() {
-  return _react.default.createElement(_react.default.Fragment, null, _react.default.createElement(_grommet.Text, {
-    color: "accent-1",
-    size: "77px"
-  }, "SELFIES 2020"), _react.default.createElement("a", {
-    href: "/loginorsignup"
-  }, _react.default.createElement("img", {
-    alt: "Door",
-    src: require('./images/Door.png')
-  })));
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+var Entrance =
+/*#__PURE__*/
+function (_React$Component) {
+  _inherits(Entrance, _React$Component);
+
+  function Entrance() {
+    _classCallCheck(this, Entrance);
+
+    return _possibleConstructorReturn(this, _getPrototypeOf(Entrance).apply(this, arguments));
+  }
+
+  _createClass(Entrance, [{
+    key: "componentDidMount",
+    value: function componentDidMount() {
+      var _this$props = this.props,
+          loggedIn = _this$props.loggedIn,
+          history = _this$props.history;
+
+      if (loggedIn) {
+        history.push('/games');
+      }
+    }
+  }, {
+    key: "render",
+    value: function render() {
+      return _react.default.createElement(_react.default.Fragment, null, _react.default.createElement(_grommet.Text, {
+        color: "accent-1",
+        size: "77px"
+      }, "SELFIES 2020"), _react.default.createElement("a", {
+        href: "/loginorsignup"
+      }, _react.default.createElement("img", {
+        alt: "Door",
+        src: require('./images/Door.png')
+      })));
+    }
+  }]);
+
+  return Entrance;
+}(_react.default.Component);
+
+Entrance.propTypes = {
+  history: _propTypes.default.object,
+  loggedIn: _propTypes.default.bool
+};
+Entrance.defaultProps = {
+  history: _propTypes.default.object,
+  loggedIn: _propTypes.default.bool
 };
 
-var _default = Entrance;
+var mapStateToProps = function mapStateToProps(state) {
+  return {
+    loggedIn: state.auth.loggedIn
+  };
+};
+
+var _default = (0, _reactRedux.connect)(mapStateToProps)(Entrance);
+
 exports.default = _default;
-},{"react":"node_modules/react/index.js","grommet":"node_modules/grommet/es6/index.js","./images/Door.png":"src/images/Door.png"}],"src/Signup.js":[function(require,module,exports) {
+},{"react":"node_modules/react/index.js","grommet":"node_modules/grommet/es6/index.js","prop-types":"node_modules/prop-types/index.js","react-redux":"node_modules/react-redux/es/index.js","./images/Door.png":"src/images/Door.png"}],"src/Signup.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -69074,9 +69232,13 @@ var _react = _interopRequireDefault(require("react"));
 
 var _grommet = require("grommet");
 
+var _propTypes = _interopRequireDefault(require("prop-types"));
+
 var _reactRedux = require("react-redux");
 
 var _account = require("./modules/account");
+
+var _LoginOrSignup = _interopRequireDefault(require("./components/LoginOrSignup"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -69130,12 +69292,6 @@ function (_React$Component) {
       var name = e.target.name;
       var value = e.target.value;
 
-      if (name === 'email') {
-        _this.setState({
-          username: value
-        });
-      }
-
       _this.setState(function (prevstate) {
         var newState = _objectSpread({}, prevstate);
 
@@ -69145,8 +69301,11 @@ function (_React$Component) {
     });
 
     _defineProperty(_assertThisInitialized(_this), "handleSubmit", function () {
-      _this.props.dispatch((0, _account.handleSignup)(_this.state)).then(function () {
-        return _this.props.history.push('/games');
+      var _this$props = _this.props,
+          dispatch = _this$props.dispatch,
+          history = _this$props.history;
+      dispatch((0, _account.handleSignup)(_this.state)).then(function () {
+        return history.push('/games');
       });
     });
 
@@ -69157,6 +69316,7 @@ function (_React$Component) {
     key: "render",
     value: function render() {
       var _this$state = this.state,
+          username = _this$state.username,
           email = _this$state.email,
           password = _this$state.password;
       return _react.default.createElement(_react.default.Fragment, null, _react.default.createElement(_grommet.Box, {
@@ -69171,37 +69331,33 @@ function (_React$Component) {
         margin: {
           left: 'small'
         }
-      }, "NEW USERS"), _react.default.createElement(_grommet.Form, {
-        onSubmit: this.handleSubmit,
-        color: "blue"
-      }, _react.default.createElement(_grommet.FormField, {
-        label: "email",
-        name: "email",
-        required: true,
-        value: email,
-        onChange: this.handleChange
-      }), _react.default.createElement(_grommet.FormField, {
-        type: "password",
-        label: "password",
-        name: "password",
-        required: true,
-        value: password,
-        onChange: this.handleChange
-      }), _react.default.createElement(_grommet.Button, {
-        type: "submit",
-        primary: true,
-        label: "Submit"
-      }))));
+      }, "NEW USERS"), _react.default.createElement(_LoginOrSignup.default, {
+        username: username,
+        password: password,
+        email: email,
+        handleChange: this.handleChange,
+        fromLoginOrSignup: false,
+        handleSubmit: this.handleSubmit
+      })));
     }
   }]);
 
   return Signup;
 }(_react.default.Component);
 
+Signup.propTypes = {
+  history: _propTypes.default.object,
+  dispatch: _propTypes.default.func
+};
+Signup.defaultProps = {
+  history: _propTypes.default.object,
+  dispatch: _propTypes.default.func
+};
+
 var _default = (0, _reactRedux.connect)()(Signup);
 
 exports.default = _default;
-},{"react":"node_modules/react/index.js","grommet":"node_modules/grommet/es6/index.js","react-redux":"node_modules/react-redux/es/index.js","./modules/account":"src/modules/account.js"}],"node_modules/grommet-icons/es6/utils.js":[function(require,module,exports) {
+},{"react":"node_modules/react/index.js","grommet":"node_modules/grommet/es6/index.js","prop-types":"node_modules/prop-types/index.js","react-redux":"node_modules/react-redux/es/index.js","./modules/account":"src/modules/account.js","./components/LoginOrSignup":"src/components/LoginOrSignup.js"}],"node_modules/grommet-icons/es6/utils.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -101128,7 +101284,7 @@ Object.keys(_themes).forEach(function (key) {
     }
   });
 });
-},{"./default-props":"node_modules/grommet-icons/es6/default-props.js","./icons":"node_modules/grommet-icons/es6/icons/index.js","./themes":"node_modules/grommet-icons/es6/themes/index.js"}],"src/modules/authWrapper.js":[function(require,module,exports) {
+},{"./default-props":"node_modules/grommet-icons/es6/default-props.js","./icons":"node_modules/grommet-icons/es6/icons/index.js","./themes":"node_modules/grommet-icons/es6/themes/index.js"}],"src/hocs/authWrapper.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -101142,7 +101298,7 @@ var _reactRedux = require("react-redux");
 
 var _reactRouterDom = require("react-router-dom");
 
-var _account = require("./account");
+var _account = require("../modules/account");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -101242,7 +101398,7 @@ var withAuth = function withAuth(WrappedComponent) {
 
 var _default = withAuth;
 exports.default = _default;
-},{"react":"node_modules/react/index.js","react-redux":"node_modules/react-redux/es/index.js","react-router-dom":"node_modules/react-router-dom/esm/react-router-dom.js","./account":"src/modules/account.js"}],"src/Games.js":[function(require,module,exports) {
+},{"react":"node_modules/react/index.js","react-redux":"node_modules/react-redux/es/index.js","react-router-dom":"node_modules/react-router-dom/esm/react-router-dom.js","../modules/account":"src/modules/account.js"}],"src/Games.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -101254,13 +101410,17 @@ var _react = _interopRequireDefault(require("react"));
 
 var _grommet = require("grommet");
 
+var _propTypes = _interopRequireDefault(require("prop-types"));
+
 var _grommetIcons = require("grommet-icons");
 
 var _reactRedux = require("react-redux");
 
 var _account = require("./modules/account");
 
-var _authWrapper = _interopRequireDefault(require("./modules/authWrapper"));
+var _game = require("./modules/game");
+
+var _authWrapper = _interopRequireDefault(require("./hocs/authWrapper"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -101311,26 +101471,36 @@ function (_React$Component) {
     _this = _possibleConstructorReturn(this, (_getPrototypeOf2 = _getPrototypeOf(Games)).call.apply(_getPrototypeOf2, [this].concat(args)));
 
     _defineProperty(_assertThisInitialized(_this), "state", {
-      roomName: '',
-      showTextInput: ''
+      roomName: ''
     });
 
     _defineProperty(_assertThisInitialized(_this), "onClick", function () {
-      _this.props.dispatch((0, _account.createGame)(_this.state.roomName)).then(function (data) {
-        _this.props.history.push(data);
+      var _this$props = _this.props,
+          dispatch = _this$props.dispatch,
+          history = _this$props.history;
+      var roomName = _this.state.roomName;
+
+      if (roomName.length === 0) {
+        return alert('You must include a room name');
+      }
+
+      return dispatch((0, _game.createGame)(roomName)).then(function (data) {
+        history.push(data);
       });
     });
 
     _defineProperty(_assertThisInitialized(_this), "onJoin", function (e) {
       e.preventDefault();
-
-      _this.props.history.push("/game/".concat(e.target.value));
+      var history = _this.props.history;
+      history.push("/game/".concat(e.target.value));
     });
 
     _defineProperty(_assertThisInitialized(_this), "onLogout", function () {
-      _this.props.dispatch((0, _account.logoutUser)());
-
-      _this.props.history.push('/loginorsignup');
+      var _this$props2 = _this.props,
+          dispatch = _this$props2.dispatch,
+          history = _this$props2.history;
+      dispatch((0, _account.logoutUser)());
+      history.push('/loginorsignup');
     });
 
     return _this;
@@ -101339,7 +101509,8 @@ function (_React$Component) {
   _createClass(Games, [{
     key: "componentDidMount",
     value: function componentDidMount() {
-      return this.props.dispatch((0, _account.getGames)());
+      var dispatch = this.props.dispatch;
+      return dispatch((0, _game.getGames)());
     }
   }, {
     key: "render",
@@ -101368,7 +101539,11 @@ function (_React$Component) {
         width: "600px",
         pad: "medium",
         elevation: "medium",
-        background: "accent-2"
+        background: "accent-2",
+        overflow: {
+          horizontal: 'hidden',
+          vertical: 'scroll'
+        }
       }, games.games && games.games.map(function (game) {
         return _react.default.createElement(_grommet.Grid, {
           key: game.id,
@@ -101381,7 +101556,8 @@ function (_React$Component) {
           onClick: _this2.onJoin,
           value: game.id,
           margin: {
-            right: '5px'
+            right: '5px',
+            bottom: '5px'
           },
           label: "join"
         }), _react.default.createElement(_grommet.Text, null, game.room_name)));
@@ -101416,10 +101592,21 @@ var s2p = function s2p(state) {
   };
 };
 
+Games.propTypes = {
+  history: _propTypes.default.object,
+  dispatch: _propTypes.default.func,
+  games: _propTypes.default.object
+};
+Games.defaultProps = {
+  history: _propTypes.default.object,
+  dispatch: _propTypes.default.func,
+  games: _propTypes.default.null
+};
+
 var _default = (0, _authWrapper.default)((0, _reactRedux.connect)(s2p)(Games));
 
 exports.default = _default;
-},{"react":"node_modules/react/index.js","grommet":"node_modules/grommet/es6/index.js","grommet-icons":"node_modules/grommet-icons/es6/index.js","react-redux":"node_modules/react-redux/es/index.js","./modules/account":"src/modules/account.js","./modules/authWrapper":"src/modules/authWrapper.js"}],"src/WebSocketConnection.js":[function(require,module,exports) {
+},{"react":"node_modules/react/index.js","grommet":"node_modules/grommet/es6/index.js","prop-types":"node_modules/prop-types/index.js","grommet-icons":"node_modules/grommet-icons/es6/index.js","react-redux":"node_modules/react-redux/es/index.js","./modules/account":"src/modules/account.js","./modules/game":"src/modules/game.js","./hocs/authWrapper":"src/hocs/authWrapper.js"}],"src/Game.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -101427,103 +101614,19 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = void 0;
 
-var _react = _interopRequireWildcard(require("react"));
-
-var _reactRedux = require("react-redux");
-
-var _WSClientActions = require("./modules/WSClientActions");
-
-var _WSServerActions = require("./modules/WSServerActions");
-
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj.default = obj; return newObj; } }
-
-function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
-
-function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
-
-function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
-
-function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
-
-function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
-
-var WebSocketConnection =
-/*#__PURE__*/
-function (_Component) {
-  _inherits(WebSocketConnection, _Component);
-
-  function WebSocketConnection(props) {
-    var _this;
-
-    _classCallCheck(this, WebSocketConnection);
-
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(WebSocketConnection).call(this, props));
-    _this.autoconnect = !!props.autoconnect;
-    return _this;
-  }
-
-  _createClass(WebSocketConnection, [{
-    key: "componentDidMount",
-    value: function componentDidMount() {
-      if (this.autoconnect) {
-        this.props.wsConnect(this.props.host);
-      }
-    }
-  }, {
-    key: "render",
-    value: function render() {
-      return _react.default.createElement("div", null, this.props.children);
-    }
-  }]);
-
-  return WebSocketConnection;
-}(_react.Component);
-
-var mapStateToProps = function mapStateToProps(state) {
-  return {
-    wsEvents: state.socket
-  };
-};
-
-var mapDispatchToProps = {
-  wsConnect: _WSClientActions.wsConnect,
-  wsHealth: _WSServerActions.wsHealth
-};
-
-var _default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(WebSocketConnection);
-
-exports.default = _default;
-},{"react":"node_modules/react/index.js","react-redux":"node_modules/react-redux/es/index.js","./modules/WSClientActions":"src/modules/WSClientActions.js","./modules/WSServerActions":"src/modules/WSServerActions.js"}],"src/Game.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-
-var _react = _interopRequireWildcard(require("react"));
+var _react = _interopRequireDefault(require("react"));
 
 var _grommet = require("grommet");
 
-var _reactRedux = require("react-redux");
+var _propTypes = _interopRequireDefault(require("prop-types"));
 
-var _WebSocketConnection = _interopRequireDefault(require("./WebSocketConnection"));
+var _reactRedux = require("react-redux");
 
 var _websocket = require("./modules/websocket");
 
-var _WSClientActions = require("./modules/WSClientActions");
+var _authWrapper = _interopRequireDefault(require("./hocs/authWrapper"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj.default = obj; return newObj; } }
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
@@ -101566,12 +101669,9 @@ function (_React$Component) {
     _defineProperty(_assertThisInitialized(_this), "connectAndJoin", function () {
       var _this$props = _this.props,
           id = _this$props.id,
-          dispatch = _this$props.dispatch,
-          username = _this$props.username;
+          dispatch = _this$props.dispatch;
       var host = "ws://127.0.0.1:8000/ws/game/".concat(id, "?token=").concat(localStorage.getItem('token'));
-      dispatch((0, _WSClientActions.wsConnect)(host)); // setTimeout(() => {
-      //   dispatch(join(username, id));
-      // }, 3000);
+      dispatch((0, _websocket.wsConnect)(host));
     });
 
     return _this;
@@ -101580,19 +101680,20 @@ function (_React$Component) {
   _createClass(Game, [{
     key: "componentDidMount",
     value: function componentDidMount() {
-      if (this.props.id) {
+      var id = this.props.id;
+
+      if (id) {
         this.connectAndJoin();
       }
     }
   }, {
-    key: "componentWillReceiveProps",
-    value: function componentWillReceiveProps(nextProps) {}
-  }, {
     key: "render",
     value: function render() {
-      console.log(this.props.users);
+      var _this$props2 = this.props,
+          id = _this$props2.id,
+          joinedUser = _this$props2.joinedUser;
 
-      if (this.props.id) {
+      if (id) {
         return _react.default.createElement(_react.default.Fragment, null, _react.default.createElement(_grommet.Box, {
           round: "xsmall",
           height: "medium",
@@ -101601,13 +101702,26 @@ function (_React$Component) {
           pad: "medium",
           elevation: "medium",
           background: "accent-2"
-        }, this.props.joinedUser));
+        }, joinedUser));
       }
+
+      return "".concat(_react.default.createElement(_grommet.Text, null, " LOADING "));
     }
   }]);
 
   return Game;
 }(_react.default.Component);
+
+Game.propTypes = {
+  id: _propTypes.default.string,
+  dispatch: _propTypes.default.func,
+  joinedUser: _propTypes.default.string
+};
+Game.defaultProps = {
+  id: _propTypes.default.string,
+  dispatch: _propTypes.default.func,
+  joinedUser: _propTypes.default.string
+};
 
 var s2p = function s2p(state, ownProps) {
   return {
@@ -101619,10 +101733,10 @@ var s2p = function s2p(state, ownProps) {
   };
 };
 
-var _default = (0, _reactRedux.connect)(s2p)(Game);
+var _default = (0, _authWrapper.default)((0, _reactRedux.connect)(s2p)(Game));
 
 exports.default = _default;
-},{"react":"node_modules/react/index.js","grommet":"node_modules/grommet/es6/index.js","react-redux":"node_modules/react-redux/es/index.js","./WebSocketConnection":"src/WebSocketConnection.js","./modules/websocket":"src/modules/websocket.js","./modules/WSClientActions":"src/modules/WSClientActions.js"}],"src/App.js":[function(require,module,exports) {
+},{"react":"node_modules/react/index.js","grommet":"node_modules/grommet/es6/index.js","prop-types":"node_modules/prop-types/index.js","react-redux":"node_modules/react-redux/es/index.js","./modules/websocket":"src/modules/websocket.js","./hocs/authWrapper":"src/hocs/authWrapper.js"}],"src/App.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -101650,24 +101764,6 @@ var _Game = _interopRequireDefault(require("./Game"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
-
-function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
-
-function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
-
-function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
-
-function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
-
 var theme = {
   global: {
     font: {
@@ -101676,58 +101772,41 @@ var theme = {
   }
 };
 
-var App =
-/*#__PURE__*/
-function (_React$Component) {
-  _inherits(App, _React$Component);
-
-  function App() {
-    _classCallCheck(this, App);
-
-    return _possibleConstructorReturn(this, _getPrototypeOf(App).apply(this, arguments));
-  }
-
-  _createClass(App, [{
-    key: "render",
-    value: function render() {
-      return _react.default.createElement(_grommet.Grommet, {
-        theme: theme
-      }, _react.default.createElement(_grommet.Box, {
-        justify: "center",
-        height: "100%",
-        align: "center",
-        padding: {
-          top: '20px'
-        },
-        margin: {
-          horizontal: 'auto'
-        },
-        round: "xsmall"
-      }, _react.default.createElement(_reactRouterDom.Switch, null, _react.default.createElement(_reactRouterDom.Route, {
-        exact: true,
-        path: "/",
-        component: _Entrance.default
-      }), _react.default.createElement(_reactRouterDom.Route, {
-        exact: true,
-        path: "/games",
-        component: _Games.default
-      }), _react.default.createElement(_reactRouterDom.Route, {
-        path: "/game/:id",
-        component: _Game.default
-      }), _react.default.createElement(_reactRouterDom.Route, {
-        exact: true,
-        path: "/loginorsignup",
-        component: _LoginOrSignup.default
-      }), _react.default.createElement(_reactRouterDom.Route, {
-        exact: true,
-        path: "/signup",
-        component: _Signup.default
-      }))));
-    }
-  }]);
-
-  return App;
-}(_react.default.Component);
+var App = function App() {
+  return _react.default.createElement(_grommet.Grommet, {
+    theme: theme
+  }, _react.default.createElement(_grommet.Box, {
+    justify: "center",
+    height: "100%",
+    align: "center",
+    padding: {
+      top: '20px'
+    },
+    margin: {
+      horizontal: 'auto'
+    },
+    round: "xsmall"
+  }, _react.default.createElement(_reactRouterDom.Switch, null, _react.default.createElement(_reactRouterDom.Route, {
+    exact: true,
+    path: "/",
+    component: _Entrance.default
+  }), _react.default.createElement(_reactRouterDom.Route, {
+    exact: true,
+    path: "/games",
+    component: _Games.default
+  }), _react.default.createElement(_reactRouterDom.Route, {
+    path: "/game/:id",
+    component: _Game.default
+  }), _react.default.createElement(_reactRouterDom.Route, {
+    exact: true,
+    path: "/loginorsignup",
+    component: _LoginOrSignup.default
+  }), _react.default.createElement(_reactRouterDom.Route, {
+    exact: true,
+    path: "/signup",
+    component: _Signup.default
+  }))));
+};
 
 var _default = (0, _reactRedux.connect)()(App);
 
@@ -101749,15 +101828,14 @@ var _reduxThunk = _interopRequireDefault(require("redux-thunk"));
 
 var _reducers = _interopRequireDefault(require("./src/modules/reducers"));
 
-var _middleware = _interopRequireDefault(require("./src/modules/middleware"));
+var _middleware = _interopRequireDefault(require("./src/middleware/middleware"));
 
 var _App = _interopRequireDefault(require("./src/App"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var middleware = [_reduxThunk.default, _middleware.default];
-var store = (0, _redux.createStore)(_reducers.default, (0, _redux.compose)(_redux.applyMiddleware.apply(void 0, middleware) // window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__(),
-));
+var store = (0, _redux.createStore)(_reducers.default, (0, _redux.compose)(_redux.applyMiddleware.apply(void 0, middleware), window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()));
 
 var Root = function Root(_ref) {
   var store = _ref.store;
@@ -101772,7 +101850,7 @@ var Root = function Root(_ref) {
 _reactDom.default.render(_react.default.createElement(Root, {
   store: store
 }), document.getElementById('app'));
-},{"react":"node_modules/react/index.js","react-dom":"node_modules/react-dom/index.js","react-router-dom":"node_modules/react-router-dom/esm/react-router-dom.js","redux":"node_modules/redux/es/redux.js","react-redux":"node_modules/react-redux/es/index.js","redux-thunk":"node_modules/redux-thunk/es/index.js","./src/modules/reducers":"src/modules/reducers.js","./src/modules/middleware":"src/modules/middleware.js","./src/App":"src/App.js"}],"node_modules/parcel/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"react":"node_modules/react/index.js","react-dom":"node_modules/react-dom/index.js","react-router-dom":"node_modules/react-router-dom/esm/react-router-dom.js","redux":"node_modules/redux/es/redux.js","react-redux":"node_modules/react-redux/es/index.js","redux-thunk":"node_modules/redux-thunk/es/index.js","./src/modules/reducers":"src/modules/reducers.js","./src/middleware/middleware":"src/middleware/middleware.js","./src/App":"src/App.js"}],"node_modules/parcel/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -101800,7 +101878,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "64748" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "51697" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

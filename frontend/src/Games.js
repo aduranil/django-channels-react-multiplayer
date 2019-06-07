@@ -2,10 +2,12 @@ import React from 'react';
 import {
   Button, TextInput, Grid, Box, Text, Grommet,
 } from 'grommet';
+import PropTypes from 'prop-types';
 import { Gamepad } from 'grommet-icons';
 import { connect } from 'react-redux';
-import { createGame, logoutUser, getGames } from './modules/account';
-import withAuth from './modules/authWrapper';
+import { logoutUser } from './modules/account';
+import { createGame, getGames } from './modules/game';
+import withAuth from './hocs/authWrapper';
 
 const theme = {
   button: {
@@ -18,28 +20,35 @@ const theme = {
 class Games extends React.Component {
   state = {
     roomName: '',
-    showTextInput: '',
   };
 
+  componentDidMount() {
+    const { dispatch } = this.props;
+    return dispatch(getGames());
+  }
+
   onClick = () => {
-    this.props.dispatch(createGame(this.state.roomName)).then((data) => {
-      this.props.history.push(data);
+    const { dispatch, history } = this.props;
+    const { roomName } = this.state;
+    if (roomName.length === 0) {
+      return alert('You must include a room name');
+    }
+    return dispatch(createGame(roomName)).then((data) => {
+      history.push(data);
     });
   };
 
   onJoin = (e) => {
     e.preventDefault();
-    this.props.history.push(`/game/${e.target.value}`);
+    const { history } = this.props;
+    history.push(`/game/${e.target.value}`);
   };
 
   onLogout = () => {
-    this.props.dispatch(logoutUser());
-    this.props.history.push('/loginorsignup');
+    const { dispatch, history } = this.props;
+    dispatch(logoutUser());
+    history.push('/loginorsignup');
   };
-
-  componentDidMount() {
-    return this.props.dispatch(getGames());
-  }
 
   render() {
     const { roomName } = this.state;
@@ -60,6 +69,7 @@ class Games extends React.Component {
           pad="medium"
           elevation="medium"
           background="accent-2"
+          overflow={{ horizontal: 'hidden', vertical: 'scroll' }}
         >
           {games.games
             && games.games.map(game => (
@@ -68,7 +78,7 @@ class Games extends React.Component {
                   <Button
                     onClick={this.onJoin}
                     value={game.id}
-                    margin={{ right: '5px' }}
+                    margin={{ right: '5px', bottom: '5px' }}
                     label="join"
                   />
                   <Text>{game.room_name}</Text>
@@ -92,4 +102,17 @@ class Games extends React.Component {
 const s2p = state => ({
   games: state.games,
 });
+
+Games.propTypes = {
+  history: PropTypes.object,
+  dispatch: PropTypes.func,
+  games: PropTypes.object,
+};
+
+Games.defaultProps = {
+  history: PropTypes.object,
+  dispatch: PropTypes.func,
+  games: PropTypes.null,
+};
+
 export default withAuth(connect(s2p)(Games));
