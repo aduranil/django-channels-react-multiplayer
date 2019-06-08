@@ -34005,7 +34005,7 @@ var index = (0, _memoize.default)(function (prop) {
 );
 var _default = index;
 exports.default = _default;
-},{"@emotion/memoize":"node_modules/@emotion/memoize/dist/memoize.browser.esm.js"}],"node_modules/process/browser.js":[function(require,module,exports) {
+},{"@emotion/memoize":"node_modules/@emotion/memoize/dist/memoize.browser.esm.js"}],"../../../.nvm/versions/node/v8.14.0/lib/node_modules/parcel/node_modules/process/browser.js":[function(require,module,exports) {
 
 // shim for using process in browser
 var process = module.exports = {}; // cached from whatever global is present so that test runners that stub it
@@ -36639,7 +36639,7 @@ if ("development" !== 'production' && "development" !== 'test' && typeof window 
 
 var _default = styled;
 exports.default = _default;
-},{"stylis/stylis.min":"node_modules/stylis/stylis.min.js","stylis-rule-sheet":"node_modules/stylis-rule-sheet/index.js","react":"node_modules/react/index.js","@emotion/unitless":"node_modules/@emotion/unitless/dist/unitless.browser.esm.js","react-is":"node_modules/react-is/index.js","memoize-one":"node_modules/memoize-one/dist/memoize-one.esm.js","prop-types":"node_modules/prop-types/index.js","react-dom":"node_modules/react-dom/index.js","@emotion/is-prop-valid":"node_modules/@emotion/is-prop-valid/dist/is-prop-valid.browser.esm.js","process":"node_modules/process/browser.js"}],"node_modules/grommet/es6/contexts/AnnounceContext/AnnounceContext.js":[function(require,module,exports) {
+},{"stylis/stylis.min":"node_modules/stylis/stylis.min.js","stylis-rule-sheet":"node_modules/stylis-rule-sheet/index.js","react":"node_modules/react/index.js","@emotion/unitless":"node_modules/@emotion/unitless/dist/unitless.browser.esm.js","react-is":"node_modules/react-is/index.js","memoize-one":"node_modules/memoize-one/dist/memoize-one.esm.js","prop-types":"node_modules/prop-types/index.js","react-dom":"node_modules/react-dom/index.js","@emotion/is-prop-valid":"node_modules/@emotion/is-prop-valid/dist/is-prop-valid.browser.esm.js","process":"../../../.nvm/versions/node/v8.14.0/lib/node_modules/parcel/node_modules/process/browser.js"}],"node_modules/grommet/es6/contexts/AnnounceContext/AnnounceContext.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -101850,7 +101850,7 @@ var Root = function Root(_ref) {
 _reactDom.default.render(_react.default.createElement(Root, {
   store: store
 }), document.getElementById('app'));
-},{"react":"node_modules/react/index.js","react-dom":"node_modules/react-dom/index.js","react-router-dom":"node_modules/react-router-dom/esm/react-router-dom.js","redux":"node_modules/redux/es/redux.js","react-redux":"node_modules/react-redux/es/index.js","redux-thunk":"node_modules/redux-thunk/es/index.js","./src/modules/reducers":"src/modules/reducers.js","./src/middleware/middleware":"src/middleware/middleware.js","./src/App":"src/App.js"}],"node_modules/parcel/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"react":"node_modules/react/index.js","react-dom":"node_modules/react-dom/index.js","react-router-dom":"node_modules/react-router-dom/esm/react-router-dom.js","redux":"node_modules/redux/es/redux.js","react-redux":"node_modules/react-redux/es/index.js","redux-thunk":"node_modules/redux-thunk/es/index.js","./src/modules/reducers":"src/modules/reducers.js","./src/middleware/middleware":"src/middleware/middleware.js","./src/App":"src/App.js"}],"../../../.nvm/versions/node/v8.14.0/lib/node_modules/parcel/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -101878,7 +101878,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "51697" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "53675" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
@@ -102053,5 +102053,5 @@ function hmrAcceptRun(bundle, id) {
     return true;
   }
 }
-},{}]},{},["node_modules/parcel/src/builtins/hmr-runtime.js","index.js"], null)
+},{}]},{},["../../../.nvm/versions/node/v8.14.0/lib/node_modules/parcel/src/builtins/hmr-runtime.js","index.js"], null)
 //# sourceMappingURL=/frontend.e31bb0bc.js.map
