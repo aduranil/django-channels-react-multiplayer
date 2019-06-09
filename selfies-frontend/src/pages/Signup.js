@@ -2,8 +2,8 @@ import React from 'react';
 import { Text, Box } from 'grommet';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { handleSignup } from './modules/account';
-import Login from './components/LoginOrSignup';
+import { handleSignup } from '../modules/account';
+import Login from '../components/LoginOrSignup';
 
 class Signup extends React.Component {
   state = {
@@ -22,9 +22,10 @@ class Signup extends React.Component {
     });
   };
 
-  handleSubmit = () => {
+  handleSubmit = async () => {
     const { dispatch, history } = this.props;
-    dispatch(handleSignup(this.state)).then(() => history.push('/games'));
+    await dispatch(handleSignup(this.state));
+    history.push('/games');
   };
 
   render() {

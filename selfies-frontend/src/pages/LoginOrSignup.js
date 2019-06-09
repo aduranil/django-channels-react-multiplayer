@@ -3,8 +3,8 @@ import { Box, Text } from 'grommet';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { handleLogin } from './modules/account';
-import Login from './components/LoginOrSignup';
+import { handleLogin } from '../modules/account';
+import Login from '../components/LoginOrSignup';
 
 class LoginOrSignup extends React.Component {
   state = {
@@ -22,8 +22,10 @@ class LoginOrSignup extends React.Component {
     });
   };
 
-  handleSubmit = () => {
-    this.props.dispatch(handleLogin(this.state)).then(() => this.props.history.push('/games'));
+  handleSubmit = async () => {
+    const { dispatch, history } = this.props;
+    await dispatch(handleLogin(this.state));
+    history.push('/games');
   };
 
   render() {

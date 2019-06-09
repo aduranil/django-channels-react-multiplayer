@@ -63,10 +63,12 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.BasicAuthentication',
     ),
+    # Authentication backends
+
 }
 
 CORS_ORIGIN_WHITELIST = (
-    'localhost:1234'
+    'localhost:1234', 'localhost:3000'
 )
 
 ROOT_URLCONF = 'selfies.urls'
