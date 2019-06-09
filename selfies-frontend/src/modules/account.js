@@ -5,19 +5,25 @@ const headers = {
 
 const API_ROOT = 'http://localhost:8000';
 
-export const getCurrentUser = () => dispatch => fetch(`${API_ROOT}/app/user/`, {
-  method: 'GET',
-  headers,
-})
-  .then(res => res.json())
-  .then(json => dispatch({ type: 'SET_CURRENT_USER', data: json }));
-
 function status(res) {
   if (!res.ok) {
     throw new Error(res.statusText);
   }
   return res;
 }
+
+export const getCurrentUser = () => dispatch => fetch(`${API_ROOT}/app/user/`, {
+  method: 'GET',
+  headers,
+})
+  .then(status)
+  .then(res => res.json())
+  .then(json => dispatch({ type: 'SET_CURRENT_USER', data: json }))
+  .catch((e) => {
+    dispatch({ type: 'SET_ERROR', data: e.message });
+  });
+
+export const removeError = () => ({ type: 'REMOVE_ERROR' });
 
 export const handleLogin = data => dispatch => fetch(`${API_ROOT}/app/login/`, {
   method: 'POST',
@@ -31,11 +37,9 @@ export const handleLogin = data => dispatch => fetch(`${API_ROOT}/app/login/`, {
   .then(res => res.json())
   .then((json) => {
     localStorage.setItem('token', json.token);
-    return dispatch({ type: 'SET_CURRENT_USER', data: json });
+    dispatch({ type: 'SET_CURRENT_USER', data: json });
   })
-  .catch((e) => {
-    dispatch({ type: 'SET_ERROR', data: e.message });
-  });
+  .catch(e => dispatch({ type: 'SET_ERROR', data: e.message }));
 
 export const handleSignup = jsonData => dispatch => fetch(`${API_ROOT}/app/users/`, {
   method: 'POST',
@@ -45,11 +49,13 @@ export const handleSignup = jsonData => dispatch => fetch(`${API_ROOT}/app/users
   },
   body: JSON.stringify(jsonData),
 })
+  .then(status)
   .then(res => res.json())
   .then((json) => {
     localStorage.setItem('token', json.token);
-    return dispatch({ type: 'SET_CURRENT_USER', data: json });
-  });
+    dispatch({ type: 'SET_CURRENT_USER', data: json });
+  })
+  .catch(e => dispatch({ type: 'SET_ERROR', data: e.message }));
 
 export const logoutUser = () => (dispatch) => {
   localStorage.removeItem('token');
@@ -71,6 +77,8 @@ export const authReducer = (state = { ...initialState }, action) => {
       return { ...state, loggedIn: false, username: null };
     case 'SET_ERROR':
       return { ...state, errorMessage: action.data };
+    case 'REMOVE_ERROR':
+      return { ...state, errorMessage: null };
     default:
       return state;
   }
