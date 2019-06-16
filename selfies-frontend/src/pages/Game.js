@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { wsConnect, leaveGame } from '../modules/websocket';
 import { getGame } from '../modules/game';
-import { getMessages, newMessage } from '../modules/message';
+import { newMessage } from '../modules/message';
 import withAuth from '../hocs/authWrapper';
 
 const theme = {
@@ -34,7 +34,6 @@ class Game extends React.Component {
     const host = `ws://127.0.0.1:8000/ws/game/${id}?token=${localStorage.getItem('token')}`;
     await dispatch(wsConnect(host));
     dispatch(getGame(id));
-    dispatch(getMessages(id));
   };
 
   leaveGame = () => {
@@ -52,6 +51,7 @@ class Game extends React.Component {
     const { dispatch } = this.props;
     const { message } = this.state;
     dispatch(newMessage(message));
+    this.setState({ message: '' });
   };
 
   render() {
@@ -75,7 +75,7 @@ class Game extends React.Component {
                   <Grommet theme={theme}>
                     <Text>
                       {' '}
-                      {message.message_type === 'action' ? null : `${message.user.username}:`}
+                      {message.message_type === 'action' ? null : `${message.user.username}: `}
                       {message.message}
                     </Text>
                   </Grommet>
@@ -101,15 +101,21 @@ class Game extends React.Component {
 Game.propTypes = {
   id: PropTypes.string,
   dispatch: PropTypes.func,
-  joinedUser: PropTypes.string,
   history: PropTypes.func,
+  messages: PropTypes.shape({
+    id: PropTypes.number,
+    message: PropTypes.string,
+  }),
 };
 
 Game.defaultProps = {
   id: PropTypes.string,
   dispatch: PropTypes.func,
-  joinedUser: PropTypes.null,
   history: PropTypes.func,
+  messages: PropTypes.shape({
+    id: PropTypes.number,
+    message: PropTypes.string,
+  }),
 };
 
 const s2p = (state, ownProps) => ({
@@ -117,7 +123,5 @@ const s2p = (state, ownProps) => ({
   messages: state.messages,
   username: state.auth.username,
   socket: state.socket.host,
-  joinedUser: state.socket.user,
-  users: state.socket.users,
 });
 export default withAuth(connect(s2p)(Game));

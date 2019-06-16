@@ -106,13 +106,23 @@ const s2p = state => ({
 Games.propTypes = {
   history: PropTypes.object,
   dispatch: PropTypes.func,
-  games: PropTypes.object,
+  games: PropTypes.shape({
+    id: PropTypes.number,
+    game_status: PropTypes.string,
+    room_name: PropTypes.string,
+    users: PropTypes.shape({
+      id: PropTypes.number,
+      username: PropTypes.string,
+    }),
+  }),
+  loggedIn: PropTypes.bool,
 };
 
 Games.defaultProps = {
   history: PropTypes.object,
   dispatch: PropTypes.func,
   games: PropTypes.null,
+  loggedIn: PropTypes.bool,
 };
 
 export default withAuth(connect(s2p)(Games));

@@ -1,6 +1,6 @@
 import * as actions from '../modules/websocket';
 import { updateGamePlayers } from '../modules/game';
-import { newMessage, setMessages } from '../modules/message';
+import { setMessages } from '../modules/message';
 
 const socketMiddleware = (function () {
   let socket = null;
@@ -30,6 +30,7 @@ const socketMiddleware = (function () {
     switch (payload.type) {
       case 'update_game_players':
         store.dispatch(updateGamePlayers(payload.players));
+        store.dispatch(setMessages(payload.messages));
         break;
       case 'get_messages':
         store.dispatch(setMessages(payload.messages));
