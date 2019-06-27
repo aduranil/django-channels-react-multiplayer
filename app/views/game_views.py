@@ -4,7 +4,7 @@ from rest_framework import permissions
 from rest_framework.authentication import TokenAuthentication
 from django.http import HttpResponse
 
-from app.models import Game
+from app.models import Game, GamePlayer
 
 
 class GameCreateView(APIView):
@@ -14,7 +14,7 @@ class GameCreateView(APIView):
     def post(self, request):
         user = request.user
         game = Game.objects.create(room_name=request.data['room_name'])
-        game.users.add(user)
+        GamePlayer.objects.create(user=user, game=game)
         return HttpResponse(json.dumps(game.as_json()), content_type="application/json")
 
 
