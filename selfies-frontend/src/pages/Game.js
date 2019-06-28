@@ -4,8 +4,8 @@ import {
 } from 'grommet';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { wsConnect, leaveGame } from '../modules/websocket';
-import { getGame, startRound } from '../modules/game';
+import { wsConnect } from '../modules/websocket';
+import { getGame, startRound, leaveGame } from '../modules/game';
 import { newMessage } from '../modules/message';
 import withAuth from '../hocs/authWrapper';
 import { Phone } from '../images/iPhone';
@@ -84,13 +84,13 @@ class Game extends React.Component {
             overflow={{ horizontal: 'hidden', vertical: 'scroll' }}
           >
             {Array.isArray(messages.messages)
-              && messages.messages.map(message => (
-                <Grid key={message.id} columns={{ count: 2 }}>
+              && messages.messages.map(msg => (
+                <Grid key={msg.id} columns={{ count: 2 }}>
                   <Grommet theme={theme}>
                     <Text>
                       {' '}
-                      {message.message_type === 'action' ? null : `${message.user.username}: `}
-                      {message.message}
+                      {msg.message_type === 'action' ? null : `${msg.user.username}: `}
+                      {msg.message}
                     </Text>
                   </Grommet>
                 </Grid>
@@ -110,15 +110,7 @@ class Game extends React.Component {
             elevation="medium"
             background="accent-2"
           >
-            <Grid
-              columns={{
-                count: 6,
-              }}
-              gap="small"
-              columns="100px"
-              rows="medium"
-              justify="center"
-            >
+            <Grid gap="small" columns="100px" rows="medium" justify="center">
               {Array.isArray(players)
                 && players.map(player => (
                   <Box key={player.id}>
@@ -153,29 +145,29 @@ class Game extends React.Component {
 Game.propTypes = {
   id: PropTypes.string,
   dispatch: PropTypes.func,
-  history: PropTypes.func,
+  history: PropTypes.shape({
+    push: PropTypes.func.isRequired,
+  }).isRequired,
   messages: PropTypes.shape({
     id: PropTypes.number,
     message: PropTypes.string,
   }),
-  players: PropTypes.shape({
-    id: PropTypes.number,
-    username: PropTypes.string,
-  }),
+  players: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.number,
+      username: PropTypes.string,
+    }),
+  ),
 };
 
 Game.defaultProps = {
   id: PropTypes.string,
   dispatch: PropTypes.func,
-  history: PropTypes.func,
   messages: PropTypes.shape({
     id: PropTypes.number,
     message: PropTypes.string,
   }),
-  players: PropTypes.shape({
-    id: PropTypes.number,
-    username: PropTypes.string,
-  }),
+  players: PropTypes.Array,
 };
 
 const s2p = (state, ownProps) => ({

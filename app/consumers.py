@@ -1,17 +1,19 @@
 """ All of the websocket actions for the game and chat functionalities"""
 import json
-from asgiref.sync import async_to_sync
 
+from asgiref.sync import async_to_sync
 from channels.generic.websocket import WebsocketConsumer
+
 from .models import Game, Message, GamePlayer
 
 
 class GameConsumer(WebsocketConsumer):
     """Websocket for inside of the game"""
     def connect(self):
-        self.id = self.scope['url_route']['kwargs']['id']
+        game_id = self.scope['url_route']['kwargs']['id']
+        self.id = game_id
         self.room_group_name = 'game_%s' % self.id
-        self.game = Game.objects.get(id=self.scope['url_route']['kwargs']['id'])
+        self.game = Game.objects.get(id=game_id)
         async_to_sync(self.channel_layer.group_add)(
             self.room_group_name,
             self.channel_name,
@@ -34,12 +36,19 @@ class GameConsumer(WebsocketConsumer):
         if not hasattr(user, 'gameplayer'):
             game_player = GamePlayer.objects.create(user=user, game=game)
             message = '{} joined'.format(user.username)
-            Message.objects.create(message=message, game=game, game_player=game_player, message_type="action")
+            Message.objects.create(
+                message=message,
+                game=game,
+                game_player=game_player,
+                message_type="action"
+            )
         async_to_sync(self.channel_layer.group_send)(
             self.room_group_name,
             {
                 'type': 'update_game_players',
-                'players': [{'id': u.user.id, 'username': u.user.username, 'followers': u.followers, 'stories': u.stories, 'started': u.started} for u in game.game_players.all()],
+                'players': [
+                    {'id': u.user.id, 'username': u.user.username, 'followers': u.followers, 'stories': u.stories,
+                     'started': u.started} for u in game.game_players.all()],
                 'messages': [m.as_json() for m in messages]
             }
         )
@@ -60,7 +69,9 @@ class GameConsumer(WebsocketConsumer):
                 self.room_group_name,
                 {
                     'type': 'update_game_players',
-                    'players': [{'id': u.user.id, 'username': u.user.username, 'followers': u.followers, 'stories': u.stories, 'started': u.started} for u in game.game_players.all()],
+                    'players': [
+                        {'id': u.user.id, 'username': u.user.username, 'followers': u.followers, 'stories': u.stories,
+                         'started': u.started} for u in game.game_players.all()],
                 }
             )
 
@@ -76,17 +87,15 @@ class GameConsumer(WebsocketConsumer):
         print(data)
         self.commands[data['command']](self, data)
 
-
     def new_message(self, data):
         user = self.scope['user']
         game_player = GamePlayer.objects.get(user=user)
-        message = Message.objects.create(
+        Message.objects.create(
             message=data['message'],
             message_type='user_message',
             game=self.game,
             game_player=game_player,
         )
-        game = Game.objects.get(id=self.id)
         messages = Message.objects.all().filter(game=self.id).order_by('created_at')
         updated_messages = [m.as_json() for m in messages]
         async_to_sync(self.channel_layer.group_send)(
@@ -106,7 +115,9 @@ class GameConsumer(WebsocketConsumer):
             self.room_group_name,
             {
                 'type': 'update_game_players',
-                'players': [{'id': u.user.id, 'username': u.user.username, 'followers': u.followers, 'stories': u.stories, 'started': u.started} for u in self.game.game_players.all()],
+                'players': [
+                    {'id': u.user.id, 'username': u.user.username, 'followers': u.followers, 'stories': u.stories,
+                     'started': u.started} for u in self.game.game_players.all()],
             }
         )
 

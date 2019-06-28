@@ -46,7 +46,7 @@ const socketMiddleware = (function () {
    */
   return store => next => (action) => {
     switch (action.type) {
-      case actions.WS_CONNECT:
+      case 'WS_CONNECT':
         if (socket !== null) {
           socket.close();
         }
@@ -67,7 +67,7 @@ const socketMiddleware = (function () {
 
         break;
 
-      case actions.WS_DISCONNECT:
+      case 'WS_DISCONNECT':
         if (socket !== null) {
           socket.close();
         }
@@ -82,7 +82,6 @@ const socketMiddleware = (function () {
         socket.send(
           JSON.stringify({ command: 'leave_game', username: action.username, id: action.id }),
         );
-        console.log('sent', action.username, action.id);
         break;
       case 'NEW_MESSAGE':
         socket.send(JSON.stringify({ command: 'NEW_MESSAGE', message: action.msg }));
