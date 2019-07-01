@@ -3,7 +3,8 @@ const headers = {
   Authorization: `Token ${localStorage.getItem('token')}`,
 };
 
-export const updateGamePlayers = json => ({ type: 'UPDATE_GAME_PLAYERS', data: json });
+export const newMessage = msg => ({ type: 'NEW_MESSAGE', msg });
+export const updateGame = json => ({ type: 'SET_GAME', data: json });
 export const leaveGame = id => ({ type: 'LEAVE_GAME', id });
 export const startRound = id => ({ type: 'START_ROUND', id });
 const API_ROOT = 'http://localhost:8000';
@@ -37,18 +38,16 @@ export const getGame = id => dispatch => fetch(`${API_ROOT}/app/game/${id}`, {
     dispatch({ type: 'SET_GAME', data: json });
   });
 
-const gameInitialState = { games: [] };
+const gameInitialState = {};
 
 export const gameReducer = (state = { ...gameInitialState }, action) => {
   switch (action.type) {
     case 'LEAVE_GAME':
       return { ...state, users: [...state.users] };
     case 'SET_GAME':
-      return { ...state, roomName: action.data.room_name, players: action.data.users };
+      return { ...state, game: action.data };
     case 'SHOW_GAMES':
       return { ...state, games: action.data };
-    case 'UPDATE_GAME_PLAYERS':
-      return { ...state, players: action.data };
     default:
       return state;
   }

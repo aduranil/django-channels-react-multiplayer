@@ -1,37 +1,23 @@
 import React from 'react';
 import {
-  Box, Text, Button, Grid, Grommet, TextArea,
+  Box, Text, Button, Grid, Grommet,
 } from 'grommet';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import { grommet } from 'grommet/themes';
 import { wsConnect } from '../modules/websocket';
 import { getGame, startRound, leaveGame } from '../modules/game';
-import { newMessage } from '../modules/message';
 import withAuth from '../hocs/authWrapper';
-import { Phone } from '../images/iPhone';
-
-const theme = {
-  button: {
-    padding: {
-      horizontal: '6px',
-    },
-  },
-};
+import Timer from '../components/Timer';
+import ChatBox from '../components/ChatBox';
+import GameView from '../components/GameScreen';
 
 class Game extends React.Component {
-  state = {
-    message: '',
-  };
-
   componentDidMount() {
     const { id } = this.props;
     if (id) {
       this.connectAndJoin();
     }
-  }
-
-  componentDidUpdate() {
-    this.scrollToBottom();
   }
 
   connectAndJoin = async () => {
@@ -47,94 +33,40 @@ class Game extends React.Component {
     history.push('/games');
   };
 
-  handleChange = (e) => {
-    const { value } = e.target;
-    this.setState({ message: value });
-  };
-
-  handleSubmit = () => {
-    const { dispatch } = this.props;
-    const { message } = this.state;
-    dispatch(newMessage(message));
-    this.setState({ message: '' });
-  };
-
-  scrollToBottom = () => {
-    this.messagesEnd.scrollIntoView({ behavior: 'smooth' });
-  };
-
   startRound = () => {
     const { id, dispatch } = this.props;
     dispatch(startRound(id));
   };
 
   render() {
-    const { id, messages, players } = this.props;
-    const { message } = this.state;
+    const { id, game } = this.props;
     if (id) {
       return (
         <React.Fragment>
-          <Box
-            round="xsmall"
-            width="600px"
-            height="300px"
-            pad="medium"
-            elevation="medium"
-            background="accent-2"
-            overflow={{ horizontal: 'hidden', vertical: 'scroll' }}
-          >
-            {Array.isArray(messages.messages)
-              && messages.messages.map(msg => (
-                <Grid key={msg.id} columns={{ count: 2 }}>
-                  <Grommet theme={theme}>
-                    <Text>
-                      {' '}
-                      {msg.message_type === 'action' ? null : `${msg.user.username}: `}
-                      {msg.message}
-                    </Text>
-                  </Grommet>
+          <Grommet theme={grommet} full>
+            <Grid
+              fill
+              areas={[
+                { name: 'nav', start: [0, 0], end: [0, 0] },
+                { name: 'main', start: [1, 0], end: [1, 0] },
+              ]}
+              columns={['medium', 'flex']}
+              rows={['flex']}
+              gap="small"
+            >
+              <Box gridArea="nav">
+                <ChatBox game={game} />
+              </Box>
+              <Box gridArea="main">
+                <GameView game={game} />
+                <Grid columns="small">
+                  <Timer />
+                  <Button onClick={this.leaveGame} label="leave game" />
+                  <Button onClick={this.startRound} label="start game" />
                 </Grid>
-              ))}
-            <div
-              style={{ float: 'left', clear: 'both' }}
-              ref={(el) => {
-                this.messagesEnd = el;
-              }}
-            />
-          </Box>
-          <Box
-            width="800px"
-            height="300px"
-            round="xsmall"
-            pad="medium"
-            elevation="medium"
-            background="accent-2"
-          >
-            <Grid gap="small" columns="100px" rows="medium" justify="center">
-              {Array.isArray(players)
-                && players.map(player => (
-                  <Box key={player.id}>
-                    {player.username}
-                    {player.started ? ' !' : ' ?'}
-                    <Phone />
-                    {' '}
-                  </Box>
-                ))}
-            </Grid>
-          </Box>
-
-          <Box round="xsmall" width="600px" pad="medium" elevation="medium" background="accent-2">
-            <Grid gap="small" columns={['450px', 'xsmall']}>
-              <Box>
-                <TextArea onChange={this.handleChange} value={message} />
-              </Box>
-              <Box justify="center" align="center" alignContent="center">
-                <Button onClick={this.handleSubmit} label="send" />
               </Box>
             </Grid>
-          </Box>
-          <Button onClick={this.leaveGame} label="leave game" />
-          <Button onClick={this.startRound} label="start game" />
+          </Grommet>
         </React.Fragment>
       );
     }
@@ -148,10 +80,6 @@ Game.propTypes = {
   history: PropTypes.shape({
     push: PropTypes.func.isRequired,
   }).isRequired,
-  messages: PropTypes.shape({
-    id: PropTypes.number,
-    message: PropTypes.string,
-  }),
   players: PropTypes.arrayOf(
     PropTypes.shape({
       id: PropTypes.number,
@@ -163,17 +91,12 @@ Game.propTypes = {
 Game.defaultProps = {
   id: PropTypes.string,
   dispatch: PropTypes.func,
-  messages: PropTypes.shape({
-    id: PropTypes.number,
-    message: PropTypes.string,
-  }),
   players: PropTypes.Array,
 };
 
 const s2p = (state, ownProps) => ({
   id: ownProps.match && ownProps.match.params.id,
-  messages: state.messages,
   username: state.auth.username,
-  players: state.games.players,
+  game: state.games.game,
 });
 export default withAuth(connect(s2p)(Game));

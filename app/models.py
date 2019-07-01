@@ -11,15 +11,29 @@ class Game(models.Model):
     game_status = models.CharField(max_length=50, default="active")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    round_started = models.BooleanField(default=False)
 
     def as_json(self):
         return dict(
             id=self.id,
             game_status=self.game_status,
             room_name=self.room_name,
-            users=[{'id': u.user.id, 'username': u.user.username, 'followers': u.followers, 'stories': u.stories} for u in self.game_players.all()]
+            round_started=self.round_started,
+            users=[u.as_json() for u in self.game_players.all()],
+            messages=[m.as_json() for m in self.messages.all()]
         )
 
+    def check_round_status(self):
+        """See if the round can be started. Requires at least 3 players and that all players in the
+        room have started"""
+        if self.game_players.all().count() <= 2:
+            return False
+
+        for player in self.game_players.all():
+            if player.started is False:
+                return False
+        self.round_started = True
+        self.save()
 
 class GamePlayer(models.Model):
     followers = models.IntegerField(default=0)
@@ -32,10 +46,18 @@ class GamePlayer(models.Model):
     started = models.BooleanField(default=False)
     game = models.ForeignKey(Game, related_name="game_players", on_delete=models.CASCADE)
 
+    def as_json(self):
+        return dict(
+            followers=self.followers,
+            stories=self.stories,
+            username= self.user.username,
+            started=self.started
+        )
+
 
 class Message(models.Model):
     game = models.ForeignKey(Game, related_name="messages", on_delete=models.CASCADE)
-    game_player = models.ForeignKey(GamePlayer, related_name="messages", on_delete=models.CASCADE, blank=True, null=True)
+    username = models.CharField(max_length=200, default=None)
     message = models.CharField(max_length=200)
     created_at = models.DateTimeField(auto_now_add=True)
     message_type = models.CharField(max_length=50, default=None)
@@ -46,6 +68,5 @@ class Message(models.Model):
             message=self.message,
             message_type=self.message_type,
             created_at=json.dumps(self.created_at, cls=DjangoJSONEncoder),
-            game={'id': self.game.id, 'room_name': self.game.room_name},
-            user={'id': self.game_player.user.id, 'username': self.game_player.user.username},
+            username=self.username,
         )
