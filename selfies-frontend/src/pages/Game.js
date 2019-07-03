@@ -8,7 +8,6 @@ import { grommet } from 'grommet/themes';
 import { wsConnect } from '../modules/websocket';
 import { getGame, startRound, leaveGame } from '../modules/game';
 import withAuth from '../hocs/authWrapper';
-import Timer from '../components/Timer';
 import ChatBox from '../components/ChatBox';
 import GameView from '../components/GameScreen';
 
@@ -27,9 +26,9 @@ class Game extends React.Component {
     dispatch(getGame(id));
   };
 
-  leaveGame = () => {
+  leaveGame = async () => {
     const { id, dispatch, history } = this.props;
-    dispatch(leaveGame(id));
+    await dispatch(leaveGame(id));
     history.push('/games');
   };
 
@@ -39,7 +38,8 @@ class Game extends React.Component {
   };
 
   render() {
-    const { id, game } = this.props;
+    const { id, game, time } = this.props;
+    console.log(time);
     if (id) {
       return (
         <React.Fragment>
@@ -60,7 +60,7 @@ class Game extends React.Component {
               <Box gridArea="main">
                 <GameView game={game} />
                 <Grid columns="small">
-                  <Timer />
+                  <Text>{time}</Text>
                   <Button onClick={this.leaveGame} label="leave game" />
                   <Button onClick={this.startRound} label="start game" />
                 </Grid>
@@ -80,23 +80,24 @@ Game.propTypes = {
   history: PropTypes.shape({
     push: PropTypes.func.isRequired,
   }).isRequired,
-  players: PropTypes.arrayOf(
-    PropTypes.shape({
-      id: PropTypes.number,
-      username: PropTypes.string,
-    }),
-  ),
+  game: PropTypes.shape({
+    id: PropTypes.number,
+    username: PropTypes.string,
+  }),
+  time: PropTypes.string,
 };
 
 Game.defaultProps = {
   id: PropTypes.string,
   dispatch: PropTypes.func,
-  players: PropTypes.Array,
+  game: PropTypes.null,
+  time: PropTypes.null,
 };
 
 const s2p = (state, ownProps) => ({
   id: ownProps.match && ownProps.match.params.id,
   username: state.auth.username,
   game: state.games.game,
+  time: state.games.time,
 });
 export default withAuth(connect(s2p)(Game));
