@@ -70,7 +70,7 @@ const socketMiddleware = (function () {
           socket.close();
         }
         socket = null;
-
+        console.log('websocket closed');
         // Tell the store that we've been disconnected...
         store.dispatch(actions.wsDisconnected(action.host));
 
@@ -86,6 +86,9 @@ const socketMiddleware = (function () {
         break;
       case 'START_ROUND':
         socket.send(JSON.stringify({ command: 'START_ROUND', id: action.id }));
+        break;
+      case 'MAKE_MOVE':
+        socket.send(JSON.stringify({ command: 'MAKE_MOVE', move: action.move }));
         break;
       default:
         return next(action);

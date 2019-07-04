@@ -5,8 +5,10 @@ import {
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { grommet } from 'grommet/themes';
-import { wsConnect } from '../modules/websocket';
-import { getGame, startRound, leaveGame } from '../modules/game';
+import { wsConnect, wsDisconnect } from '../modules/websocket';
+import {
+  getGame, startRound, leaveGame, makeMove,
+} from '../modules/game';
 import withAuth from '../hocs/authWrapper';
 import ChatBox from '../components/ChatBox';
 import GameView from '../components/GameScreen';
@@ -28,7 +30,9 @@ class Game extends React.Component {
 
   leaveGame = async () => {
     const { id, dispatch, history } = this.props;
+    const host = `ws://127.0.0.1:8000/ws/game/${id}?token=${localStorage.getItem('token')}`;
     await dispatch(leaveGame(id));
+    await dispatch(wsDisconnect(host));
     history.push('/games');
   };
 
@@ -37,9 +41,13 @@ class Game extends React.Component {
     dispatch(startRound(id));
   };
 
+  makeMove = () => {
+    const { dispatch } = this.props;
+    dispatch(makeMove('SELFIE'));
+  };
+
   render() {
     const { id, game, time } = this.props;
-    console.log(time);
     if (id) {
       return (
         <React.Fragment>
@@ -60,6 +68,7 @@ class Game extends React.Component {
               <Box gridArea="main">
                 <GameView game={game} />
                 <Grid columns="140px">
+                  <Button margin="xsmall" onClick={this.makeMove} label="Post a selfie" />
                   <Button margin="xsmall" onClick={this.leaveGame} label="leave game" />
                   <Button margin="xsmall" onClick={this.startRound} label="start game" />
                   <Text>{time}</Text>
