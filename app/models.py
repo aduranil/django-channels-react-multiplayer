@@ -1,5 +1,7 @@
 # Create your models here.
 import json
+from collections import defaultdict
+
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models
 from django.contrib.auth.models import User
@@ -105,6 +107,140 @@ class Round(models.Model):
     def as_json(self):
         return dict(id=self.id, started=self.started)
 
+    def tabulate_round(self):
+        POST_SELFIE = "post_selfie"
+        POST_GROUP_SELFIE = "post_group_selfie"
+        POST_STORY = "post_story"
+        GO_LIVE = "go_live"
+        LEAVE_COMMENT = "leave_comment"
+        DONT_POST = "dont_post"
+        NO_MOVE = "no_move"
+        GO_LIVE_DAMAGE = "go_live_damage"
+        LEAVE_COMMENT_NO_MOVE = "leave_comment_no_move"
+        LEAVE_COMMENT_GROUP_SELFIE = "leave_comment_group_selfie"
+
+        POINTS = dict([
+            (POST_SELFIE, 10),
+            (POST_GROUP_SELFIE, 20),
+            (POST_STORY, 10),
+            (GO_LIVE, 20),
+            (LEAVE_COMMENT, -5),
+            (LEAVE_COMMENT_NO_MOVE, -10),
+            (LEAVE_COMMENT_GROUP_SELFIE, -15),
+            (DONT_POST, 0),
+            (NO_MOVE, -5),
+            (GO_LIVE_DAMAGE, -15)]
+        )
+
+        # the list has the id of the player who performed that move
+        PLAYER_MOVES = dict([
+            (POST_SELFIE, []),
+            (POST_GROUP_SELFIE, []),
+            (POST_STORY, []),
+            (GO_LIVE, []),
+            (LEAVE_COMMENT, []),
+            (DONT_POST, []),
+            (NO_MOVE, [])]
+        )
+        # see which players completed a move during a round
+        PLAYERS_WHO_MOVED = []
+
+        # keep a running list of victims during the round
+        VICTIMS = defaultdict(lambda: 0)
+
+        # initialize an empty dict of player points to keep track of
+        PLAYER_POINTS = defaultdict(lambda: 0)
+
+        # populate what each player did and initial points for them
+        for move in self.moves.all():
+            # TODO refactor this into a switch statement
+            if move.action_type == move.POST_SELFIE:
+                PLAYER_MOVES[POST_SELFIE].append(move.player.user.id)
+                PLAYERS_WHO_MOVED.append(move.player.user.id)
+                # dont update these points until the end
+            elif move.action_type == move.POST_GROUP_SELFIE:
+                PLAYER_MOVES[POST_GROUP_SELFIE].append(move.player.user.id)
+                PLAYERS_WHO_MOVED.append(move.player.user.id)
+                PLAYER_POINTS[move.player.user.id] = POINTS[POST_GROUP_SELFIE]
+            elif move.action_type == move.POST_STORY:
+                PLAYER_MOVES[POST_STORY].append(move.player.user.id)
+                PLAYERS_WHO_MOVED.append(move.player.user.id)
+                PLAYER_POINTS[move.player.user.id] = POINTS[POST_STORY]
+            elif move.action_type == move.GO_LIVE:
+                PLAYER_MOVES[GO_LIVE].append(move.player.user.id)
+                PLAYERS_WHO_MOVED.append(move.player.user.id)
+                PLAYER_POINTS[move.player.user.id] = POINTS[GO_LIVE]
+            elif move.action_type == move.LEAVE_COMMENT:
+                PLAYER_MOVES[LEAVE_COMMENT].append(move.player.user.id)
+                PLAYERS_WHO_MOVED.append(move.player.user.id)
+                VICTIMS[move.victim.user.id] += 1
+                PLAYER_POINTS[move.player.user.id] = POINTS[LEAVE_COMMENT]
+            elif move.action_type == move.DONT_POST:
+                PLAYER_MOVES[DONT_POST].append(move.player.user.id)
+                PLAYERS_WHO_MOVED.append(move.player.user.id)
+                PLAYER_POINTS[move.player.user.id] = POINTS[DONT_POST]
+
+        # see if any of the players didnt move and add a no_move action
+        for player in self.game.game_players.all():
+            if player.user.id not in PLAYERS_WHO_MOVED:
+                PLAYER_MOVES[NO_MOVE].append(player.user.id)
+                PLAYER_POINTS[player.user.id] = POINTS[NO_MOVE]
+                Move.objects.create(
+                    round=self,
+                    action_type=NO_MOVE,
+                    player=player,
+                )
+
+        # convert a group selfie into a regular selfie if there's just 1
+        if len(PLAYER_MOVES[POST_GROUP_SELFIE]) == 1:
+            # update that players points to be the selfie points
+            PLAYER_POINTS[PLAYER_MOVES[POST_GROUP_SELFIE][0]] = POINTS[POST_SELFIE]
+            # add them to the post_selfie array
+            PLAYER_MOVES[POST_SELFIE].append(PLAYER_MOVES[POST_GROUP_SELFIE][0])
+            # update the post_group_selfie array
+            PLAYER_MOVES[POST_GROUP_SELFIE] = []
+
+        # calculate the points for go live
+        if len(PLAYER_MOVES[GO_LIVE]) == 1:
+
+            # delete the user from the array now that their action is resolved
+            del PLAYER_MOVES[GO_LIVE][0]
+
+            # everyone loses 15 followers who posted a story
+            for user in PLAYER_MOVES[POST_STORY]:
+                # UPDATE their points
+                PLAYER_POINTS[user] = POINTS[GO_LIVE_DAMAGE]
+
+            # everyone loses 15 followers who posted a selfie
+            for user in PLAYER_MOVES[POST_SELFIE]:
+                # add points to existing total of 0
+                PLAYER_POINTS[user] += POINTS[GO_LIVE_DAMAGE]
+        elif len(PLAYER_MOVES[GO_LIVE]) > 1:
+            # if more than one player went live they all lose 20 points
+            for user in PLAYER_MOVES[GO_LIVE]:
+                # UPDATE their points
+                PLAYER_POINTS[user] = POINTS[GO_LIVE]
+
+        # calculate the points lost by any victims
+        for v in VICTIMS:
+            if v in PLAYER_MOVES[POST_SELFIE]:
+                # VICTIMS[v] is how many people did the victimizing action
+                # POINTS[LEAVE_COMMENT] is -5
+                # Don't update points, subtract from existing points
+                PLAYER_POINTS[v] += (POINTS[LEAVE_COMMENT] * VICTIMS[v])
+            if v in PLAYER_MOVES[NO_MOVE]:
+                # POINTS[LEAVE_COMMENT_NO_MOVE] is -10
+                # UPDATE their points
+                PLAYER_POINTS[v] = POINTS[LEAVE_COMMENT_NO_MOVE] * VICTIMS[v]
+            if v in PLAYER_MOVES[POST_GROUP_SELFIE]:
+                # POINTS[LEAVE_COMMENT_GROUP_SELFIE] is -15
+                # UPDATE their points
+                PLAYER_POINTS[v] = POINTS[LEAVE_COMMENT_GROUP_SELFIE] * VICTIMS[v]
+
+        # finally tabulate the post_selfies move
+        for user in PLAYER_MOVES[POST_SELFIE]:
+            if PLAYER_POINTS[user] == 0:
+                PLAYER_POINTS[user] = POINTS[POST_SELFIE]
 
 class Move(models.Model):
     POST_SELFIE = "post_selfie"
@@ -113,7 +249,7 @@ class Move(models.Model):
     GO_LIVE = "go_live"
     LEAVE_COMMENT = "leave_comment"
     DONT_POST = "dont_post"
-    DO_NOTHING = "do_nothing"
+    NO_MOVE = "no_move"
 
     ACTION_TYPES = (
         (POST_SELFIE, "Post a selfie"),
@@ -122,10 +258,10 @@ class Move(models.Model):
         (GO_LIVE, "Go live"),
         (LEAVE_COMMENT, "Leave a comment"),
         (DONT_POST, "Don't post"),
-        (DO_NOTHING, "Do nothing")
+        (NO_MOVE, "No move"),
     )
 
     round = models.ForeignKey(Round, related_name="moves", on_delete=models.CASCADE)
-    action_type = models.CharField(max_length=200, choices=ACTION_TYPES, default=DO_NOTHING)
+    action_type = models.CharField(max_length=200, choices=ACTION_TYPES, default=DONT_POST)
     player = models.ForeignKey(GamePlayer, related_name="game_player", on_delete=models.CASCADE)
     victim = models.ForeignKey(GamePlayer, related_name="victim", blank=True, null=True, on_delete=models.CASCADE)
