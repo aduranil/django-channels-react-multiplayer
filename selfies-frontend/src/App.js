@@ -17,24 +17,15 @@ const theme = {
 };
 
 const App = () => (
-  <Grommet theme={theme}>
-    <Box
-      justify="center"
-      height="100%"
-      align="center"
-      padding={{ top: '20px' }}
-      margin={{ horizontal: 'auto' }}
-      round="xsmall"
-    >
-      <Switch>
-        <Route exact path="/" component={Entrance} />
-        <Route exact path="/games" component={Games} />
-        <Route path="/game/:id" component={Game} />
-        <Route exact path="/loginorsignup" component={LoginOrSignup} />
-        <Route exact path="/signup" component={Signup} />
-      </Switch>
-    </Box>
-  </Grommet>
+  <React.Fragment>
+    <Switch>
+      <Route exact path="/" component={Entrance} />
+      <Route exact path="/games" component={Games} />
+      <Route path="/game/:id" component={Game} />
+      <Route exact path="/loginorsignup" component={LoginOrSignup} />
+      <Route exact path="/signup" component={Signup} />
+    </Switch>
+  </React.Fragment>
 );
 
 export default connect()(App);
