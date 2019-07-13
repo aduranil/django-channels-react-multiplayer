@@ -1,12 +1,32 @@
+// Google Fonts
+@import url(https://fonts.googleapis.com/css?family=Lobster);
+@import url(https://fonts.googleapis.com/css?family=Roboto+Mono&display=swap);
+
+$lobster: 'Lobster', cursive;
+$muli: 'Roboto Mono', monospace;
+
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  overflow: hidden;
+  font-family: $muli;
+}
+
+h1 {
+  font-family: $lobster;
+  color: #464655;
+}
+
+.entrance-title {
+  font-family: $lobster;
+  font-size: 100px;
+  color: #464655;
 }
 
 .landing-page-wrapper {
-  background: #FF70A6;
-  box-shadow: 0 2px 10px 0 rgba(0,0,0,0.50), inset 0 1px 3px 0 rgba(0,0,0,0.50);
+  background: #ff70a6;
+  box-shadow: 0 2px 10px 0 rgba(0, 0, 0, 0.5), inset 0 1px 3px 0 rgba(0, 0, 0, 0.5);
   border-radius: 20px;
   flex-grow: 1;
   margin: 30px auto 100px auto;

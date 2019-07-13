@@ -1,8 +1,9 @@
 import React from 'react';
-import { Text } from 'grommet';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import Rectangle from '../images/Rectangle';
+import HalfRectangle from '../images/Rectangle';
+import { EntrancePhone } from '../images/EntrancePhone';
+import { Message } from '../images/iMessage';
 import './App.scss';
 
 class Entrance extends React.Component {
@@ -15,34 +16,48 @@ class Entrance extends React.Component {
 
   render() {
     return (
-      <div style={{ minWidth: '100vw', minHeight: '100' }}>
-        <div
-          style={{
-            position: 'absolute',
-            width: '100%',
-            height: '100%',
-            top: 0,
-            left: 0,
-            zIndex: -1,
-          }}
-        >
-          <Rectangle />
+      <div style={{ minWidth: '100vw', minHeight: '100vh' }}>
+        <HalfRectangle color="#70D6FF" />
+        <div style={{ textAlign: 'center' }}>
+          <span className="entrance-title">Selfies 2020</span>
         </div>
-
         <div
           style={{
             display: 'flex',
             flexDirection: 'column',
             minWidth: '100vw',
-            minHeight: '100vh',
+            minHeight: '80vh',
           }}
         >
-          <div>
-            <Text color="accent-1" size="77px">
-              SELFIES 2020
-            </Text>
+          <div className="landing-page-wrapper">
+            <div
+              style={{
+                textAlign: 'center',
+                marginTop: '15px',
+                position: 'relative',
+                marginBottom: '15px',
+              }}
+            >
+              <a href="/loginorsignup">
+                <div
+                  style={{
+                    top: '35%',
+                    left: '37.6%',
+                    width: '25%',
+                    height: '14%',
+                    borderRadius: '15px',
+                    backgroundColor: 'white',
+                    opacity: '0.5',
+                    position: 'absolute',
+                    alignSelf: 'center',
+                  }}
+                >
+                  <Message />
+                </div>
+              </a>
+              <EntrancePhone />
+            </div>
           </div>
-          <div className="landing-page-wrapper" style={{ maxWidth: '100%' }} />
         </div>
       </div>
     );

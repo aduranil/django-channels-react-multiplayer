@@ -242,6 +242,7 @@ class Round(models.Model):
             if PLAYER_POINTS[user] == 0:
                 PLAYER_POINTS[user] = POINTS[POST_SELFIE]
 
+
 class Move(models.Model):
     POST_SELFIE = "post_selfie"
     POST_GROUP_SELFIE = "post_group_selfie"
