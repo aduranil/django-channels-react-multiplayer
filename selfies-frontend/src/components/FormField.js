@@ -26,7 +26,6 @@ const FormField = ({
       type={type}
       label={labelName}
       name={labelName}
-      required
       value={input}
       onChange={onChange}
       error={error}

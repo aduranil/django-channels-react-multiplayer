@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import HalfRectangle from '../images/Rectangle';
 import { EntrancePhone } from '../images/EntrancePhone';
@@ -38,7 +39,7 @@ class Entrance extends React.Component {
                 marginBottom: '15px',
               }}
             >
-              <a href="/loginorsignup">
+              <Link to="/loginorsignup">
                 <div
                   style={{
                     top: '35%',
@@ -54,7 +55,7 @@ class Entrance extends React.Component {
                 >
                   <Message />
                 </div>
-              </a>
+              </Link>
               <EntrancePhone />
             </div>
           </div>

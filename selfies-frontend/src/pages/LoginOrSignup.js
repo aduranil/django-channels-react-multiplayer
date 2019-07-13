@@ -1,18 +1,20 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { handleLogin, removeError } from '../modules/account';
+import { handleLogin, removeError, handleSignup } from '../modules/account';
 import Form from '../components/Form';
+import HalfRectangle from '../images/Rectangle';
 
 class LoginOrSignup extends React.Component {
   state = {
     email: '',
     password: '',
+    username: '',
   };
 
   componentWillUnmount() {
-    this.props.dispatch(removeError());
+    const { dispatch } = this.props;
+    dispatch(removeError());
   }
 
   handleChange = (e) => {
@@ -26,9 +28,13 @@ class LoginOrSignup extends React.Component {
   };
 
   handleSubmit = async () => {
-    const { dispatch, history } = this.props;
-    const response = await dispatch(handleLogin(this.state));
-    if (!response) return history.push('/games');
+    const { dispatch, history, route } = this.props;
+    if (route === '/loginorsignup') {
+      await dispatch(handleLogin(this.state));
+      history.push('/games');
+    }
+    dispatch(handleSignup(this.state));
+    history.push('/games');
   };
 
   render() {
@@ -44,6 +50,7 @@ class LoginOrSignup extends React.Component {
           minHeight: '100vh',
         }}
       >
+        <HalfRectangle color="#70D6FF" />
         <div
           style={{
             alignSelf: 'center',
@@ -63,15 +70,6 @@ class LoginOrSignup extends React.Component {
             handleChange={this.handleChange}
             handleSubmit={this.handleSubmit}
           />
-          {route === '/loginorsignup' && (
-            <div>
-              Click
-              {' '}
-              <Link to="/signup">here</Link>
-              {' '}
-to create your user!
-            </div>
-          )}
         </div>
       </div>
     );
@@ -83,10 +81,12 @@ LoginOrSignup.propTypes = {
     push: PropTypes.func.isRequired,
   }).isRequired,
   dispatch: PropTypes.func,
+  route: PropTypes.string,
 };
 
 LoginOrSignup.defaultProps = {
   dispatch: PropTypes.func,
+  route: PropTypes.string,
 };
 
 const s2p = (state, ownProps) => ({

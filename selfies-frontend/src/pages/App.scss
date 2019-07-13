@@ -3,19 +3,19 @@
 @import url(https://fonts.googleapis.com/css?family=Roboto+Mono&display=swap);
 
 $lobster: 'Lobster', cursive;
-$muli: 'Roboto Mono', monospace;
+$roboto: 'Roboto Mono', monospace;
 
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
   overflow: hidden;
-  font-family: $muli;
+  font-family: $roboto;
+  color: #464655;
 }
 
 h1 {
   font-family: $lobster;
-  color: #464655;
 }
 
 .entrance-title {

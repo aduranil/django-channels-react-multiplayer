@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import { Link } from 'react-router-dom';
 import FormField from './FormField';
 
 const Form = ({
@@ -10,37 +11,50 @@ const Form = ({
     style={{
       padding: '5%',
       width: '500px',
-      height: '300px',
+      height: '330px',
     }}
   >
-    <form onSubmit={handleSubmit}>
+    <FormField input={email} labelName="email" onChange={handleChange} error={error} type="text" />
+    {route === '/signup' && (
       <FormField
-        input={email}
-        labelName="email"
-        onChange={handleChange}
-        error={error}
+        input={username}
+        labelName="username"
         type="text"
-      />
-      {route === '/signup' && (
-        <FormField
-          input={username}
-          labelName="username"
-          type="text"
-          onChange={handleChange}
-          error={error}
-        />
-      )}
-      <FormField
-        input={password}
-        labelName="password"
         onChange={handleChange}
-        type="password"
         error={error}
       />
-      <div style={{ marginTop: '10px', marginBottom: '10px' }}>
-        <button style={{ width: '100%', height: '30px' }} type="submit" label="Submit" />
+    )}
+    <FormField
+      input={password}
+      labelName="password"
+      onChange={handleChange}
+      type="password"
+      error={error}
+    />
+    <button
+      style={{
+        width: '100%',
+        height: '40px',
+        borderRadius: '5px',
+        border: 'none',
+        marginTop: '20px',
+        marginBottom: '10px',
+        cursor: 'pointer',
+      }}
+      type="submit"
+      onClick={handleSubmit}
+    >
+      <span style={{ fontSize: '20px' }}>Submit</span>
+    </button>
+    {route === '/loginorsignup' && (
+      <div>
+        Click
+        {' '}
+        <Link to="/signup">here</Link>
+        {' '}
+to create your user!
       </div>
-    </form>
+    )}
   </div>
 );
 
