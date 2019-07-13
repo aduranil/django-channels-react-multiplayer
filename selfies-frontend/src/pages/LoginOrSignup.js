@@ -1,16 +1,21 @@
 import React from 'react';
-import { Box, Text } from 'grommet';
-import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { handleLogin } from '../modules/account';
-import Login from '../components/LoginOrSignup';
+import { handleLogin, removeError, handleSignup } from '../modules/account';
+import Form from '../components/Form';
+import HalfRectangle from '../images/Rectangle';
 
 class LoginOrSignup extends React.Component {
   state = {
     email: '',
     password: '',
+    username: '',
   };
+
+  componentWillUnmount() {
+    const { dispatch } = this.props;
+    dispatch(removeError());
+  }
 
   handleChange = (e) => {
     const { name } = e.target;
@@ -23,48 +28,50 @@ class LoginOrSignup extends React.Component {
   };
 
   handleSubmit = async () => {
-    const { dispatch, history } = this.props;
-    const response = await dispatch(handleLogin(this.state));
-    if (!response) return history.push('/games');
+    const { dispatch, history, route } = this.props;
+    if (route === '/loginorsignup') {
+      await dispatch(handleLogin(this.state));
+      history.push('/games');
+    }
+    dispatch(handleSignup(this.state));
+    history.push('/games');
   };
 
   render() {
     const { username, email, password } = this.state;
+    const { route } = this.props;
     return (
-      <React.Fragment>
-        <Box
-          gap="medium"
-          width="medium"
-          elevation="medium"
-          pad="medium"
-          round="small"
-          margin="15px"
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          minWidth: '100vw',
+          minHeight: '100vh',
+        }}
+      >
+        <HalfRectangle color="#70D6FF" />
+        <div
+          style={{
+            alignSelf: 'center',
+            boxShadow: '0 2px 10px 0 rgba(0, 0, 0, 0.25), inset 0 1px 3px 0 rgba(0, 0, 0, 0.25)',
+            borderRadius: '20px',
+            backgroundColor: '#ff70a6',
+          }}
         >
-          <Text textAlign="center" color="white" margin={{ left: 'small' }}>
-            NEW USERS
-          </Text>
-          <Text margin={{ left: 'small' }}>
-            Click
-            {' '}
-            <Link to="/signup">here</Link>
-            {' '}
-to create your user!
-          </Text>
-        </Box>
-        <Box width="medium" elevation="medium" pad="medium" round="small">
-          <Text textAlign="center" color="white" margin={{ left: 'small' }}>
-            RETURNING USERS
-          </Text>
-          <Login
-            fromLoginOrSignup
+          <h1 style={{ textAlign: 'center', marginTop: '15px' }}>
+            {route === '/loginorsignup' ? 'Returning Users' : 'New Users'}
+          </h1>
+          <Form
+            route={route}
             username={username}
             password={password}
             email={email}
             handleChange={this.handleChange}
             handleSubmit={this.handleSubmit}
           />
-        </Box>
-      </React.Fragment>
+        </div>
+      </div>
     );
   }
 }
@@ -74,10 +81,15 @@ LoginOrSignup.propTypes = {
     push: PropTypes.func.isRequired,
   }).isRequired,
   dispatch: PropTypes.func,
+  route: PropTypes.string,
 };
 
 LoginOrSignup.defaultProps = {
   dispatch: PropTypes.func,
+  route: PropTypes.string,
 };
 
-export default connect()(LoginOrSignup);
+const s2p = (state, ownProps) => ({
+  route: ownProps.match && ownProps.match.path,
+});
+export default connect(s2p)(LoginOrSignup);

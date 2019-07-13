@@ -1,4 +1,4 @@
-![SELFIES](https://i.ibb.co/CK6K28b/Screen-Shot-2019-07-03-at-2-44-12-PM.png)
+![SELFIES](https://i.imgur.com/0oZKbIf.png)
 
 ## About
 
