@@ -1,17 +1,6 @@
 import React from 'react';
-import {
-  Grid, Text, Grommet, Box, TextArea, Button,
-} from 'grommet';
 import { connect } from 'react-redux';
 import { newMessage } from '../modules/game';
-
-const theme = {
-  button: {
-    padding: {
-      horizontal: '6px',
-    },
-  },
-};
 
 class ChatBox extends React.Component {
   state = {
@@ -43,24 +32,16 @@ class ChatBox extends React.Component {
     const { game } = this.props;
     return (
       <React.Fragment>
-        <Box
-          pad="medium"
-          elevation="medium"
-          background="accent-2"
-          height="385px"
-          overflow={{ horizontal: 'hidden', vertical: 'scroll' }}
-        >
+        <div style={{ horizontal: 'hidden', vertical: 'scroll' }}>
           {game
             && game.messages.map(msg => (
-              <Grid key={msg.id} columns={{ count: 2 }}>
-                <Grommet theme={theme}>
-                  <Text>
-                    {' '}
-                    {msg.message_type === 'action' ? null : `${msg.username}: `}
-                    {msg.message}
-                  </Text>
-                </Grommet>
-              </Grid>
+              <div key={msg.id} columns={{ count: 2 }}>
+                <span>
+                  {' '}
+                  {msg.message_type === 'action' ? null : `${msg.username}: `}
+                  {msg.message}
+                </span>
+              </div>
             ))}
           <div
             style={{ float: 'left', clear: 'both' }}
@@ -68,17 +49,16 @@ class ChatBox extends React.Component {
               this.messagesEnd = el;
             }}
           />
-        </Box>
-        <Box pad="medium" elevation="medium" background="accent-1">
-          <Grid gap="small" columns={['240px', 'xsmall']}>
-            <Box>
-              <TextArea onChange={this.handleChange} value={message} />
-            </Box>
-            <Box justify="center" align="center" alignContent="center">
-              <Button onClick={this.handleSubmit} label="send" />
-            </Box>
-          </Grid>
-        </Box>
+        </div>
+        <div>
+          <div>
+            <input onChange={this.handleChange} value={message} />
+            <button type="button" onClick={this.handleSubmit}>
+              send
+              {' '}
+            </button>
+          </div>
+        </div>
       </React.Fragment>
     );
   }

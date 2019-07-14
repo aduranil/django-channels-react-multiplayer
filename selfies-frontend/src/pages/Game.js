@@ -1,10 +1,6 @@
 import React from 'react';
-import {
-  Box, Text, Button, Grid, Grommet,
-} from 'grommet';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { grommet } from 'grommet/themes';
 import { wsConnect, wsDisconnect } from '../modules/websocket';
 import {
   getGame, startRound, leaveGame, makeMove,
@@ -50,36 +46,29 @@ class Game extends React.Component {
     const { id, game, time } = this.props;
     if (id) {
       return (
-        <React.Fragment>
-          <Grommet theme={grommet} full>
-            <Grid
-              fill
-              areas={[
-                { name: 'nav', start: [0, 0], end: [0, 0] },
-                { name: 'main', start: [1, 0], end: [1, 0] },
-              ]}
-              columns={['medium', 'flex']}
-              rows={['flex']}
-              gap="small"
-            >
-              <Box gridArea="nav">
-                <ChatBox game={game} />
-              </Box>
-              <Box gridArea="main">
-                <GameView game={game} />
-                <Grid columns="140px">
-                  <Button margin="xsmall" onClick={this.makeMove} label="Post a selfie" />
-                  <Button margin="xsmall" onClick={this.leaveGame} label="leave game" />
-                  <Button margin="xsmall" onClick={this.startRound} label="start game" />
-                  <Text>{time}</Text>
-                </Grid>
-              </Box>
-            </Grid>
-          </Grommet>
-        </React.Fragment>
+        <div style={{ display: 'flex', flexDirection: 'row' }}>
+          <div>
+            <ChatBox game={game} />
+          </div>
+          <div>
+            <GameView game={game} />
+            <div style={{ display: 'flex', flexDirection: 'row' }}>
+              <button type="button" onClick={this.makeMove}>
+                post a selfie
+              </button>
+              <button type="button" onClick={this.leaveGame}>
+                leave game
+              </button>
+              <button type="button" onClick={this.startRound}>
+                start game
+              </button>
+              <span>{time}</span>
+            </div>
+          </div>
+        </div>
       );
     }
-    return `${<Text> LOADING </Text>}`;
+    return `${<span> LOADING </span>}`;
   }
 }
 
