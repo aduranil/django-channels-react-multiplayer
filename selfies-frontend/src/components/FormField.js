@@ -17,10 +17,10 @@ const FormField = ({
     <input
       style={{
         width: '100%',
-        height: '30px',
+        height: '40px',
         padding: '5px',
         border: 'none',
-        borderRadius: '5px',
+        borderRadius: '20px',
         marginTop: '5px',
       }}
       type={type}

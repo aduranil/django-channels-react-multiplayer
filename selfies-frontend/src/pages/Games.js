@@ -1,21 +1,10 @@
 import React from 'react';
-import {
-  Button, TextInput, Grid, Box, Text, Grommet,
-} from 'grommet';
 import PropTypes from 'prop-types';
-import { Gamepad } from 'grommet-icons';
 import { connect } from 'react-redux';
 import Navigation from '../components/Navigation';
 import { createGame, getGames } from '../modules/game';
 import withAuth from '../hocs/authWrapper';
-
-const theme = {
-  button: {
-    padding: {
-      horizontal: '6px',
-    },
-  },
-};
+import HalfRectangle from '../images/Rectangle';
 
 class Games extends React.Component {
   state = {
@@ -23,8 +12,9 @@ class Games extends React.Component {
   };
 
   componentDidMount() {
-    const { dispatch, loggedIn } = this.props;
-    if (loggedIn) return dispatch(getGames());
+    const { dispatch, loggedIn, history } = this.props;
+    if (!loggedIn) return history.push('/loginorsignup');
+    return dispatch(getGames());
   }
 
   onClick = () => {
@@ -49,51 +39,56 @@ class Games extends React.Component {
     const { games } = this.props;
     return (
       <React.Fragment>
+        <HalfRectangle color="#70D6FF" />
         <Navigation />
-        <Box
-          round="xsmall"
-          height="medium"
-          margin="medium"
-          width="600px"
-          pad="medium"
-          elevation="medium"
-          background="accent-2"
-          overflow={{ horizontal: 'hidden', vertical: 'scroll' }}
-        >
+        <div className="box">
+          <h1 style={{ textAlign: 'center' }}>Active Games</h1>
           {Array.isArray(games.games)
             && games.games.map(game => (
-              <Grid key={game.id} columns={{ count: 2 }}>
-                <Grommet theme={theme}>
-                  <Button
-                    onClick={this.onJoin}
-                    value={game.id}
-                    margin={{ right: '5px', bottom: '5px' }}
-                    label="join"
-                    disabled={game.is_joinable === false}
-                  />
-                  <Text>
-                    {game.room_name}
-                    , players:
+              <div style={{ marginTop: '10px', marginBottom: '10px' }} key={game.id}>
+                <button
+                  type="button"
+                  onClick={this.onJoin}
+                  value={game.id}
+                  disabled={game.is_joinable === false}
+                >
+                  join
+                </button>
+                <span>
+                  {game.room_name}
+                  , players:
+                  {' '}
+                </span>
+                {game.users.map(user => (
+                  <span key={user.username}>
                     {' '}
-                  </Text>
-                  {game.users.map(user => (
-                    <Text key={user.username}>
-                      {' '}
-                      {user.username}
-                    </Text>
-                  ))}
-                </Grommet>
-              </Grid>
+                    {user.username}
+                    ,
+                  </span>
+                ))}
+              </div>
             ))}
-        </Box>
-        <Grid columns={{ count: 2, size: 'auto' }} gap="small">
-          <TextInput
-            placeholder="room name"
-            value={roomName}
-            onChange={event => this.setState({ roomName: event.target.value })}
-          />
-          <Button onClick={this.onClick} icon={<Gamepad />} label="Create new game" />
-        </Grid>
+          <div style={{ display: 'flex' }}>
+            <div>
+              <button type="button" onClick={this.onClick}>
+                create new game
+              </button>
+            </div>
+            <div style={{ width: '70%' }}>
+              <input
+                value={roomName}
+                onChange={event => this.setState({ roomName: event.target.value })}
+                placeholder="room name"
+                style={{
+                  padding: '7px',
+                  borderRadius: '20px',
+                  border: '3px solid white',
+                  width: '100%',
+                }}
+              />
+            </div>
+          </div>
+        </div>
       </React.Fragment>
     );
   }
