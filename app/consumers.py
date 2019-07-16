@@ -5,6 +5,7 @@ from asgiref.sync import async_to_sync
 import time
 import threading
 from channels.generic.websocket import WebsocketConsumer
+from django.contrib.auth.models import User
 
 from .models import Game, Message, GamePlayer, Round, Move
 
@@ -16,6 +17,7 @@ class GameConsumer(WebsocketConsumer):
         self.id = game_id
         self.room_group_name = 'game_%s' % self.id
         self.game = Game.objects.get(id=game_id)
+        self.game_player = GamePlayer.objects.get(user=self.scope['user'])
         async_to_sync(self.channel_layer.group_add)(
             self.room_group_name,
             self.channel_name,
@@ -89,24 +91,74 @@ class GameConsumer(WebsocketConsumer):
         self.send_update_game_players(game)
         if game.can_start_game():
             # start the timer in another thread
-            Round.objects.create(game=game, started=True)
-            threading.Thread(target=self.update_timer_data).start()
+            round = Round.objects.create(game=game, started=True)
+            # pass round so we can set it to false after the time is done
+            self.start_round_and_timer(round, game)
 
-    def update_timer_data(self):
+    def start_round_and_timer(self, round, game):
+        threading.Thread(target=self.update_timer_data, args=[round]).start()
+        self.send_update_game_players(game)
+
+    def update_timer_data(self, round):
         """countdown the timer for the game"""
-        i = 60
+        i = 15
         while i >= 0:
             time.sleep(1)
             self.send_time(str(i))
             i -= 1
         # reset timer back to null
         self.send_time(None)
+        self.new_round_or_determine_winner(round)
+
+    def new_round_or_determine_winner(self, round):
+        "determines a winner or loops through again"
+        # TODO i need to move this somewhere else
+        player_points = round.tabulate_round()
+        winner = None
+        for player in self.game.game_players.all():
+            points = player_points[player.user_id]
+            updated_points = points + player.followers
+
+            # the floor is zero
+            if updated_points < 0:
+                updated_points = 0
+            if updated_points >= 100:
+                winner = player
+            player.followers = updated_points
+            player.save()
+        round.started = False
+        round.save()
+        updated_round = Round.objects.create(game=self.game, started=True)
+        if not winner:
+            self.start_round_and_timer(updated_round, self.game)
+        else:
+            # TODO disconnect when this happens
+            self.when_someone_wins()
+
+    def when_someone_wins(self):
+        # placeholder method for now
+        return
 
     def make_move(self, data):
-        print('noooo')
-        print('nevermind')
-        print('received')
-        print('cool')
+        user = self.scope['user']
+        round = Round.objects.get(game=self.game, started=True)
+        game_player = GamePlayer.objects.get(user=user)
+        try:
+            move = Move.objects.get(player=game_player, round=round)
+            move.action_type = data['move']['move']
+            # if in a former move they left a comment but now they want to
+            # do something else, a victim is still saved on the Move object
+            # update victim to be none in this case
+            if data['move']['move'] is not "leave_comment" and move.victim is not None:
+                move.victim = None
+            move.save()
+        except:
+            move = Move.objects.create(round=round, action_type=data['move']['move'], player=game_player)
+        # save the victim if they are there
+        if data['move']['victim']:
+            victim = GamePlayer.objects.get(user_id=data['move']['victim'])
+            move.victim = victim
+            move.save()
 
     # ASYNC TO SYNC ACTIONS
     def send_update_game_players(self, game):
@@ -117,6 +169,7 @@ class GameConsumer(WebsocketConsumer):
                     {
                         'type': 'update_game_players',
                         'game': game.as_json(),
+                        'current_player': self.game_player.as_json()
                     }
                 )
 

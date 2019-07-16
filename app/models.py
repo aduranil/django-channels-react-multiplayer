@@ -23,7 +23,8 @@ class Game(models.Model):
             room_name=self.room_name,
             round_started=self.round_started,
             users=[u.as_json() for u in self.game_players.all()],
-            messages=[m.as_json() for m in self.messages.all().order_by('created_at')]
+            messages=[m.as_json() for m in self.messages.all().order_by('created_at')],
+            current_round=[r.as_json() for r in self.rounds.all().filter(started=True)]
         )
 
     def can_start_game(self):
@@ -72,6 +73,7 @@ class GamePlayer(models.Model):
 
     def as_json(self):
         return dict(
+            id=self.user.id,
             followers=self.followers,
             stories=self.stories,
             username=self.user.username,
@@ -166,6 +168,11 @@ class Round(models.Model):
                 PLAYER_MOVES[POST_STORY].append(move.player.user.id)
                 PLAYERS_WHO_MOVED.append(move.player.user.id)
                 PLAYER_POINTS[move.player.user.id] = POINTS[POST_STORY]
+
+                # decrement the number of stories the player has
+                game_player = GamePlayer.objects.get(user_id=move.player.user_id)
+                game_player.stories = game_player.stories - 1
+                game_player.save()
             elif move.action_type == move.GO_LIVE:
                 PLAYER_MOVES[GO_LIVE].append(move.player.user.id)
                 PLAYERS_WHO_MOVED.append(move.player.user.id)
@@ -241,6 +248,8 @@ class Round(models.Model):
         for user in PLAYER_MOVES[POST_SELFIE]:
             if PLAYER_POINTS[user] == 0:
                 PLAYER_POINTS[user] = POINTS[POST_SELFIE]
+
+        return PLAYER_POINTS
 
 
 class Move(models.Model):

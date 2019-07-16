@@ -7,8 +7,8 @@ import {
 } from '../modules/game';
 import withAuth from '../hocs/authWrapper';
 import ChatBox from '../components/ChatBox';
-import GameView from '../components/GameScreen';
 import Navigation from '../components/Navigation';
+import { Phone } from '../images/iPhone';
 
 class Game extends React.Component {
   componentDidMount() {
@@ -38,13 +38,25 @@ class Game extends React.Component {
     dispatch(startRound(id));
   };
 
-  makeMove = () => {
+  makeMove = (event) => {
     const { dispatch } = this.props;
-    dispatch(makeMove('SELFIE'));
+    let victim = null;
+    // only the comment game move has another player that it impacts
+    if (event.currentTarget.value === 'leave_comment') {
+      victim = event.currentTarget.id;
+    }
+    dispatch(
+      makeMove({
+        move: event.currentTarget.value,
+        victim,
+      }),
+    );
   };
 
   render() {
-    const { id, game, time } = this.props;
+    const {
+      id, game, time, current_player,
+    } = this.props;
     if (id) {
       return (
         <React.Fragment>
@@ -52,10 +64,54 @@ class Game extends React.Component {
           <div style={{ display: 'flex', flexDirection: 'row' }}>
             <ChatBox game={game} />
             <div className="gamebox">
-              <GameView game={game} />
               <div style={{ display: 'flex', flexDirection: 'row' }}>
-                <button type="button" onClick={this.makeMove}>
+                {game
+                  && game.users.map(player => (
+                    <div style={{ margin: '1%' }} key={player.username}>
+                      {player.username}
+                      {player.started ? ' !' : ' ?'}
+                      <div>
+                        {player.followers}
+                        {' '}
+                        {player.followers === 1 ? 'follower' : 'followers'}
+                      </div>
+                      <div>
+                        {player.stories}
+                        {' '}
+                        {player.stories === 1 ? 'story' : 'stories'}
+                      </div>
+                      <button
+                        onClick={this.makeMove}
+                        id={player.id}
+                        value="leave_comment"
+                        type="button"
+                      >
+                        <Phone />
+                      </button>
+                      {' '}
+                    </div>
+                  ))}
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'row' }}>
+                <button type="button" value="post_selfie" onClick={this.makeMove}>
                   post a selfie
+                </button>
+                <button type="button" value="post_group_selfie" onClick={this.makeMove}>
+                  post group selfie
+                </button>
+                <button
+                  type="button"
+                  disabled={current_player && current_player.stories === 0}
+                  value="post_story"
+                  onClick={this.makeMove}
+                >
+                  post story
+                </button>
+                <button type="button" value="dont_post" onClick={this.makeMove}>
+                  don't post
+                </button>
+                <button type="button" value="go_live" onClick={this.makeMove}>
+                  go live
                 </button>
                 <button type="button" onClick={this.leaveGame}>
                   leave game
@@ -98,6 +154,7 @@ const s2p = (state, ownProps) => ({
   id: ownProps.match && ownProps.match.params.id,
   username: state.auth.username,
   game: state.games.game,
+  current_player: state.games.current_player,
   time: state.games.time,
 });
 export default withAuth(connect(s2p)(Game));

@@ -28,7 +28,7 @@ const socketMiddleware = (function () {
 
     switch (payload.type) {
       case 'update_game_players':
-        store.dispatch(updateGame(payload.game));
+        store.dispatch(updateGame(payload.game, payload.current_player));
         break;
       case 'update_timer':
         store.dispatch(updateTimer(payload.time));
@@ -88,7 +88,13 @@ const socketMiddleware = (function () {
         socket.send(JSON.stringify({ command: 'START_ROUND', id: action.id }));
         break;
       case 'MAKE_MOVE':
-        socket.send(JSON.stringify({ command: 'MAKE_MOVE', move: action.move }));
+        socket.send(
+          JSON.stringify({
+            command: 'MAKE_MOVE',
+            move: action.move,
+            victim: action.victim,
+          }),
+        );
         break;
       default:
         return next(action);
