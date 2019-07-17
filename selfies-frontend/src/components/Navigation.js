@@ -2,23 +2,24 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import { logoutUser } from '../modules/account';
-import { wsDisconnect } from '../modules/websocket';
 
 class Navigation extends React.Component {
   onLogout = async () => {
-    const { dispatch, history, host } = this.props;
+    const { dispatch, history } = this.props;
     await dispatch(logoutUser());
-    await dispatch(wsDisconnect(host));
-    history.push('/loginorsignup');
+    return history.push('/loginorsignup');
   };
 
   render() {
+    const { loggedIn } = this.props;
     return (
       <div className="container">
         <h1> Selfies 2020 </h1>
-        <button type="button" style={{ width: '100px' }} onClick={this.onLogout}>
-          logout
-        </button>
+        {loggedIn && (
+          <button type="button" style={{ width: '100px' }} onClick={this.onLogout}>
+            logout
+          </button>
+        )}
       </div>
     );
   }
@@ -26,6 +27,7 @@ class Navigation extends React.Component {
 
 const s2p = state => ({
   host: state.websocket.host,
+  loggedIn: state.auth.loggedIn,
 });
 
 export default connect(s2p)(withRouter(Navigation));

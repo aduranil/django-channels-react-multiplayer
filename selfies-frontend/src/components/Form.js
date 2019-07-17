@@ -24,6 +24,7 @@ const FormField = ({
       value={input}
       onChange={onChange}
       error={error}
+      autoComplete="on"
     />
   </div>
 );
@@ -35,29 +36,41 @@ const Form = ({
     style={{
       padding: '5%',
       width: '500px',
-      height: '330px',
+      height: '350px',
     }}
   >
-    <FormField input={email} labelName="email" onChange={handleChange} error={error} type="text" />
-    {route === '/signup' && (
+    <form>
       <FormField
-        input={username}
-        labelName="username"
-        type="text"
+        input={email}
+        labelName="email"
         onChange={handleChange}
         error={error}
+        type="text"
       />
-    )}
-    <FormField
-      input={password}
-      labelName="password"
-      onChange={handleChange}
-      type="password"
-      error={error}
-    />
-    <button type="submit" style={{ width: '100%' }} onClick={handleSubmit}>
-      <span style={{ fontSize: '20px' }}>Submit</span>
-    </button>
+      {route === '/signup' && (
+        <FormField
+          input={username}
+          labelName="username"
+          type="text"
+          onChange={handleChange}
+          error={error}
+        />
+      )}
+      <FormField
+        input={password}
+        labelName="password"
+        onChange={handleChange}
+        type="password"
+        error={error}
+      />
+      <button
+        onClick={handleSubmit}
+        type="button"
+        style={{ width: '100%', marginTop: '10px', marginBottom: '10px' }}
+      >
+        <span style={{ fontSize: '20px' }}>Submit</span>
+      </button>
+    </form>
     {route === '/loginorsignup' && (
       <div>
         Click

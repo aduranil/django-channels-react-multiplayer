@@ -12,14 +12,14 @@ const withAuth = (WrappedComponent) => {
     componentDidMount() {
       if (localStorage.getItem('token')) {
         this.props.dispatch(getCurrentUser());
-      } else {
-        this.setState({ authCompleted: true });
       }
     }
 
     componentWillReceiveProps(nextProps) {
       if (nextProps.loggedIn) {
         this.setState({ authCompleted: true });
+      } else {
+        this.setState({ authCompleted: false });
       }
     }
 

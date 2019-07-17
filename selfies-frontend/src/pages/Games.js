@@ -12,9 +12,10 @@ class Games extends React.Component {
   };
 
   componentDidMount() {
-    const { dispatch, loggedIn, history } = this.props;
-    if (!loggedIn) return history.push('/loginorsignup');
-    return dispatch(getGames());
+    const { dispatch, loggedIn } = this.props;
+    if (loggedIn) {
+      dispatch(getGames());
+    }
   }
 
   onClick = () => {
