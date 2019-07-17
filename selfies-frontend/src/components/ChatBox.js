@@ -31,7 +31,7 @@ class ChatBox extends React.Component {
     const { message } = this.state;
     const { game } = this.props;
     return (
-      <div className="chatbox" style={{ horizontal: 'hidden', vertical: 'scroll' }}>
+      <div className="landingbox basebox" style={{ horizontal: 'hidden', vertical: 'scroll' }}>
         {game
           && game.messages.map(msg => (
             <div key={msg.id}>

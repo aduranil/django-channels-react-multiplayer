@@ -14,17 +14,6 @@ $roboto: 'Roboto Mono', monospace;
   color: #464655;
 }
 
-.box {
-  background-color: #ff70a6;
-  box-shadow: 0 2px 10px 0 rgba(0, 0, 0, 0.5), inset 0 1px 3px 0 rgba(0, 0, 0, 0.5);
-  border-radius: 20px;
-  flex-grow: 1;
-  margin: 30px auto 100px auto;
-  width: 50%;
-  padding: 3%;
-  min-height: 300px;
-}
-
 button {
   border-radius: 20px;
   margin-right: 10px;
@@ -39,36 +28,32 @@ button[disabled] {
   cursor: default;
 }
 
-.chatbox {
-  background-color: #70d6ff;
+.landingbox {
+  background: #ff70a6;
   box-shadow: 0 2px 10px 0 rgba(0, 0, 0, 0.5), inset 0 1px 3px 0 rgba(0, 0, 0, 0.5);
   border-radius: 20px;
   flex-grow: 1;
-  margin: auto;
+  margin: 30px auto 100px auto;
   width: 50%;
-  padding: 2%;
-  margin-left: 1%;
-  margin-right: 0%;
-  margin-bottom: 1%;
-  margin-top: 2%;
+  padding: 3%;
   min-height: 300px;
-  max-height: 500px;
-  overflow: scroll;
 }
 
-.gamebox {
-  background-color: #ff70a6;
-  box-shadow: 0 2px 10px 0 rgba(0, 0, 0, 0.5), inset 0 1px 3px 0 rgba(0, 0, 0, 0.5);
-  border-radius: 20px;
-  flex-grow: 1;
-  margin: auto;
-  width: 100%;
+.basebox {
+  background-color: #70d6ff;
   padding: 2%;
   margin-left: 1%;
   margin-right: 1%;
   margin-bottom: 1%;
   margin-top: 2%;
-  min-height: 300px;
+}
+
+.gamebox {
+  padding: 2%;
+  width: 100%;
+  margin-right: 1%;
+  margin-bottom: 1%;
+  margin-top: 2%;
 }
 
 .container {
@@ -94,12 +79,5 @@ input {
   padding: 7px;
   border: none;
   border-radius: 20px;
-}
-.landing-page-wrapper {
-  background: #ff70a6;
-  box-shadow: 0 2px 10px 0 rgba(0, 0, 0, 0.5), inset 0 1px 3px 0 rgba(0, 0, 0, 0.5);
-  border-radius: 20px;
-  flex-grow: 1;
-  margin: 30px auto 100px auto;
-  width: 50%;
+  outline: none;
 }

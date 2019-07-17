@@ -21,7 +21,7 @@ const Entrance = () => (
         minHeight: '80vh',
       }}
     >
-      <div className="landing-page-wrapper">
+      <div className="landingbox" style={{ padding: '1%' }}>
         <div
           style={{
             textAlign: 'center',
@@ -58,12 +58,8 @@ Entrance.propTypes = {
   history: PropTypes.shape({
     push: PropTypes.func.isRequired,
   }).isRequired,
-  loggedIn: PropTypes.bool,
 };
 
-Entrance.defaultProps = {
-  loggedIn: PropTypes.null,
-};
 const mapStateToProps = state => ({
   loggedIn: state.auth.loggedIn,
 });

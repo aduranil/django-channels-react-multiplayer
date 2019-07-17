@@ -42,7 +42,7 @@ class Games extends React.Component {
       <React.Fragment>
         <HalfRectangle color="#70D6FF" />
         <Navigation />
-        <div className="box">
+        <div className="landingbox">
           <h1 style={{ textAlign: 'center' }}>Active Games</h1>
           {Array.isArray(games.games)
             && games.games.map(game => (

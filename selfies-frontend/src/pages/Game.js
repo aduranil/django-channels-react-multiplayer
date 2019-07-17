@@ -63,7 +63,7 @@ class Game extends React.Component {
           <Navigation />
           <div style={{ display: 'flex', flexDirection: 'row' }}>
             <ChatBox game={game} />
-            <div className="gamebox">
+            <div className="gamebox landingbox">
               <div style={{ display: 'flex', flexDirection: 'row' }}>
                 {game
                   && game.users.map(player => (
