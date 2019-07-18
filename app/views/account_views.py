@@ -18,15 +18,15 @@ class LoginUser(ObtainAuthToken):
 
     def post(self, request, *args, **kwargs):
         serializer = LoginSerializer(data=request.data)
-        if serializer.is_valid(raise_exception=True):
-            user = User.objects.get(email=request.data['email'])
-            auth_user = authenticate(username=user.username, password=request.data['password'])
-            token, created = Token.objects.get_or_create(user=auth_user)
-            return Response({
-                'token': token.key,
-                'username': auth_user.username,
-                'email': auth_user.email,
-            }, status=status.HTTP_200_OK)
+        serializer.is_valid(raise_exception=True)
+        user = User.objects.get(email=request.data['email'])
+        auth_user = authenticate(username=user.username, password=request.data['password'])
+        token, created = Token.objects.get_or_create(user=auth_user)
+        return Response({
+            'token': token.key,
+            'username': auth_user.username,
+            'email': auth_user.email,
+        }, status=status.HTTP_200_OK)
 
 class GetUser(ObtainAuthToken):
     authentication_classes = (TokenAuthentication,)

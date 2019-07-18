@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 
 const FormField = ({
@@ -51,7 +50,7 @@ const Form = ({
       >
         <span style={{ fontSize: '20px' }}>Submit</span>
       </button>
-      {error && <span style={{ color: 'white', fontWeight: 'bold' }}>{error}</span>}
+      <span style={{ color: 'white', fontWeight: 'bold' }}>{error}</span>
     </form>
     {route === '/loginorsignup' && (
       <div>
@@ -85,7 +84,4 @@ Form.defaultProps = {
   route: PropTypes.string,
 };
 
-const s2p = state => ({
-  error: state.auth.errorMessage,
-});
-export default connect(s2p)(Form);
+export default Form;

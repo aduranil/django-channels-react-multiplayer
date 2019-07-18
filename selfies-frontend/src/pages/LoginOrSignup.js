@@ -43,7 +43,6 @@ class LoginOrSignup extends React.Component {
       username, email, password, error,
     } = this.state;
     const { route } = this.props;
-    console.log(this.state);
     return (
       <React.Fragment>
         <Navigation />
