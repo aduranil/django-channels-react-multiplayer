@@ -1,3 +1,4 @@
+from django.http import HttpResponse
 from rest_framework import permissions, status
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.authtoken.views import ObtainAuthToken
@@ -17,21 +18,20 @@ class LoginUser(ObtainAuthToken):
 
     def post(self, request, *args, **kwargs):
         serializer = LoginSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        user = User.objects.get(email=request.data['email'])
-        auth_user = authenticate(username=user.username, password=request.data['password'])
-        token, created = Token.objects.get_or_create(user=auth_user)
-        return Response({
-            'token': token.key,
-            'username': auth_user.username,
-            'email': auth_user.email,
-        }, status=status.HTTP_200_OK)
-
+        if serializer.is_valid(raise_exception=True):
+            user = User.objects.get(email=request.data['email'])
+            auth_user = authenticate(username=user.username, password=request.data['password'])
+            token, created = Token.objects.get_or_create(user=auth_user)
+            return Response({
+                'token': token.key,
+                'username': auth_user.username,
+                'email': auth_user.email,
+            }, status=status.HTTP_200_OK)
 
 class GetUser(ObtainAuthToken):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (permissions.IsAuthenticated,)
-    
+
     def get(self, request):
         serializer = UserSerializer(request.user)
         return Response(serializer.data)

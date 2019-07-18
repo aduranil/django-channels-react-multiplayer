@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 
 const FormField = ({
-  input, onChange, error, labelName, type,
+  input, onChange, labelName, type,
 }) => (
   <div
     style={{
@@ -23,7 +23,6 @@ const FormField = ({
       name={labelName}
       value={input}
       onChange={onChange}
-      error={error}
       autoComplete="on"
     />
   </div>
@@ -40,29 +39,11 @@ const Form = ({
     }}
   >
     <form>
-      <FormField
-        input={email}
-        labelName="email"
-        onChange={handleChange}
-        error={error}
-        type="text"
-      />
+      <FormField input={email} labelName="email" onChange={handleChange} type="text" />
       {route === '/signup' && (
-        <FormField
-          input={username}
-          labelName="username"
-          type="text"
-          onChange={handleChange}
-          error={error}
-        />
+        <FormField input={username} labelName="username" type="text" onChange={handleChange} />
       )}
-      <FormField
-        input={password}
-        labelName="password"
-        onChange={handleChange}
-        type="password"
-        error={error}
-      />
+      <FormField input={password} labelName="password" onChange={handleChange} type="password" />
       <button
         onClick={handleSubmit}
         type="button"
@@ -70,6 +51,7 @@ const Form = ({
       >
         <span style={{ fontSize: '20px' }}>Submit</span>
       </button>
+      {error && <span style={{ color: 'white', fontWeight: 'bold' }}>{error}</span>}
     </form>
     {route === '/loginorsignup' && (
       <div>
