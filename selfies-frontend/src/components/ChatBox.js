@@ -32,31 +32,36 @@ class ChatBox extends React.Component {
     const { message } = this.state;
     const { game } = this.props;
     return (
-      <div
-        className="landingbox basebox"
-        style={{ horizontal: 'hidden', vertical: 'scroll', position: 'relative' }}
-      >
-        {game
-          && game.messages.map(msg => (
-            <div key={msg.id}>
-              <span>
-                {' '}
-                {msg.message_type === 'action' ? null : `${msg.username}: `}
-                {msg.message}
-              </span>
-            </div>
-          ))}
+      <div className="landingbox basebox" style={{ display: 'flex', flexDirection: 'column' }}>
         <div
-          style={{ float: 'left', clear: 'both' }}
-          ref={(el) => {
-            this.messagesEnd = el;
+          style={{
+            overflowY: 'scroll',
+            marginRight: '2px',
+            maxHeight: '300px',
+            marginBottom: '5px',
           }}
-        />
+        >
+          {game
+            && game.messages.map(msg => (
+              <div key={msg.id}>
+                <span>
+                  {' '}
+                  {msg.message_type === 'action' ? null : `${msg.username}: `}
+                  {msg.message}
+                </span>
+              </div>
+            ))}
+          <div
+            style={{ float: 'left', clear: 'both' }}
+            ref={(el) => {
+              this.messagesEnd = el;
+            }}
+          />
+        </div>
         <div
           style={{
             display: 'flex',
-            position: 'absolute',
-            bottom: '5%',
+            marginBottom: '5%',
             marginTop: '5px',
             width: '100%',
           }}
