@@ -1,11 +1,10 @@
 """ All of the websocket actions for the game and chat functionalities"""
 import json
-
-from asgiref.sync import async_to_sync
 import time
 import threading
+
+from asgiref.sync import async_to_sync
 from channels.generic.websocket import WebsocketConsumer
-from django.contrib.auth.models import User
 
 from .models import Game, Message, GamePlayer, Round, Move
 
@@ -141,7 +140,7 @@ class GameConsumer(WebsocketConsumer):
     def make_move(self, data):
         user = self.scope['user']
         round = Round.objects.get(game=self.game, started=True)
-        game_player = GamePlayer.objects.get(user=user)
+        game_player = GamePlayer.objects.get_or_none(user=user)
         try:
             move = Move.objects.get(player=game_player, round=round)
             move.action_type = data['move']['move']
@@ -163,13 +162,14 @@ class GameConsumer(WebsocketConsumer):
     def send_update_game_players(self, game):
         """sends all game info as a json object when there's an update"""
         game = Game.objects.get(id=self.id)
-        game_player = GamePlayer.objects.get(user=self.scope['user'])
+        game_player = GamePlayer.objects.get_or_none(user=self.scope['user'])
+        current_player = game_player.as_json() if game_player else None
         async_to_sync(self.channel_layer.group_send)(
                     self.room_group_name,
                     {
                         'type': 'update_game_players',
                         'game': game.as_json(),
-                        'current_player': game_player.as_json()
+                        'current_player': current_player,
                     }
                 )
 

@@ -1,6 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
+import PropTypes from 'prop-types';
 import { logoutUser } from '../modules/account';
 
 class Navigation extends React.Component {
@@ -30,4 +31,15 @@ const s2p = state => ({
   loggedIn: state.auth.loggedIn,
 });
 
+Navigation.propTypes = {
+  history: PropTypes.shape({
+    push: PropTypes.func.isRequired,
+  }).isRequired,
+  dispatch: PropTypes.func.isRequired,
+  loggedIn: PropTypes.bool,
+};
+
+Navigation.defaultProps = {
+  loggedIn: PropTypes.undefined,
+};
 export default connect(s2p)(withRouter(Navigation));

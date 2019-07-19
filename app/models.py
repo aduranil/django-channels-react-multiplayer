@@ -7,6 +7,15 @@ from django.db import models
 from django.contrib.auth.models import User
 
 
+class GetOrNoneManager(models.Manager):
+    """Adds get_or_none method to objects"""
+    def get_or_none(self, **kwargs):
+        try:
+            return self.get(**kwargs)
+        except self.model.DoesNotExist:
+            return None
+
+
 class Game(models.Model):
     room_name = models.CharField(max_length=50)
     game_status = models.CharField(max_length=50, default="active")
@@ -70,6 +79,7 @@ class GamePlayer(models.Model):
         related_name="game_players",
         on_delete=models.CASCADE,
     )
+    objects = GetOrNoneManager()
 
     def as_json(self):
         return dict(

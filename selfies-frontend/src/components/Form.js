@@ -1,10 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 
 const FormField = ({
-  input, onChange, error, labelName, type,
+  input, onChange, labelName, type,
 }) => (
   <div
     style={{
@@ -23,7 +22,6 @@ const FormField = ({
       name={labelName}
       value={input}
       onChange={onChange}
-      error={error}
       autoComplete="on"
     />
   </div>
@@ -40,29 +38,11 @@ const Form = ({
     }}
   >
     <form>
-      <FormField
-        input={email}
-        labelName="email"
-        onChange={handleChange}
-        error={error}
-        type="text"
-      />
+      <FormField input={email} labelName="email" onChange={handleChange} type="text" />
       {route === '/signup' && (
-        <FormField
-          input={username}
-          labelName="username"
-          type="text"
-          onChange={handleChange}
-          error={error}
-        />
+        <FormField input={username} labelName="username" type="text" onChange={handleChange} />
       )}
-      <FormField
-        input={password}
-        labelName="password"
-        onChange={handleChange}
-        type="password"
-        error={error}
-      />
+      <FormField input={password} labelName="password" onChange={handleChange} type="password" />
       <button
         onClick={handleSubmit}
         type="button"
@@ -70,6 +50,7 @@ const Form = ({
       >
         <span style={{ fontSize: '20px' }}>Submit</span>
       </button>
+      <span style={{ color: 'white', fontWeight: 'bold' }}>{error}</span>
     </form>
     {route === '/loginorsignup' && (
       <div>
@@ -83,27 +64,25 @@ to create your user!
   </div>
 );
 
+FormField.propTypes = {
+  onChange: PropTypes.func.isRequired,
+  input: PropTypes.string.isRequired,
+  labelName: PropTypes.string.isRequired,
+  type: PropTypes.string.isRequired,
+};
 Form.propTypes = {
-  handleSubmit: PropTypes.func,
-  handleChange: PropTypes.func,
-  email: PropTypes.string,
-  password: PropTypes.string,
-  username: PropTypes.string,
+  handleSubmit: PropTypes.func.isRequired,
+  handleChange: PropTypes.func.isRequired,
+  email: PropTypes.string.isRequired,
+  password: PropTypes.string.isRequired,
+  username: PropTypes.string.isRequired,
   error: PropTypes.string,
   route: PropTypes.string,
 };
 
 Form.defaultProps = {
-  handleSubmit: PropTypes.func,
-  handleChange: PropTypes.func,
-  email: PropTypes.string,
-  password: PropTypes.string,
-  username: PropTypes.null,
   error: PropTypes.null,
   route: PropTypes.string,
 };
 
-const s2p = state => ({
-  error: state.auth.errorMessage,
-});
-export default connect(s2p)(Form);
+export default Form;

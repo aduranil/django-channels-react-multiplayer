@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { handleLogin, removeError, handleSignup } from '../modules/account';
+import { handleLogin, handleSignup } from '../modules/account';
 import Form from '../components/Form';
 import HalfRectangle from '../images/Rectangle';
 import Navigation from '../components/Navigation';
@@ -11,12 +11,8 @@ class LoginOrSignup extends React.Component {
     email: '',
     password: '',
     username: '',
+    error: null,
   };
-
-  componentWillUnmount() {
-    const { dispatch } = this.props;
-    dispatch(removeError());
-  }
 
   handleChange = (e) => {
     const { name } = e.target;
@@ -30,16 +26,22 @@ class LoginOrSignup extends React.Component {
 
   handleSubmit = async () => {
     const { dispatch, history, route } = this.props;
+    let response;
     if (route === '/loginorsignup') {
-      await dispatch(handleLogin(this.state));
-      return history.push('/games');
+      response = await dispatch(handleLogin(this.state));
+    } else {
+      response = await dispatch(handleSignup(this.state));
     }
-    await dispatch(handleSignup(this.state));
-    history.push('/games');
+    if (response && response.type === 'SET_ERROR') {
+      return this.setState({ error: response.data });
+    }
+    return history.push('/games');
   };
 
   render() {
-    const { username, email, password } = this.state;
+    const {
+      username, email, password, error,
+    } = this.state;
     const { route } = this.props;
     return (
       <React.Fragment>
@@ -70,6 +72,7 @@ class LoginOrSignup extends React.Component {
               username={username}
               password={password}
               email={email}
+              error={error}
               handleChange={this.handleChange}
               handleSubmit={this.handleSubmit}
             />

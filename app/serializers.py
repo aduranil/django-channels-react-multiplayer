@@ -5,8 +5,8 @@ from django.contrib.auth.models import User
 
 class UserSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(required=True)
-    username = serializers.CharField()
-    password = serializers.CharField(min_length=4)
+    username = serializers.CharField(required=True)
+    password = serializers.CharField(min_length=8, required=True)
 
     def create(self, validated_data):
         """Create and return a `User` with an email, username and password."""
@@ -20,10 +20,10 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ('id', 'username', 'email', 'password')
 
 
-class LoginSerializer(serializers.Serializer):
+class LoginSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(required=True,)
-    password = serializers.CharField(min_length=4)
+    password = serializers.CharField(min_length=8)
 
     class Meta:
         model = User
-        fields = ('id', 'username', 'email', 'password')
+        fields = ('id', 'email', 'password')

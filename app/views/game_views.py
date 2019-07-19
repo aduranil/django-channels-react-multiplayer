@@ -4,7 +4,7 @@ from rest_framework import permissions
 from rest_framework.authentication import TokenAuthentication
 from django.http import HttpResponse
 
-from app.models import Game, GamePlayer
+from app.models import Game
 
 
 class GameCreateView(APIView):

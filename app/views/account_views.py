@@ -5,10 +5,11 @@ from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 from rest_framework import serializers
 
-from app.serializers import UserSerializer, LoginSerializer
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
 from django.db import IntegrityError
+
+from app.serializers import UserSerializer, LoginSerializer
 
 
 class LoginUser(ObtainAuthToken):
@@ -31,7 +32,7 @@ class LoginUser(ObtainAuthToken):
 class GetUser(ObtainAuthToken):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (permissions.IsAuthenticated,)
-    
+
     def get(self, request):
         serializer = UserSerializer(request.user)
         return Response(serializer.data)

@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import Navigation from '../components/Navigation';
 import { createGame, getGames } from '../modules/game';
-import withAuth from '../hocs/authWrapper';
+import WithAuth from '../hocs/AuthWrapper';
 import HalfRectangle from '../images/Rectangle';
 
 class Games extends React.Component {
@@ -35,6 +35,12 @@ class Games extends React.Component {
     history.push(`/game/${e.target.value}`);
   };
 
+  onKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      this.onClick();
+    }
+  };
+
   render() {
     const { roomName } = this.state;
     const { games } = this.props;
@@ -42,7 +48,7 @@ class Games extends React.Component {
       <React.Fragment>
         <HalfRectangle color="#70D6FF" />
         <Navigation />
-        <div className="box">
+        <div className="landingbox">
           <h1 style={{ textAlign: 'center' }}>Active Games</h1>
           {Array.isArray(games.games)
             && games.games.map(game => (
@@ -77,6 +83,7 @@ class Games extends React.Component {
               value={roomName}
               onChange={event => this.setState({ roomName: event.target.value })}
               placeholder="room name"
+              onKeyPress={this.onKeyPress}
               style={{ width: '100%' }}
             />
           </div>
@@ -114,4 +121,4 @@ Games.defaultProps = {
   loggedIn: PropTypes.bool,
 };
 
-export default withAuth(connect(s2p)(Games));
+export default WithAuth(connect(s2p)(Games));

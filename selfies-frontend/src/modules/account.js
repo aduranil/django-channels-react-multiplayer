@@ -19,9 +19,7 @@ export const getCurrentUser = () => dispatch => fetch(`${API_ROOT}/app/user/`, {
   .then((json) => {
     dispatch({ type: 'SET_CURRENT_USER', data: json });
   })
-  .catch((e) => {
-    dispatch({ type: 'SET_ERROR', data: e.message });
-  });
+  .catch(e => dispatch({ type: 'SET_ERROR', data: e.message }));
 
 export const removeError = () => ({ type: 'REMOVE_ERROR' });
 
@@ -75,10 +73,6 @@ export const authReducer = (state = { ...initialState }, action) => {
       };
     case 'LOGOUT_USER':
       return { ...state, loggedIn: false, username: null };
-    case 'SET_ERROR':
-      return { ...state, errorMessage: action.data };
-    case 'REMOVE_ERROR':
-      return { ...state, errorMessage: null };
     default:
       return state;
   }
