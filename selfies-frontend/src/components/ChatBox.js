@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 import { newMessage } from '../modules/game';
 
 class ChatBox extends React.Component {
@@ -31,7 +32,10 @@ class ChatBox extends React.Component {
     const { message } = this.state;
     const { game } = this.props;
     return (
-      <div className="landingbox basebox" style={{ horizontal: 'hidden', vertical: 'scroll' }}>
+      <div
+        className="landingbox basebox"
+        style={{ horizontal: 'hidden', vertical: 'scroll', position: 'relative' }}
+      >
         {game
           && game.messages.map(msg => (
             <div key={msg.id}>
@@ -48,9 +52,17 @@ class ChatBox extends React.Component {
             this.messagesEnd = el;
           }}
         />
-        <div style={{ display: 'flex', marginTop: '5px' }}>
+        <div
+          style={{
+            display: 'flex',
+            position: 'absolute',
+            bottom: '5%',
+            marginTop: '5px',
+            width: '100%',
+          }}
+        >
           <input
-            style={{ width: '100%', marginRight: '5px' }}
+            style={{ width: '68%', marginRight: '5px' }}
             onChange={this.handleChange}
             value={message}
           />
@@ -63,5 +75,34 @@ class ChatBox extends React.Component {
     );
   }
 }
+
+ChatBox.propTypes = {
+  dispatch: PropTypes.func.isRequired,
+  game: PropTypes.shape({
+    id: PropTypes.number.isRequired,
+    game_status: PropTypes.string.isRequired,
+    is_joinable: PropTypes.bool.isRequired,
+    room_name: PropTypes.string.isRequired,
+    round_started: PropTypes.bool.isRequired,
+    users: PropTypes.arrayOf(
+      PropTypes.shape({
+        id: PropTypes.number.isRequired,
+        followers: PropTypes.number.isRequired,
+        stories: PropTypes.number.isRequired,
+        username: PropTypes.string.isRequired,
+        started: PropTypes.bool.isRequired,
+      }),
+    ),
+    messages: PropTypes.arrayOf(
+      PropTypes.shape({
+        id: PropTypes.number.isRequired,
+        username: PropTypes.string.isRequired,
+        message: PropTypes.string.isRequired,
+        message_type: PropTypes.string.isRequired,
+        created_at: PropTypes.string.isRequired,
+      }),
+    ),
+  }).isRequired,
+};
 
 export default connect()(ChatBox);

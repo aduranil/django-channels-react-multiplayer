@@ -64,22 +64,23 @@ to create your user!
   </div>
 );
 
+FormField.propTypes = {
+  onChange: PropTypes.func.isRequired,
+  input: PropTypes.string.isRequired,
+  labelName: PropTypes.string.isRequired,
+  type: PropTypes.string.isRequired,
+};
 Form.propTypes = {
-  handleSubmit: PropTypes.func,
-  handleChange: PropTypes.func,
-  email: PropTypes.string,
-  password: PropTypes.string,
-  username: PropTypes.string,
+  handleSubmit: PropTypes.func.isRequired,
+  handleChange: PropTypes.func.isRequired,
+  email: PropTypes.string.isRequired,
+  password: PropTypes.string.isRequired,
+  username: PropTypes.string.isRequired,
   error: PropTypes.string,
   route: PropTypes.string,
 };
 
 Form.defaultProps = {
-  handleSubmit: PropTypes.func,
-  handleChange: PropTypes.func,
-  email: PropTypes.string,
-  password: PropTypes.string,
-  username: PropTypes.null,
   error: PropTypes.null,
   route: PropTypes.string,
 };
