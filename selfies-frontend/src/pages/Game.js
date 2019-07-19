@@ -5,7 +5,7 @@ import { wsConnect, wsDisconnect } from '../modules/websocket';
 import {
   getGame, startRound, leaveGame, makeMove,
 } from '../modules/game';
-import withAuth from '../hocs/authWrapper';
+import WithAuth from '../hocs/AuthWrapper';
 import ChatBox from '../components/ChatBox';
 import Navigation from '../components/Navigation';
 import { Phone } from '../images/iPhone';
@@ -186,4 +186,4 @@ const s2p = (state, ownProps) => ({
   current_player: state.games.current_player,
   time: state.games.time,
 });
-export default withAuth(connect(s2p)(Game));
+export default WithAuth(connect(s2p)(Game));

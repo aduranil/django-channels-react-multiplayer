@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
 import { getCurrentUser } from '../modules/account';
 
-const withAuth = (WrappedComponent) => {
+const WithAuth = (WrappedComponent) => {
   class AuthedComponent extends React.Component {
     state = {
       authCompleted: this.props.loggedIn,
@@ -40,4 +40,4 @@ const withAuth = (WrappedComponent) => {
   return connect(mapStateToProps)(AuthedComponent);
 };
 
-export default withAuth;
+export default WithAuth;
