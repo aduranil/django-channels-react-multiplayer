@@ -35,6 +35,12 @@ class Games extends React.Component {
     history.push(`/game/${e.target.value}`);
   };
 
+  onKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      this.onClick();
+    }
+  };
+
   render() {
     const { roomName } = this.state;
     const { games } = this.props;
@@ -77,6 +83,7 @@ class Games extends React.Component {
               value={roomName}
               onChange={event => this.setState({ roomName: event.target.value })}
               placeholder="room name"
+              onKeyPress={this.onKeyPress}
               style={{ width: '100%' }}
             />
           </div>

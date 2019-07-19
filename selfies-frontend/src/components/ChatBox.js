@@ -28,6 +28,12 @@ class ChatBox extends React.Component {
     this.setState({ message: '' });
   };
 
+  onKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      this.handleSubmit();
+    }
+  };
+
   render() {
     const { message } = this.state;
     const { game } = this.props;
@@ -37,6 +43,7 @@ class ChatBox extends React.Component {
           style={{
             overflowY: 'scroll',
             marginRight: '2px',
+            minHeight: '300px',
             maxHeight: '300px',
             marginBottom: '5px',
           }}
@@ -70,6 +77,7 @@ class ChatBox extends React.Component {
             style={{ width: '68%', marginRight: '5px' }}
             onChange={this.handleChange}
             value={message}
+            onKeyPress={this.onKeyPress}
           />
           <button style={{ width: '20%' }} type="button" onClick={this.handleSubmit}>
             send

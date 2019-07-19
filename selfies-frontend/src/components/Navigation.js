@@ -36,7 +36,10 @@ Navigation.propTypes = {
     push: PropTypes.func.isRequired,
   }).isRequired,
   dispatch: PropTypes.func.isRequired,
-  loggedIn: PropTypes.bool.isRequired,
+  loggedIn: PropTypes.bool,
 };
 
+Navigation.defaultProps = {
+  loggedIn: PropTypes.undefined,
+};
 export default connect(s2p)(withRouter(Navigation));
