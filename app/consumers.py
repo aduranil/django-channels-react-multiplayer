@@ -1,11 +1,10 @@
 """ All of the websocket actions for the game and chat functionalities"""
 import json
-
-from asgiref.sync import async_to_sync
 import time
 import threading
+
+from asgiref.sync import async_to_sync
 from channels.generic.websocket import WebsocketConsumer
-from django.contrib.auth.models import User
 
 from .models import Game, Message, GamePlayer, Round, Move
 
