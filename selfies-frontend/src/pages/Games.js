@@ -18,14 +18,6 @@ class Games extends React.Component {
     }
   }
 
-  // refresh the games, for example if 1 person left and the game gets deleted
-  componentDidUpdate(nextProps) {
-    const { dispatch, games } = this.props;
-    if (games !== nextProps.games) {
-      dispatch(getGames());
-    }
-  }
-
   onClick = () => {
     const { dispatch, history } = this.props;
     const { roomName } = this.state;

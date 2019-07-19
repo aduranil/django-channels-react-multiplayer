@@ -57,6 +57,7 @@ class Game extends React.Component {
     const {
       id, game, time, current_player,
     } = this.props;
+    console.log(game);
     if (id) {
       return (
         <React.Fragment>
@@ -92,27 +93,34 @@ class Game extends React.Component {
                     </div>
                   ))}
               </div>
+
               <div style={{ display: 'flex', flexDirection: 'row' }}>
-                <button type="button" value="post_selfie" onClick={this.makeMove}>
-                  post a selfie
-                </button>
-                <button type="button" value="post_group_selfie" onClick={this.makeMove}>
-                  post group selfie
-                </button>
-                <button
-                  type="button"
-                  disabled={current_player && current_player.stories === 0}
-                  value="post_story"
-                  onClick={this.makeMove}
-                >
-                  post story
-                </button>
-                <button type="button" value="dont_post" onClick={this.makeMove}>
-                  don't post
-                </button>
-                <button type="button" value="go_live" onClick={this.makeMove}>
-                  go live
-                </button>
+                {game
+                  && game.round_started && (
+                    <React.Fragment>
+                      <button type="button" value="post_selfie" onClick={this.makeMove}>
+                        post a selfie
+                      </button>
+                      <button type="button" value="post_group_selfie" onClick={this.makeMove}>
+                        post group selfie
+                      </button>
+                      <button
+                        type="button"
+                        disabled={current_player && current_player.stories === 0}
+                        value="post_story"
+                        onClick={this.makeMove}
+                      >
+                        post story
+                      </button>
+                      <button type="button" value="dont_post" onClick={this.makeMove}>
+                        don't post
+                      </button>
+                      <button type="button" value="go_live" onClick={this.makeMove}>
+                        go live
+                      </button>
+                      {' '}
+                    </React.Fragment>
+                )}
                 <button type="button" onClick={this.leaveGame}>
                   leave game
                 </button>
@@ -137,8 +145,29 @@ Game.propTypes = {
     push: PropTypes.func.isRequired,
   }).isRequired,
   game: PropTypes.shape({
-    id: PropTypes.number,
-    username: PropTypes.string,
+    id: PropTypes.number.isRequired,
+    game_status: PropTypes.string.isRequired,
+    is_joinable: PropTypes.bool.isRequired,
+    room_name: PropTypes.string.isRequired,
+    round_started: PropTypes.bool.isRequired,
+    users: PropTypes.arrayOf(
+      PropTypes.shape({
+        id: PropTypes.number.isRequired,
+        followers: PropTypes.number.isRequired,
+        stories: PropTypes.number.isRequired,
+        username: PropTypes.string.isRequired,
+        started: PropTypes.bool.isRequired,
+      }),
+    ),
+    messages: PropTypes.arrayOf(
+      PropTypes.shape({
+        id: PropTypes.number.isRequired,
+        username: PropTypes.string.isRequired,
+        message: PropTypes.string.isRequired,
+        message_type: PropTypes.string.isRequired,
+        created_at: PropTypes.string.isRequired,
+      }),
+    ),
   }),
   time: PropTypes.string,
 };
