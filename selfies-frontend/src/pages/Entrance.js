@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import HalfRectangle from '../images/Rectangle';
 import { EntrancePhone } from '../images/EntrancePhone';
 import { Message } from '../images/iMessage';
-import './App.scss';
+import './App.css';
 
 const Entrance = () => (
   <div style={{ minWidth: '100vw', minHeight: '100vh' }}>
@@ -21,7 +21,17 @@ const Entrance = () => (
         minHeight: '80vh',
       }}
     >
-      <div className="landingbox" style={{ padding: '1%' }}>
+      <div
+        style={{
+          background: '#ff70a6',
+          boxShadow: '0 2px 10px 0 rgba(0, 0, 0, 0.5), inset 0 1px 3px 0 rgba(0, 0, 0, 0.5)',
+          borderRadius: '20px',
+          flexGrow: '1',
+          margin: '30px auto 100px auto',
+          width: '50%',
+          padding: '1%',
+        }}
+      >
         <div
           style={{
             textAlign: 'center',

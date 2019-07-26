@@ -1,16 +1,10 @@
-// Google Fonts
-@import url(https://fonts.googleapis.com/css?family=Lobster);
-@import url(https://fonts.googleapis.com/css?family=Roboto+Mono&display=swap);
-
-$lobster: 'Lobster', cursive;
-$roboto: 'Roboto Mono', monospace;
 
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
   overflow: hidden;
-  font-family: $roboto;
+  font-family: 'Roboto Mono', monospace;
   color: #464655;
 }
 
@@ -65,13 +59,13 @@ button[disabled] {
 }
 
 .entrance-title {
-  font-family: $lobster;
+  font-family: 'Lobster', cursive;
   font-size: 100px;
   color: #464655;
 }
 
 h1 {
-  font-family: $lobster;
+  font-family: 'Lobster', cursive;
 }
 
 input {
@@ -80,4 +74,32 @@ input {
   border: none;
   border-radius: 20px;
   outline: none;
+}
+
+.moves-enter,
+.moves-appear {
+  top: var(--menu-starting-top);
+  width: var(--toggler-width);
+  max-height: var(--toggler-height);
+  color: var(--fade-from-color);
+  background-color: var(--toggler-bg-color);
+}
+
+.moves-enter-active,
+.moves-appear-active {
+  top: var(--menu-ending-top);
+  width: var(--menu-width);
+  max-height: var(--menu-max-height);
+  color: var(--fade-to-color);
+  background-color: var(--menu-bg-color);
+  transition: all var(--timeout);
+}
+
+.moves-exit {
+  opacity: 1;
+}
+
+.moves-exit-active {
+  opacity: 0;
+  transition: opacity var(--timeout);
 }
