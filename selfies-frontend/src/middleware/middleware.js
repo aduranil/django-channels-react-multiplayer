@@ -17,6 +17,7 @@ const socketMiddleware = () => {
    * Handler for when the WebSocket closes
    */
   const onClose = (ws, store) => (event) => {
+    debugger;
     store.dispatch(actions.wsDisconnected(event.host));
   };
 
@@ -49,22 +50,22 @@ const socketMiddleware = () => {
           socket.close();
         }
 
-        // Attempt to connect to the remote host...
+        // connect to the remote host
         socket = new WebSocket(action.host);
 
-        // Set up WebSocket handlers
+        // websocket handlers
         socket.onmessage = onMessage(socket, store);
         socket.onclose = onClose(socket, store);
         socket.onopen = onOpen(socket, store, action.host);
 
         break;
-
       case 'WS_DISCONNECT':
         if (socket !== null) {
           socket.close();
         }
         socket = null;
         console.log('websocket closed');
+
         // Tell the store that we've been disconnected...
         store.dispatch(actions.wsDisconnected(action.host));
 

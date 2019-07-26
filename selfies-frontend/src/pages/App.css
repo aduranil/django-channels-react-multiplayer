@@ -35,7 +35,7 @@ button[disabled] {
 
 .basebox {
   background-color: #70d6ff;
-  padding: 2%;
+  padding-bottom: 0;
   margin-left: 1%;
   margin-right: 1%;
   margin-bottom: 1%;

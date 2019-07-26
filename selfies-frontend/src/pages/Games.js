@@ -50,31 +50,33 @@ class Games extends React.Component {
         <Navigation />
         <div className="landingbox">
           <h1 style={{ textAlign: 'center' }}>Active Games</h1>
-          {Array.isArray(games.games)
-            && games.games.map(game => (
-              <div style={{ marginTop: '10px', marginBottom: '10px' }} key={game.id}>
-                <button
-                  type="button"
-                  onClick={this.onJoin}
-                  value={game.id}
-                  disabled={game.is_joinable === false}
-                >
-                  join
-                </button>
-                <span>
-                  {game.room_name}
-                  , players:
-                  {' '}
-                </span>
-                {game.users.map(user => (
-                  <span key={user.username}>
+          <div style={{ overflowY: 'scroll', maxHeight: '250px', marginBottom: '10px' }}>
+            {Array.isArray(games.games)
+              && games.games.map(game => (
+                <div style={{ marginTop: '10px', marginBottom: '10px' }} key={game.id}>
+                  <button
+                    type="button"
+                    onClick={this.onJoin}
+                    value={game.id}
+                    disabled={game.is_joinable === false}
+                  >
+                    join
+                  </button>
+                  <span>
+                    {game.room_name}
+                    , players:
                     {' '}
-                    {user.username}
-                    ,
                   </span>
-                ))}
-              </div>
-            ))}
+                  {game.users.map(user => (
+                    <span key={user.username}>
+                      {' '}
+                      {user.username}
+                      ,
+                    </span>
+                  ))}
+                </div>
+              ))}
+          </div>
           <div style={{ display: 'flex' }}>
             <button type="button" style={{ width: '30%' }} onClick={this.onClick}>
               create game

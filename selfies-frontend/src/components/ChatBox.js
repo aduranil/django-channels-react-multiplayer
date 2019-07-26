@@ -43,9 +43,8 @@ class ChatBox extends React.Component {
           style={{
             overflowY: 'scroll',
             marginRight: '2px',
-            minHeight: '290px',
-            maxHeight: '290px',
-            marginBottom: '5px',
+            minHeight: '270px',
+            maxHeight: '270px',
           }}
         >
           {game
@@ -68,7 +67,6 @@ class ChatBox extends React.Component {
         <div
           style={{
             display: 'flex',
-            marginBottom: '5%',
             marginTop: '5px',
             width: '100%',
           }}
