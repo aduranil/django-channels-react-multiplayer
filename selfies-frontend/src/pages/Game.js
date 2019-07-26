@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { wsConnect, wsDisconnect } from '../modules/websocket';
 import { startRound, leaveGame, makeMove } from '../modules/game';
-import WithAuth from '../hocs/AuthWrapper';
+import WithAuth from '../hocs/AuthenticationWrapper';
 import ChatBox from '../components/ChatBox';
 import Navigation from '../components/Navigation';
 import { Phone } from '../images/iPhone';

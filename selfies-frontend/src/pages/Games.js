@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import Navigation from '../components/Navigation';
 import { createGame, getGames } from '../modules/game';
-import WithAuth from '../hocs/AuthWrapper';
+import WithAuth from '../hocs/AuthenticationWrapper';
 import HalfRectangle from '../images/Rectangle';
 
 class Games extends React.Component {
