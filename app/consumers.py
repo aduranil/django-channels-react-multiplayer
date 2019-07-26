@@ -67,6 +67,7 @@ class GameConsumer(WebsocketConsumer):
             game_player.delete()
             game.check_joinability()
             self.send_update_game_players(game)
+            self.disconnect()
 
     def new_message(self, data):
         user = self.scope['user']

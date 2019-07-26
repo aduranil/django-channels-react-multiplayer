@@ -35,7 +35,7 @@ button[disabled] {
 
 .basebox {
   background-color: #70d6ff;
-  padding: 2%;
+  padding-bottom: 0;
   margin-left: 1%;
   margin-right: 1%;
   margin-bottom: 1%;
@@ -74,32 +74,4 @@ input {
   border: none;
   border-radius: 20px;
   outline: none;
-}
-
-.moves-enter,
-.moves-appear {
-  top: var(--menu-starting-top);
-  width: var(--toggler-width);
-  max-height: var(--toggler-height);
-  color: var(--fade-from-color);
-  background-color: var(--toggler-bg-color);
-}
-
-.moves-enter-active,
-.moves-appear-active {
-  top: var(--menu-ending-top);
-  width: var(--menu-width);
-  max-height: var(--menu-max-height);
-  color: var(--fade-to-color);
-  background-color: var(--menu-bg-color);
-  transition: all var(--timeout);
-}
-
-.moves-exit {
-  opacity: 1;
-}
-
-.moves-exit-active {
-  opacity: 0;
-  transition: opacity var(--timeout);
 }

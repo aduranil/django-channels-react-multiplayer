@@ -4,26 +4,17 @@ import { updateGame, updateTimer } from '../modules/game';
 const socketMiddleware = () => {
   let socket = null;
 
-  /**
-   * Handler for when the WebSocket opens
-   */
-  const onOpen = (ws, store, host) => () => {
+  const onOpen = store => (event) => {
     // Authenticate with Backend...
-    console.log('websocket open');
-    store.dispatch(actions.wsConnected(host));
+    console.log('websocket open', event.target.url);
+    store.dispatch(actions.wsConnected(event.target.url));
   };
 
-  /**
-   * Handler for when the WebSocket closes
-   */
-  const onClose = (ws, store) => (event) => {
-    store.dispatch(actions.wsDisconnected(event.host));
+  const onClose = store => () => {
+    store.dispatch(actions.wsDisconnected());
   };
 
-  /**
-   * Handler for when a message has been received from the server.
-   */
-  const onMessage = (ws, store) => (event) => {
+  const onMessage = store => (event) => {
     const payload = JSON.parse(event.data);
 
     switch (payload.type) {
@@ -39,9 +30,6 @@ const socketMiddleware = () => {
     }
   };
 
-  /**
-   * Middleware
-   */
   return store => next => (action) => {
     switch (action.type) {
       case 'WS_CONNECT':
@@ -49,25 +37,21 @@ const socketMiddleware = () => {
           socket.close();
         }
 
-        // Attempt to connect to the remote host...
+        // connect to the remote host
         socket = new WebSocket(action.host);
 
-        // Set up WebSocket handlers
-        socket.onmessage = onMessage(socket, store);
-        socket.onclose = onClose(socket, store);
-        socket.onopen = onOpen(socket, store, action.host);
+        // websocket handlers
+        socket.onmessage = onMessage(store);
+        socket.onclose = onClose(store);
+        socket.onopen = onOpen(store);
 
         break;
-
       case 'WS_DISCONNECT':
         if (socket !== null) {
           socket.close();
         }
         socket = null;
         console.log('websocket closed');
-        // Tell the store that we've been disconnected...
-        store.dispatch(actions.wsDisconnected(action.host));
-
         break;
       case 'LEAVE_GAME':
         socket.send(
@@ -90,6 +74,7 @@ const socketMiddleware = () => {
         );
         break;
       default:
+        console.log('the next action:', action);
         return next(action);
     }
   };
