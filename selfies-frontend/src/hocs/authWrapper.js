@@ -29,7 +29,25 @@ const WithAuth = (WrappedComponent) => {
       if (authCompleted) {
         return loggedIn ? <WrappedComponent {...this.props} /> : <Redirect to="/loginorsignup" />;
       }
-      return <React.Fragment>Loading</React.Fragment>;
+      return (
+        <React.Fragment>
+          <div
+            style={{
+              textAlign: 'center',
+              margin: 'auto',
+              position: 'absolute',
+              height: '100px',
+              width: '100px',
+              top: '0px',
+              bottom: '0px',
+              left: '0px',
+              right: '0px',
+            }}
+          >
+            Loading
+          </div>
+        </React.Fragment>
+      );
     }
   }
 

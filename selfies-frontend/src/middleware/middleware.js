@@ -1,14 +1,14 @@
 import * as actions from '../modules/websocket';
 import { updateGame, updateTimer } from '../modules/game';
 
-const socketMiddleware = (function () {
+const socketMiddleware = () => {
   let socket = null;
 
   /**
    * Handler for when the WebSocket opens
    */
-  const onOpen = (ws, store, host) => (event) => {
-    // Authenticate with Backend... somehow...
+  const onOpen = (ws, store, host) => () => {
+    // Authenticate with Backend...
     console.log('websocket open');
     store.dispatch(actions.wsConnected(host));
   };
@@ -49,12 +49,6 @@ const socketMiddleware = (function () {
           socket.close();
         }
 
-        // Pass action along
-        next(action);
-
-        // Tell the store that we're busy connecting...
-        store.dispatch(actions.wsConnecting(action.host));
-
         // Attempt to connect to the remote host...
         socket = new WebSocket(action.host);
 
@@ -75,7 +69,6 @@ const socketMiddleware = (function () {
         store.dispatch(actions.wsDisconnected(action.host));
 
         break;
-
       case 'LEAVE_GAME':
         socket.send(
           JSON.stringify({ command: 'LEAVE_GAME', username: action.username, id: action.id }),
@@ -100,6 +93,6 @@ const socketMiddleware = (function () {
         return next(action);
     }
   };
-}());
+};
 
-export default socketMiddleware;
+export default socketMiddleware();

@@ -43,8 +43,8 @@ class ChatBox extends React.Component {
           style={{
             overflowY: 'scroll',
             marginRight: '2px',
-            minHeight: '300px',
-            maxHeight: '300px',
+            minHeight: '290px',
+            maxHeight: '290px',
             marginBottom: '5px',
           }}
         >
