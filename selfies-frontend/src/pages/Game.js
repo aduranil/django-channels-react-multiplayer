@@ -2,9 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { wsConnect, wsDisconnect } from '../modules/websocket';
-import {
-  getGame, startRound, leaveGame, makeMove,
-} from '../modules/game';
+import { startRound, leaveGame, makeMove } from '../modules/game';
 import WithAuth from '../hocs/AuthWrapper';
 import ChatBox from '../components/ChatBox';
 import Navigation from '../components/Navigation';
@@ -22,7 +20,6 @@ class Game extends React.Component {
     const { id, dispatch } = this.props;
     const host = `ws://127.0.0.1:8000/ws/game/${id}?token=${localStorage.getItem('token')}`;
     await dispatch(wsConnect(host));
-    dispatch(getGame(id));
   };
 
   leaveGame = async () => {
