@@ -4,25 +4,16 @@ import { updateGame, updateTimer } from '../modules/game';
 const socketMiddleware = () => {
   let socket = null;
 
-  /**
-   * Handler for when the WebSocket opens
-   */
   const onOpen = store => (event) => {
     // Authenticate with Backend...
     console.log('websocket open', event.target.url);
     store.dispatch(actions.wsConnected(event.target.url));
   };
 
-  /**
-   * Handler for when the WebSocket closes
-   */
   const onClose = store => () => {
     store.dispatch(actions.wsDisconnected());
   };
 
-  /**
-   * Handler for when a message has been received from the server.
-   */
   const onMessage = store => (event) => {
     const payload = JSON.parse(event.data);
 
@@ -39,9 +30,6 @@ const socketMiddleware = () => {
     }
   };
 
-  /**
-   * Middleware
-   */
   return store => next => (action) => {
     switch (action.type) {
       case 'WS_CONNECT':
