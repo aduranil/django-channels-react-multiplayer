@@ -57,7 +57,6 @@ class Game extends React.Component {
     const {
       id, game, time, current_player,
     } = this.props;
-    console.log(game);
     if (id) {
       return (
         <React.Fragment>
