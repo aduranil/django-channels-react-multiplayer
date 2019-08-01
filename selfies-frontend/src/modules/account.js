@@ -1,4 +1,4 @@
-const API_ROOT = 'http://localhost:8000';
+const API_ROOT = 'https://selfies-2020.herokuapp.com';
 
 function status(res) {
   if (!res.ok) {
