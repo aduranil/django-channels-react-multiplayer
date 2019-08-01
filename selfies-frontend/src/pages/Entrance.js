@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import HalfRectangle from '../images/Rectangle';
@@ -44,8 +43,8 @@ const Entrance = () => (
             <div
               style={{
                 top: '35%',
-                left: '37.6%',
-                width: '25%',
+                left: '41.5%',
+                width: '17%',
                 height: '14%',
                 borderRadius: '15px',
                 backgroundColor: 'white',
@@ -64,14 +63,4 @@ const Entrance = () => (
   </div>
 );
 
-Entrance.propTypes = {
-  history: PropTypes.shape({
-    push: PropTypes.func.isRequired,
-  }).isRequired,
-};
-
-const mapStateToProps = state => ({
-  loggedIn: state.auth.loggedIn,
-});
-
-export default connect(mapStateToProps)(Entrance);
+export default connect()(Entrance);
