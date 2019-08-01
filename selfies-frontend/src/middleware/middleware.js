@@ -16,7 +16,7 @@ const socketMiddleware = () => {
 
   const onMessage = store => (event) => {
     const payload = JSON.parse(event.data);
-
+    console.log('receiving server message');
     switch (payload.type) {
       case 'update_game_players':
         store.dispatch(updateGame(payload.game, payload.current_player));
@@ -59,6 +59,7 @@ const socketMiddleware = () => {
         );
         break;
       case 'NEW_MESSAGE':
+        console.log('sending a message', action.msg);
         socket.send(JSON.stringify({ command: 'NEW_MESSAGE', message: action.msg }));
         break;
       case 'START_ROUND':

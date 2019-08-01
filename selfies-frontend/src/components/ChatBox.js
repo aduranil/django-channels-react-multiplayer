@@ -38,13 +38,28 @@ class ChatBox extends React.Component {
     const { message } = this.state;
     const { game } = this.props;
     return (
-      <div className="landingbox basebox" style={{ display: 'flex', flexDirection: 'column' }}>
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          background: '#70d6ff',
+          boxShadow: '0 2px 10px 0 rgba(0, 0, 0, 0.5), inset 0 1px 3px 0 rgba(0, 0, 0, 0.5)',
+          borderRadius: '20px',
+          marginRight: '1%',
+          marginLeft: '1%',
+          marginBottom: '1%',
+          marginTop: '2%',
+          padding: '2%',
+          maxHeight: '500px',
+          width: '25%',
+        }}
+      >
         <div
           style={{
             overflowY: 'scroll',
             marginRight: '2px',
-            minHeight: '270px',
-            maxHeight: '270px',
+            minHeight: '350px',
+            maxHeight: '350px',
           }}
         >
           {game
@@ -113,7 +128,11 @@ ChatBox.propTypes = {
         created_at: PropTypes.string.isRequired,
       }),
     ),
-  }).isRequired,
+  }),
+};
+
+ChatBox.defaultProps = {
+  game: PropTypes.null,
 };
 
 export default connect()(ChatBox);

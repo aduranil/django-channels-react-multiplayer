@@ -60,7 +60,20 @@ class Game extends React.Component {
           <Navigation />
           <div style={{ display: 'flex', flexDirection: 'row' }}>
             <ChatBox game={game} />
-            <div className="gamebox landingbox">
+            <div
+              style={{
+                background: '#ff70a6',
+                boxShadow: '0 2px 10px 0 rgba(0, 0, 0, 0.5), inset 0 1px 3px 0 rgba(0, 0, 0, 0.5)',
+                borderRadius: '20px',
+                flexGrow: '1',
+                marginRight: '1%',
+                marginBottom: '1%',
+                marginTop: '2%',
+                width: '50%',
+                padding: '2%',
+                maxHeight: '500px',
+              }}
+            >
               <div style={{ display: 'flex', flexDirection: 'row' }}>
                 {game
                   && game.users.map(player => (
@@ -72,7 +85,7 @@ class Game extends React.Component {
                         {' '}
                         {player.followers === 1 ? 'follower' : 'followers'}
                       </div>
-                      <div>
+                      <div style={{ marginBottom: '3px' }}>
                         {player.stories}
                         {' '}
                         {player.stories === 1 ? 'story' : 'stories'}
@@ -80,6 +93,7 @@ class Game extends React.Component {
                       <button
                         onClick={this.makeMove}
                         id={player.id}
+                        disabled={!game.round_started}
                         value="leave_comment"
                         type="button"
                       >
