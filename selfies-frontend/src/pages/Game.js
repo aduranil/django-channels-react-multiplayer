@@ -18,13 +18,17 @@ class Game extends React.Component {
 
   connectAndJoin = async () => {
     const { id, dispatch } = this.props;
-    const host = `ws://127.0.0.1:8000/ws/game/${id}?token=${localStorage.getItem('token')}`;
+    const host = `ws://selfies-2020.herokuapp.com/ws/game/${id}?token=${localStorage.getItem(
+      'token',
+    )}`;
     await dispatch(wsConnect(host));
   };
 
   leaveGame = async () => {
     const { id, dispatch, history } = this.props;
-    const host = `ws://127.0.0.1:8000/ws/game/${id}?token=${localStorage.getItem('token')}`;
+    const host = `ws://selfies-2020.herokuapp.com/ws/game/${id}?token=${localStorage.getItem(
+      'token',
+    )}`;
     await dispatch(leaveGame(id));
     await dispatch(wsDisconnect(host));
     history.push('/games');
