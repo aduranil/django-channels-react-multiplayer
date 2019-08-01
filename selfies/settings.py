@@ -23,7 +23,6 @@ CHANNEL_LAYERS = {
         'CONFIG': {
             "hosts": [('redis://localhost:6379', 6379)],
         },
-        "ROUTING": "app.routing.websocket_urlpatterns",
     },
 }
 
