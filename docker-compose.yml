@@ -11,7 +11,7 @@ services:
     image: redis:latest
   web:
     build: .
-    command: python manage.py runserver 0.0.0.0:8000
+    command: daphne -b 0.0.0.0 -p 8000 selfies.asgi:application
     volumes:
       - .:/selfies
     ports:
@@ -23,6 +23,13 @@ services:
     depends_on:
       - db
       - redis
+  worker:
+    build: .
+    command: python manage.py runworker channels -v2
+    volumes:
+     - .:/selfies
+    links:
+     - redis
 
 volumes:
   postgres_data:
