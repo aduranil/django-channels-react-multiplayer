@@ -11,6 +11,7 @@ Click==7.0
 constantly==15.1.0
 Django==2.1.7
 django-cors-headers==2.5.2
+dj-database-url
 django-heroku==0.3.1
 django-webpack-loader==0.5.0
 djangorestframework==3.8.2
