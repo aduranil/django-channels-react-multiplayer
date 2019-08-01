@@ -21,7 +21,7 @@ CHANNEL_LAYERS = {
     'default': {
         'BACKEND': 'channels_redis.core.RedisChannelLayer',
         'CONFIG': {
-            "hosts": [(redis_host, 6379)],
+            "hosts": [('redis://localhost:6379', 6379)],
         },
     },
 }
@@ -37,7 +37,7 @@ SECRET_KEY = 'v&5)v*tmb8ze6rf%f0so2(36dkbuv0z4w2wdd+3$7)_$eah&pr'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*', 'https://selfies-2020.herokuapp.com/']
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
