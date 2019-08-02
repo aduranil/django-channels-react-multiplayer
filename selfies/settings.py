@@ -11,7 +11,6 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 """
 
 import os
-import django_heroku
 import dj_database_url
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -82,7 +81,7 @@ REST_FRAMEWORK = {
 }
 
 CORS_ORIGIN_WHITELIST = (
-    'localhost:1234', 'localhost:3000'
+    'localhost:1234', 'localhost:3000', 'sore-frogs.surge.sh'
 )
 
 ROOT_URLCONF = 'selfies.urls'
@@ -110,7 +109,7 @@ WSGI_APPLICATION = 'selfies.wsgi.application'
 
 DATABASE_URL = os.environ.get('DATABASE_URL')
 DATABASES = {
-    'default': dj_database_url.config(default=DATABASE_URL, conn_max_age=500)
+    'default': dj_database_url.config(default=DATABASE_URL)
 }
 
 # DATABASES = {
@@ -173,6 +172,3 @@ STATIC_URL = '/selfies-frontend/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'selfies-frontend'),
 ]
-
-# Activate Django-Heroku.
-django_heroku.settings(locals())
