@@ -82,7 +82,7 @@ REST_FRAMEWORK = {
 }
 
 CORS_ORIGIN_WHITELIST = (
-    'localhost:1234', 'localhost:3000'
+    'localhost:1234', 'localhost:3000', 'sore-frogs.surge.sh'
 )
 
 ROOT_URLCONF = 'selfies.urls'
