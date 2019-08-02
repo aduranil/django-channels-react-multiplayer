@@ -1,6 +1,6 @@
 FROM python:3.6-stretch
 ENV PYTHONUNBUFFERED 1
-ENV REDIS_HOST "redis"
+ENV REDIS_URL "redis"
 RUN mkdir /selfies
 WORKDIR /selfies
 ADD . /selfies/
