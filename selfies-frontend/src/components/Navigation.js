@@ -27,7 +27,6 @@ class Navigation extends React.Component {
 }
 
 const s2p = state => ({
-  host: state.websocket.host,
   loggedIn: state.auth.loggedIn,
 });
 

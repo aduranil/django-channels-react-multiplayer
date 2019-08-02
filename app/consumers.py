@@ -25,11 +25,7 @@ class GameConsumer(WebsocketConsumer):
         self.join_game()
 
     def disconnect(self, close_code):
-        # Leave room group
-        async_to_sync(self.channel_layer.group_discard)(
-            self.room_group_name,
-            self.channel_name
-        )
+        pass
 
     # GAME MOVE ACTIONS
     def join_game(self):
@@ -67,7 +63,10 @@ class GameConsumer(WebsocketConsumer):
             game_player.delete()
             game.check_joinability()
             self.send_update_game_players(game)
-            self.disconnect()
+            async_to_sync(self.channel_layer.group_discard)(
+                self.room_group_name,
+                self.channel_name
+            )
 
     def new_message(self, data):
         user = self.scope['user']
@@ -151,7 +150,7 @@ class GameConsumer(WebsocketConsumer):
             if data['move']['move'] is not "leave_comment" and move.victim is not None:
                 move.victim = None
             move.save()
-        except:
+        except Exception:
             move = Move.objects.create(round=round, action_type=data['move']['move'], player=game_player)
         # save the victim if they are there
         if data['move']['victim']:
