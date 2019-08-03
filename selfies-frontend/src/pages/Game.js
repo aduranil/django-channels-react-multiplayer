@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { wsConnect, wsDisconnect } from '../modules/websocket';
+import { wsConnect } from '../modules/websocket';
 import { startRound, leaveGame, makeMove } from '../modules/game';
 import WithAuth from '../hocs/AuthenticationWrapper';
 import ChatBox from '../components/ChatBox';
@@ -12,10 +12,21 @@ const HOST = 'localhost:8000';
 // const HOST = 'selfies-2020.herokuapp.com';
 
 class Game extends React.Component {
+  state = {
+    currentMove: null,
+  };
+
   componentDidMount() {
     const { id } = this.props;
     if (id) {
       this.connectAndJoin();
+    }
+  }
+
+  componentDidUpdate(prevProps) {
+    const { time } = this.props;
+    if (time === '15' && time !== prevProps.time) {
+      this.setState({ currentMove: null });
     }
   }
 
@@ -27,9 +38,7 @@ class Game extends React.Component {
 
   leaveGame = async () => {
     const { id, dispatch, history } = this.props;
-    const host = `ws://${HOST}/ws/game/${id}?token=${localStorage.getItem('token')}`;
     await dispatch(leaveGame(id));
-    await dispatch(wsDisconnect(host));
     history.push('/games');
   };
 
@@ -41,10 +50,12 @@ class Game extends React.Component {
   makeMove = (event) => {
     const { dispatch } = this.props;
     let victim = null;
+
     // only the comment game move has another player that it impacts
-    if (event.currentTarget.value === 'leave_comment') {
+    if (event.currentTarget.value.includes('leave_comment')) {
       victim = event.currentTarget.id;
     }
+    this.setState({ currentMove: event.currentTarget.value, victim });
     dispatch(
       makeMove({
         move: event.currentTarget.value,
@@ -57,6 +68,7 @@ class Game extends React.Component {
     const {
       id, game, time, currentPlayer,
     } = this.props;
+    const { currentMove } = this.state;
     if (id && game) {
       return (
         <React.Fragment>
@@ -120,7 +132,10 @@ class Game extends React.Component {
                       onClick={this.makeMove}
                       id={player.id}
                       disabled={!game.round_started}
-                      value="leave_comment"
+                      value={`leave_comment_${player.id}`}
+                      className={
+                        currentMove === `leave_comment_${player.id}` ? 'button-color' : null
+                      }
                       type="button"
                     >
                       <Phone />
@@ -133,24 +148,45 @@ class Game extends React.Component {
               <div style={{ display: 'flex', flexDirection: 'row' }}>
                 {game.round_started && (
                   <React.Fragment>
-                    <button type="button" value="post_selfie" onClick={this.makeMove}>
+                    <button
+                      className={currentMove === 'post_selfie' ? 'button-color' : null}
+                      type="button"
+                      value="post_selfie"
+                      onClick={this.makeMove}
+                    >
                       post a selfie
                     </button>
-                    <button type="button" value="post_group_selfie" onClick={this.makeMove}>
+                    <button
+                      className={currentMove === 'post_group_selfie' ? 'button-color' : null}
+                      type="button"
+                      value="post_group_selfie"
+                      onClick={this.makeMove}
+                    >
                       post group selfie
                     </button>
                     <button
                       type="button"
+                      className={currentMove === 'post_story' ? 'button-color' : null}
                       disabled={currentPlayer && currentPlayer.stories === 0}
                       value="post_story"
                       onClick={this.makeMove}
                     >
                       post story
                     </button>
-                    <button type="button" value="dont_post" onClick={this.makeMove}>
+                    <button
+                      className={currentMove === 'dont_post' ? 'button-color' : null}
+                      type="button"
+                      value="dont_post"
+                      onClick={this.makeMove}
+                    >
                       don't post
                     </button>
-                    <button type="button" value="go_live" onClick={this.makeMove}>
+                    <button
+                      className={currentMove === 'go_live' ? 'button-color' : null}
+                      type="button"
+                      value="go_live"
+                      onClick={this.makeMove}
+                    >
                       go live
                     </button>
                     {' '}
