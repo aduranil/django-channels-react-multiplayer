@@ -90,7 +90,7 @@ TEMPLATES = [
 WSGI_APPLICATION = "selfies.wsgi.application"
 
 # redis_host = os.environ.get("REDIS_URL")
-redis_host = os.environ.get('REDIS_URL', 'localhost')
+redis_host = os.environ.get("REDIS_URL", "localhost")
 CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
@@ -109,9 +109,7 @@ CHANNEL_LAYERS = {
 
 DATABASE_URL = os.environ.get("DATABASE_URL")
 if DATABASE_URL:
-    DATABASES = {
-        'default': dj_database_url.config(default=DATABASE_URL)
-    }
+    DATABASES = {"default": dj_database_url.config(default=DATABASE_URL)}
 else:
     DATABASES = {
         "default": {

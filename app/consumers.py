@@ -54,7 +54,7 @@ class GameConsumer(WebsocketConsumer):
             print("game was deleted")
             game.delete()
         else:
-            print('someone self')
+            print("someone self")
             message = "{} left".format(user.username)
             Message.objects.create(
                 message=message,
@@ -129,7 +129,7 @@ class GameConsumer(WebsocketConsumer):
         round.save()
         updated_round = Round.objects.create(game=self.game, started=True)
         if round.no_one_moved():
-            print('no one moved')
+            print("no one moved")
             # the below 4 things can be combined into one reset_game method
             self.game.round_started = False
             self.game.is_joinable = True

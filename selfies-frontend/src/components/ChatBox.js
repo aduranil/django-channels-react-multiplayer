@@ -1,105 +1,76 @@
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { newMessage } from '../modules/game';
 
-class ChatBox extends React.Component {
-  state = {
-    message: '',
-  };
+function ChatBox({ game, dispatch }) {
+  const [message, setMessage] = useState('');
+  let messagesRef = useRef();
+  useEffect(() => {
+    messagesRef.scrollIntoView({ behavior: 'smooth' });
+  });
 
-  componentDidUpdate() {
-    this.scrollToBottom();
-  }
-
-  scrollToBottom = () => {
-    this.messagesEnd.scrollIntoView({ behavior: 'smooth' });
-  };
-
-  handleChange = (e) => {
-    const { value } = e.target;
-    this.setState({ message: value });
-  };
-
-  handleSubmit = () => {
-    const { dispatch } = this.props;
-    const { message } = this.state;
+  const handleSubmit = () => {
     dispatch(newMessage(message));
-    this.setState({ message: '' });
+    setMessage('');
   };
 
-  onKeyPress = (e) => {
-    if (e.key === 'Enter') {
-      this.handleSubmit();
-    }
-  };
-
-  render() {
-    const { message } = this.state;
-    const { game } = this.props;
-    return (
+  return (
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        background: '#70d6ff',
+        boxShadow: '0 2px 10px 0 rgba(0, 0, 0, 0.5), inset 0 1px 3px 0 rgba(0, 0, 0, 0.5)',
+        borderRadius: '20px',
+        marginRight: '1%',
+        marginLeft: '1%',
+        marginBottom: '1%',
+        marginTop: '2%',
+        padding: '2%',
+        maxHeight: '500px',
+        width: '25%',
+      }}
+    >
+      <div
+        style={{
+          overflowY: 'scroll',
+          marginRight: '2px',
+          minHeight: '350px',
+          maxHeight: '350px',
+        }}
+      >
+        {game.messages.map(msg => (
+          <div key={msg.id}>
+            <span>
+              {' '}
+              {msg.message_type === 'action' ? null : `${msg.username}: `}
+              {msg.message}
+            </span>
+          </div>
+        ))}
+        <div style={{ float: 'left', clear: 'both' }} ref={el => (messagesRef = el)} />
+      </div>
       <div
         style={{
           display: 'flex',
-          flexDirection: 'column',
-          background: '#70d6ff',
-          boxShadow: '0 2px 10px 0 rgba(0, 0, 0, 0.5), inset 0 1px 3px 0 rgba(0, 0, 0, 0.5)',
-          borderRadius: '20px',
-          marginRight: '1%',
-          marginLeft: '1%',
-          marginBottom: '1%',
-          marginTop: '2%',
-          padding: '2%',
-          maxHeight: '500px',
-          width: '25%',
+          marginTop: '5px',
+          width: '100%',
         }}
       >
-        <div
-          style={{
-            overflowY: 'scroll',
-            marginRight: '2px',
-            minHeight: '350px',
-            maxHeight: '350px',
-          }}
-        >
-          {game
-            && game.messages.map(msg => (
-              <div key={msg.id}>
-                <span>
-                  {' '}
-                  {msg.message_type === 'action' ? null : `${msg.username}: `}
-                  {msg.message}
-                </span>
-              </div>
-            ))}
-          <div
-            style={{ float: 'left', clear: 'both' }}
-            ref={(el) => {
-              this.messagesEnd = el;
-            }}
-          />
-        </div>
-        <div
-          style={{
-            display: 'flex',
-            marginTop: '5px',
-            width: '100%',
-          }}
-        >
-          <input
-            style={{ width: '68%', marginRight: '5px' }}
-            onChange={this.handleChange}
-            value={message}
-            onKeyPress={this.onKeyPress}
-          />
-          <button style={{ width: '20%' }} type="button" onClick={this.handleSubmit}>
-            send
-            {' '}
-          </button>
-        </div>
+        <input
+          style={{ width: '68%', marginRight: '5px' }}
+          onChange={e => setMessage(e.target.value)}
+          value={message}
+          onKeyPress={e => e.key === 'Enter' && handleSubmit()}
+        />
+        <button style={{ width: '20%' }} type="button" onClick={handleSubmit}>
+          send
+          {' '}
+        </button>
       </div>
-    );
-  }
+    </div>
+  );
 }
 
 ChatBox.propTypes = {
