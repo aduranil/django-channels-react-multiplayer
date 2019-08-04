@@ -17,13 +17,6 @@ function Games({
     }
   });
 
-  // componentDidUpdate(prevProps) {
-  //   const { dispatch, games } = this.props;
-  //   if (games !== prevProps.games) {
-  //     dispatch(getGames());
-  //   }
-  // }
-
   const onClick = () => {
     if (roomName.length === 0) {
       return alert('You must include a room name');
