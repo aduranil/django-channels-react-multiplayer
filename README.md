@@ -4,8 +4,6 @@
 
 Every girl starts with 0 followers. The girl that gets to 100 followers first wins and wins an advertisement deal with flat tummy tea! Everyone else sets their account to private :(
 
-This is my magnum opus lol....this is currently only 20% done but has a decent amount of functionality
-
 how to run:
 
 ```
@@ -14,9 +12,9 @@ cd selfies-frontend
 yarn start
 ```
 
-![game_screen](https://i.ibb.co/71DDchG/Screen-Shot-2019-07-03-at-7-31-10-PM.png)
+![game_screen](https://thepracticaldev.s3.amazonaws.com/i/2nict69l0gvu0b79kiz1.png)
 
-![all_games](https://i.ibb.co/qmTPbwM/Screen-Shot-2019-07-03-at-7-17-05-PM.png)
+![all_games](https://thepracticaldev.s3.amazonaws.com/i/43ot9t2h2lt4ogexfllw.png)
 
 ## Moves
 
