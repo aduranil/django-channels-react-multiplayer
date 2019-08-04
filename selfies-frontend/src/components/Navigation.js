@@ -4,26 +4,22 @@ import { withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { logoutUser } from '../modules/account';
 
-class Navigation extends React.Component {
-  onLogout = async () => {
-    const { dispatch, history } = this.props;
+function Navigation({ dispatch, history, loggedIn }) {
+  const onLogout = async () => {
     await dispatch(logoutUser());
     return history.push('/loginorsignup');
   };
 
-  render() {
-    const { loggedIn } = this.props;
-    return (
-      <div className="container">
-        <h1> Selfies 2020 </h1>
-        {loggedIn && (
-          <button type="button" style={{ width: '100px' }} onClick={this.onLogout}>
-            logout
-          </button>
-        )}
-      </div>
-    );
-  }
+  return (
+    <div className="container">
+      <h1> Selfies 2020 </h1>
+      {loggedIn && (
+        <button type="button" style={{ width: '100px' }} onClick={onLogout}>
+          logout
+        </button>
+      )}
+    </div>
+  );
 }
 
 const s2p = state => ({
