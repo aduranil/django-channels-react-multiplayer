@@ -29,76 +29,71 @@ class GameConsumer(WebsocketConsumer):
     # GAME MOVE ACTIONS
     def join_game(self):
         user = self.scope["user"]
-        game = Game.objects.get(id=self.id)
-        if not hasattr(user, "gameplayer") and game.is_joinable:
-            GamePlayer.objects.create(user=user, game=game)
+        if not hasattr(user, "gameplayer") and self.game.is_joinable:
+            GamePlayer.objects.create(user=user, game=self.game)
             message = "{} joined".format(user.username)
             Message.objects.create(
                 message=message,
-                game=game,
+                game=self.game,
                 username=user.username,
                 message_type="action",
             )
-            game.check_joinability()
+            self.game.check_joinability()
 
-        self.send_update_game_players(game)
+        self.send_update_game_players()
 
     def leave_game(self, data):
         user = self.scope["user"]
-
         game_player = GamePlayer.objects.get(user=user)
         # retrieve the updated game
-        game = Game.objects.get(id=self.id)
-        print(game.game_players.all().count())
-        if game.game_players.all().count() <= 1:
+        print(self.game.game_players.all().count())
+        if self.game.game_players.all().count() <= 1:
             print("game was deleted")
-            game.delete()
+            game_player.delete()
+            self.game.delete()
         else:
             print("someone self")
             message = "{} left".format(user.username)
             Message.objects.create(
                 message=message,
-                game=game,
+                game=self.game,
                 username=user.username,
                 message_type="action",
             )
             game_player.delete()
-            game.check_joinability()
-            self.send_update_game_players(game)
+            self.game.check_joinability()
+            self.send_update_game_players()
             async_to_sync(self.channel_layer.group_discard)(
                 self.room_group_name, self.channel_name
             )
 
     def new_message(self, data):
-        user = self.scope["user"]
-        game = Game.objects.get(id=self.id)
         Message.objects.create(
             message=data["message"],
             message_type="user_message",
-            game=game,
-            username=user.username,
+            game=self.game,
+            username=self.scope["user"].username,
         )
-        self.send_update_game_players(game)
+        self.send_update_game_players()
 
     def start_round(self, data):
         """Checks if the user has opted in to starting the game"""
-        user = self.scope["user"]
-        game = Game.objects.get(id=self.id)
-        game_player = GamePlayer.objects.get(user=user)
+
+        game_player = GamePlayer.objects.get(user=self.scope["user"])
         game_player.started = True
         game_player.save()
-        self.send_update_game_players(game)
-        if game.can_start_game():
+        self.send_update_game_players()
+        if self.game.can_start_game():
             # start the timer in another thread
-            round = Round.objects.create(game=game, started=True)
+            round = Round.objects.create(game=self.game, started=True)
             # pass round so we can set it to false after the time is done
-            self.start_round_and_timer(round, game)
+            self.start_round_and_timer()
 
-    def start_round_and_timer(self, round, game):
-        threading.Thread(target=self.update_timer_data, args=[round]).start()
-        self.send_update_game_players(game)
+    def start_round_and_timer(self):
+        threading.Thread(target=self.update_timer_data).start()
+        self.send_update_game_players()
 
-    def update_timer_data(self, round):
+    def update_timer_data(self):
         """countdown the timer for the game"""
         i = 15
         while i >= 0:
@@ -107,42 +102,47 @@ class GameConsumer(WebsocketConsumer):
             i -= 1
         # reset timer back to null
         self.send_time(None)
-        self.new_round_or_determine_winner(round)
+        self.new_round_or_determine_winner()
 
-    def new_round_or_determine_winner(self, round):
+    def new_round_or_determine_winner(self):
         "determines a winner or loops through again"
         # TODO i need to move this somewhere else
-        player_points = round.tabulate_round()
-        winner = None
-        for player in self.game.game_players.all():
-            points = player_points[player.user_id]
-            updated_points = points + player.followers
+        round = Round.objects.get_or_none(game=self.game, started=True)
+        if round:
+            player_points = round.tabulate_round()
+            winner = None
+            for player in self.game.game_players.all():
+                points = player_points[player.user_id]
+                updated_points = points + player.followers
 
-            # the floor is zero
-            if updated_points < 0:
-                updated_points = 0
-            if updated_points >= 100:
-                winner = player
-            player.followers = updated_points
-            player.save()
-        round.started = False
-        round.save()
-        updated_round = Round.objects.create(game=self.game, started=True)
-        if round.no_one_moved():
-            print("no one moved")
-            # the below 4 things can be combined into one reset_game method
-            self.game.round_started = False
-            self.game.is_joinable = True
-            self.game.set_players_as_not_having_started()
-            self.game.save()
+                # the floor is zero
+                if updated_points < 0:
+                    updated_points = 0
+                if updated_points >= 100:
+                    winner = player
+                player.followers = updated_points
+                player.save()
 
-            return self.send_update_game_players(self.game)
+            if round.no_one_moved():
+                print("no one moved")
+                # the below 4 things can be combined into one reset_game method
+                self.game.round_started = False
+                self.game.is_joinable = True
+                self.game.set_players_as_not_having_started()
+                self.game.save()
+                round.started = False
+                round.save()
 
-        if not winner:
-            self.start_round_and_timer(updated_round, self.game)
-        else:
-            # TODO disconnect when this happens
-            self.when_someone_wins()
+                return self.send_update_game_players()
+
+            round.started = False
+            round.save()
+            updated_round = Round.objects.create(game=self.game, started=True)
+            if not winner:
+                self.start_round_and_timer()
+            else:
+                # TODO disconnect when this happens
+                self.when_someone_wins()
 
     def when_someone_wins(self):
         # placeholder method for now
@@ -151,6 +151,7 @@ class GameConsumer(WebsocketConsumer):
     def make_move(self, data):
         user = self.scope["user"]
         round = Round.objects.get(game=self.game, started=True)
+
         game_player = GamePlayer.objects.get_or_none(user=user)
         try:
             move = Move.objects.get(player=game_player, round=round)
@@ -172,7 +173,7 @@ class GameConsumer(WebsocketConsumer):
             move.save()
 
     # ASYNC TO SYNC ACTIONS
-    def send_update_game_players(self, game):
+    def send_update_game_players(self):
         """sends all game info as a json object when there's an update"""
         game = Game.objects.get(id=self.id)
         game_player = GamePlayer.objects.get_or_none(user=self.scope["user"])
