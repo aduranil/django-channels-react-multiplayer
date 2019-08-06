@@ -20,15 +20,11 @@ function Game({
 
   useEffect(() => dispatch(wsConnect(host)), []);
 
-  useEffect(
-    () => {
-      console.log(time);
-      if (time === '15') {
-        setCurrentMove(null);
-      }
-    },
-    [time],
-  );
+  useEffect(() => {
+    if (time === '15') {
+      setCurrentMove(null);
+    }
+  }, [time]);
 
   const exitGame = async () => {
     await dispatch(leaveGame(id));
@@ -41,21 +37,27 @@ function Game({
 
   const newMove = (event) => {
     event.preventDefault();
-
+    let move = event.currentTarget.value;
+    let theVictim = null;
     // only the comment game move has another player that it impacts
     if (event.currentTarget.value.includes('leave_comment')) {
+      move = 'leave_comment';
       setVictim(event.currentTarget.id);
+      theVictim = event.currentTarget.id;
+      // victim = event.currentTarget.id;
     }
     setCurrentMove(event.currentTarget.value);
+    console.log(event.currentTarget.id);
     dispatch(
       makeMove({
-        move: event.currentTarget.value,
-        victim,
+        move,
+        victim: theVictim,
       }),
     );
   };
 
   if (id && game) {
+    console.log(game);
     return (
       <React.Fragment>
         <Navigation />
@@ -178,7 +180,7 @@ function Game({
                     value="dont_post"
                     onClick={newMove}
                   >
-                    don't post
+                    {"don't post"}
                   </button>
                   <button
                     className={currentMove === 'go_live' ? 'button-color' : null}
@@ -229,6 +231,15 @@ Game.propTypes = {
       }),
     ),
     messages: PropTypes.arrayOf(
+      PropTypes.shape({
+        id: PropTypes.number.isRequired,
+        username: PropTypes.string.isRequired,
+        message: PropTypes.string.isRequired,
+        message_type: PropTypes.string.isRequired,
+        created_at: PropTypes.string.isRequired,
+      }),
+    ),
+    round_history: PropTypes.arrayOf(
       PropTypes.shape({
         id: PropTypes.number.isRequired,
         username: PropTypes.string.isRequired,

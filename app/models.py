@@ -1,5 +1,6 @@
 # Create your models here.
 import json
+import random
 from collections import defaultdict
 
 from django.core.serializers.json import DjangoJSONEncoder
@@ -33,7 +34,8 @@ class Game(models.Model):
             room_name=self.room_name,
             round_started=self.round_started,
             users=[u.as_json() for u in self.game_players.all()],
-            messages=[m.as_json() for m in self.messages.all().order_by("created_at")],
+            messages=[m.as_json() for m in self.messages.all().exclude(message_type="round_recap").order_by("created_at")],
+            round_history=[m.as_json() for m in self.messages.all().filter(message_type="round_recap").order_by("created_at")],
             current_round=[r.as_json() for r in self.rounds.all().filter(started=True)],
         )
 
@@ -72,7 +74,13 @@ class Game(models.Model):
 class GamePlayer(models.Model):
     followers = models.IntegerField(default=0)
     stories = models.IntegerField(default=3)
-    user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
+    user = models.ForeignKey(
+        User,
+        related_name="game_players",
+        on_delete=models.CASCADE,
+        primary_key=False,
+        default="",
+    )
     started = models.BooleanField(default=False)
     game = models.ForeignKey(
         Game, related_name="game_players", on_delete=models.CASCADE
@@ -81,7 +89,7 @@ class GamePlayer(models.Model):
 
     def as_json(self):
         return dict(
-            id=self.user.id,
+            id=self.id,
             followers=self.followers,
             stories=self.stories,
             username=self.user.username,
@@ -111,9 +119,42 @@ class Round(models.Model):
     started = models.BooleanField(default=False)
 
     objects = GetOrNoneManager()
-    
+
     def as_json(self):
-        return dict(id=self.id, started=self.started)
+        return dict(
+            id=self.id,
+            started=self.started,
+            moves=[m.as_json() for m in self.moves.all()],
+        )
+
+    def generate_message(
+        self, action_type, username, points, updated_points, player_moves, id, victims
+    ):
+        # player_moves: {'post_selfie': [2], 'post_group_selfie': [], 'post_story': [], 'go_live': [], 'leave_comment': [], 'dont_post': [], 'no_move': []}
+        # victims {33: 1} the player.id and the count of how many people left a mean comment
+        message = "{} did {} and got {} points".format(username, action_type, points)
+        if id in player_moves["go_live"]:
+            message = "{} went live and got {} points, and now has {}".format(
+                username, points, updated_points
+            )
+            if len(player_moves["go_live"]) > 1:
+                message = "{} went live while other girls also went live. what a dummy! She lost {} points and now has {} points".format(
+                    username, points, updated_points
+                )
+        if id in player_moves["dont_post"]:
+            message = "{} didn't post and lost {} points. i dont know why since she had nothing better to do.".format(username, points)
+        if id in player_moves["no_move"]:
+            message = "{} was so lazy that she forgot to move. she lost {} points".format(username, points)
+        if id in player_moves["post_selfie"]:
+            message1 = "{} posted a selfie. how original. she gained {} points".format(
+                username, points
+            )
+            message2 = "{} posted a selfie. cool i guess. she now has {} points".format(username, updated_points)
+            message3 = "{} delighted her followers with a beautiful selfie and gained {}".format(username, points)
+            message = random.choice([message1, message2, message3])
+            if len(player_moves["go_live"]) == 1:
+                message = "{} lost {} points because she posted a selfie while another girl was going live!".format(username, points)
+        Message.objects.create(message=message, message_type="round_recap", username=username, game=self.game)
 
     def no_one_moved(self):
         "if no one moved, we want to end the game"
@@ -174,41 +215,41 @@ class Round(models.Model):
         for move in self.moves.all():
             # TODO refactor this into a switch statement
             if move.action_type == move.POST_SELFIE:
-                PLAYER_MOVES[POST_SELFIE].append(move.player.user.id)
-                PLAYERS_WHO_MOVED.append(move.player.user.id)
+                PLAYER_MOVES[POST_SELFIE].append(move.player.id)
+                PLAYERS_WHO_MOVED.append(move.player.id)
                 # dont update these points until the end
             elif move.action_type == move.POST_GROUP_SELFIE:
-                PLAYER_MOVES[POST_GROUP_SELFIE].append(move.player.user.id)
-                PLAYERS_WHO_MOVED.append(move.player.user.id)
-                PLAYER_POINTS[move.player.user.id] = POINTS[POST_GROUP_SELFIE]
+                PLAYER_MOVES[POST_GROUP_SELFIE].append(move.player.id)
+                PLAYERS_WHO_MOVED.append(move.player.id)
+                PLAYER_POINTS[move.player.id] = POINTS[POST_GROUP_SELFIE]
             elif move.action_type == move.POST_STORY:
-                PLAYER_MOVES[POST_STORY].append(move.player.user.id)
-                PLAYERS_WHO_MOVED.append(move.player.user.id)
-                PLAYER_POINTS[move.player.user.id] = POINTS[POST_STORY]
+                PLAYER_MOVES[POST_STORY].append(move.player.id)
+                PLAYERS_WHO_MOVED.append(move.player.id)
+                PLAYER_POINTS[move.player.id] = POINTS[POST_STORY]
 
                 # decrement the number of stories the player has
-                game_player = GamePlayer.objects.get(user_id=move.player.user_id)
+                game_player = GamePlayer.objects.get(user_id=move.player.user_id, game=self.game)
                 game_player.stories = game_player.stories - 1
                 game_player.save()
             elif move.action_type == move.GO_LIVE:
-                PLAYER_MOVES[GO_LIVE].append(move.player.user.id)
-                PLAYERS_WHO_MOVED.append(move.player.user.id)
-                PLAYER_POINTS[move.player.user.id] = POINTS[GO_LIVE]
+                PLAYER_MOVES[GO_LIVE].append(move.player.id)
+                PLAYERS_WHO_MOVED.append(move.player.id)
+                PLAYER_POINTS[move.player.id] = POINTS[GO_LIVE]
             elif move.action_type == move.LEAVE_COMMENT:
-                PLAYER_MOVES[LEAVE_COMMENT].append(move.player.user.id)
-                PLAYERS_WHO_MOVED.append(move.player.user.id)
-                VICTIMS[move.victim.user.id] += 1
-                PLAYER_POINTS[move.player.user.id] = POINTS[LEAVE_COMMENT]
+                PLAYER_MOVES[LEAVE_COMMENT].append(move.player.id)
+                PLAYERS_WHO_MOVED.append(move.player.id)
+                VICTIMS[move.victim.id] += 1
+                PLAYER_POINTS[move.player.id] = POINTS[LEAVE_COMMENT]
             elif move.action_type == move.DONT_POST:
-                PLAYER_MOVES[DONT_POST].append(move.player.user.id)
-                PLAYERS_WHO_MOVED.append(move.player.user.id)
-                PLAYER_POINTS[move.player.user.id] = POINTS[DONT_POST]
+                PLAYER_MOVES[DONT_POST].append(move.player.id)
+                PLAYERS_WHO_MOVED.append(move.player.id)
+                PLAYER_POINTS[move.player.id] = POINTS[DONT_POST]
 
         # see if any of the players didnt move and add a no_move action
         for player in self.game.game_players.all():
-            if player.user.id not in PLAYERS_WHO_MOVED:
-                PLAYER_MOVES[NO_MOVE].append(player.user.id)
-                PLAYER_POINTS[player.user.id] = POINTS[NO_MOVE]
+            if player.id not in PLAYERS_WHO_MOVED:
+                PLAYER_MOVES[NO_MOVE].append(player.id)
+                PLAYER_POINTS[player.id] = POINTS[NO_MOVE]
                 Move.objects.create(round=self, action_type=NO_MOVE, player=player)
 
         # convert a group selfie into a regular selfie if there's just 1
@@ -262,7 +303,7 @@ class Round(models.Model):
             if PLAYER_POINTS[user] == 0:
                 PLAYER_POINTS[user] = POINTS[POST_SELFIE]
 
-        return PLAYER_POINTS
+        return [PLAYER_POINTS, PLAYER_MOVES, VICTIMS]
 
 
 class Move(models.Model):
@@ -298,3 +339,11 @@ class Move(models.Model):
         null=True,
         on_delete=models.CASCADE,
     )
+
+    def as_json(self):
+        return dict(
+            id=self.id,
+            action_type=self.action_type,
+            player=self.player.as_json() if self.player else None,
+            victim=self.victim.as_json() if self.victim else None,
+        )

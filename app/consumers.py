@@ -29,7 +29,8 @@ class GameConsumer(WebsocketConsumer):
     # GAME MOVE ACTIONS
     def join_game(self):
         user = self.scope["user"]
-        if not hasattr(user, "gameplayer") and self.game.is_joinable:
+        game_player = GamePlayer.objects.get_or_none(user=user, game=self.game)
+        if not game_player and self.game.is_joinable:
             GamePlayer.objects.create(user=user, game=self.game)
             message = "{} joined".format(user.username)
             Message.objects.create(
@@ -43,8 +44,9 @@ class GameConsumer(WebsocketConsumer):
         self.send_update_game_players()
 
     def leave_game(self, data):
+        print('in leave game')
         user = self.scope["user"]
-        game_player = GamePlayer.objects.get(user=user)
+        game_player = GamePlayer.objects.get(user=user, game=self.game)
         # retrieve the updated game
         print(self.game.game_players.all().count())
         if self.game.game_players.all().count() <= 1:
@@ -79,13 +81,13 @@ class GameConsumer(WebsocketConsumer):
     def start_round(self, data):
         """Checks if the user has opted in to starting the game"""
 
-        game_player = GamePlayer.objects.get(user=self.scope["user"])
+        game_player = GamePlayer.objects.get(user=self.scope["user"], game=self.game)
         game_player.started = True
         game_player.save()
         self.send_update_game_players()
         if self.game.can_start_game():
             # start the timer in another thread
-            round = Round.objects.create(game=self.game, started=True)
+            Round.objects.create(game=self.game, started=True)
             # pass round so we can set it to false after the time is done
             self.start_round_and_timer()
 
@@ -95,7 +97,7 @@ class GameConsumer(WebsocketConsumer):
 
     def update_timer_data(self):
         """countdown the timer for the game"""
-        i = 15
+        i = 5
         while i >= 0:
             time.sleep(1)
             self.send_time(str(i))
@@ -109,11 +111,12 @@ class GameConsumer(WebsocketConsumer):
         # TODO i need to move this somewhere else
         round = Round.objects.get_or_none(game=self.game, started=True)
         if round:
-            player_points = round.tabulate_round()
+            player_points, player_moves, victims = round.tabulate_round()
             winner = None
             for player in self.game.game_players.all():
                 points = player_points[player.user_id]
                 updated_points = points + player.followers
+                move = Move.objects.get(round=round, player=player)
 
                 # the floor is zero
                 if updated_points < 0:
@@ -122,7 +125,15 @@ class GameConsumer(WebsocketConsumer):
                     winner = player
                 player.followers = updated_points
                 player.save()
-
+                round.generate_message(
+                    move.action_type,
+                    player.user.username,
+                    points,
+                    updated_points,
+                    player_moves,
+                    player.id,
+                    victims,
+                )
             if round.no_one_moved():
                 print("no one moved")
                 # the below 4 things can be combined into one reset_game method
@@ -137,7 +148,7 @@ class GameConsumer(WebsocketConsumer):
 
             round.started = False
             round.save()
-            updated_round = Round.objects.create(game=self.game, started=True)
+            Round.objects.create(game=self.game, started=True)
             if not winner:
                 self.start_round_and_timer()
             else:
@@ -152,7 +163,7 @@ class GameConsumer(WebsocketConsumer):
         user = self.scope["user"]
         round = Round.objects.get(game=self.game, started=True)
 
-        game_player = GamePlayer.objects.get_or_none(user=user)
+        game_player = GamePlayer.objects.get_or_none(user=user, game=self.game)
         try:
             move = Move.objects.get(player=game_player, round=round)
             move.action_type = data["move"]["move"]
@@ -168,7 +179,9 @@ class GameConsumer(WebsocketConsumer):
             )
         # save the victim if they are there
         if data["move"]["victim"]:
-            victim = GamePlayer.objects.get(user_id=data["move"]["victim"])
+            victim = GamePlayer.objects.get(
+                id=data["move"]["victim"], game=self.game
+            )
             move.victim = victim
             move.save()
 
@@ -176,7 +189,7 @@ class GameConsumer(WebsocketConsumer):
     def send_update_game_players(self):
         """sends all game info as a json object when there's an update"""
         game = Game.objects.get(id=self.id)
-        game_player = GamePlayer.objects.get_or_none(user=self.scope["user"])
+        game_player = GamePlayer.objects.get_or_none(user=self.scope["user"], game=game)
         current_player = game_player.as_json() if game_player else None
         async_to_sync(self.channel_layer.group_send)(
             self.room_group_name,
