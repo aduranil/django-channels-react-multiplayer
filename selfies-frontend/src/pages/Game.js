@@ -9,8 +9,8 @@ import RoundHistory from '../components/RoundHistory';
 import Navigation from '../components/Navigation';
 import { Phone } from '../images/iPhone';
 
-const HOST = 'localhost:8000';
-// const HOST = 'selfies-2020.herokuapp.com';
+// const HOST = 'localhost:8000';
+const HOST = 'selfies-2020.herokuapp.com';
 
 function Game({
   id, time, dispatch, history, game, currentPlayer,
@@ -20,11 +20,14 @@ function Game({
 
   useEffect(() => dispatch(wsConnect(host)), [dispatch, host]);
 
-  useEffect(() => {
-    if (time === '90') {
-      setCurrentMove(null);
-    }
-  }, [time]);
+  useEffect(
+    () => {
+      if (time === '90') {
+        setCurrentMove(null);
+      }
+    },
+    [time],
+  );
 
   const beginRound = () => {
     dispatch(startRound());
