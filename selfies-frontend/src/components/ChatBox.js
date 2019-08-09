@@ -4,10 +4,10 @@ import PropTypes from 'prop-types';
 import { newMessage } from '../modules/game';
 
 function ChatBox({ game, dispatch }) {
-  const [message, setMessage] = useState('');
   let messagesRef = useRef();
+  const [message, setMessage] = useState('');
   useEffect(() => {
-    messagesRef.scrollIntoView(false);
+    messagesRef.scrollIntoView({ behavior: 'smooth' });
   });
 
   const handleSubmit = () => {
@@ -29,9 +29,10 @@ function ChatBox({ game, dispatch }) {
         marginTop: '1%',
         padding: '2%',
         maxHeight: '500px',
-        width: '25%',
+        width: '40%',
       }}
     >
+      <h3 style={{ textAlign: 'center' }}>Group Chat</h3>
       <div
         style={{
           overflowY: 'scroll',
@@ -59,12 +60,12 @@ function ChatBox({ game, dispatch }) {
         }}
       >
         <input
-          style={{ width: '68%', marginRight: '5px' }}
+          style={{ width: '100%', marginRight: '10px' }}
           onChange={e => setMessage(e.target.value)}
           value={message}
           onKeyPress={e => e.key === 'Enter' && handleSubmit()}
         />
-        <button style={{ width: '20%' }} type="button" onClick={handleSubmit}>
+        <button style={{ width: '10%' }} type="button" onClick={handleSubmit}>
           send
           {' '}
         </button>

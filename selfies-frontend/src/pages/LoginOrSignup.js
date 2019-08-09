@@ -38,6 +38,16 @@ class LoginOrSignup extends React.Component {
     return history.push('/games');
   };
 
+  componentWillUnmount() {
+    this.setState({ error: null });
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.route !== this.props.route) {
+      this.setState({ error: null });
+    }
+  }
+
   render() {
     const {
       username, email, password, error,
@@ -46,6 +56,7 @@ class LoginOrSignup extends React.Component {
     return (
       <React.Fragment>
         <Navigation />
+        <HalfRectangle color="#70D6FF" />
         <div
           style={{
             display: 'flex',
@@ -55,7 +66,6 @@ class LoginOrSignup extends React.Component {
             minHeight: '80vh',
           }}
         >
-          <HalfRectangle color="#70D6FF" />
           <div
             style={{
               alignSelf: 'center',
