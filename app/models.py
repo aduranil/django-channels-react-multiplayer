@@ -80,7 +80,7 @@ class Game(models.Model):
         """See if the round can be started. Requires at least 3 players and
         that all players in the room have started"""
 
-        if self.game_players.all().count() <= 0:
+        if self.game_players.all().count() <= 2:
             self.round_started = False
             self.save()
             return False
@@ -247,7 +247,7 @@ class Round(models.Model):
         if self.moves.all().count() == self.game.game_players.all().count():
             return True
         return False
-        
+
     def update_user_message(self, id, action_type, points, extra=None):
         gp = GamePlayer.objects.get(id=id)
         msg = Message.objects.filter(
