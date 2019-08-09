@@ -13,7 +13,7 @@ const HOST = 'localhost:8000';
 // const HOST = 'selfies-2020.herokuapp.com';
 
 function Game({
-  id, time, dispatch, history, game, currentPlayer,
+  id, time, dispatch, game, currentPlayer,
 }) {
   const [currentMove, setCurrentMove] = useState('');
   const host = `ws://${HOST}/ws/game/${id}?token=${localStorage.getItem('token')}`;
