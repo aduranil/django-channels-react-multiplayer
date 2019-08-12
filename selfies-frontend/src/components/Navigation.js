@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { withRouter } from 'react-router-dom';
+import { withRouter, Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { logoutUser } from '../modules/account';
 import { leaveGame } from '../modules/game';
@@ -19,8 +19,20 @@ function Navigation({
   };
 
   return (
-    <div className="container">
-      <h1 style={{ paddingRight: '5px' }}> Selfies 2020 </h1>
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'space-Between',
+        paddingBottom: '5px',
+        marginTop: '5px',
+        marginLeft: '5px',
+      }}
+    >
+      {' '}
+      <Link to="/">
+        <h1 style={{ paddingRight: '5px' }}>Selfies 2020 </h1>
+      </Link>
       {loggedIn && !inGame && (
         <button type="button" style={{ width: '100px' }} onClick={onLogout}>
           logout

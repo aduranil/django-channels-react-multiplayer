@@ -19,14 +19,11 @@ function Game({
 
   useEffect(() => dispatch(wsConnect(host)), [dispatch, host]);
 
-  useEffect(
-    () => {
-      if (time === '90') {
-        setCurrentMove(null);
-      }
-    },
-    [time],
-  );
+  useEffect(() => {
+    if (time === '90') {
+      setCurrentMove(null);
+    }
+  }, [time]);
 
   const beginRound = () => {
     dispatch(startRound());
@@ -53,13 +50,18 @@ function Game({
 
   if (id && game) {
     return (
-      <React.Fragment>
+      <div>
         <Navigation inGame />
         <h1 style={{ textAlign: 'center' }}>
           {' '}
           {game.room_name}
           {' '}
         </h1>
+
+        <div style={{ display: 'flex', flexDirection: 'row' }}>
+          <ChatBox game={game} />
+          <RoundHistory game={game} />
+        </div>
         <div
           style={{
             background: '#ff70a6',
@@ -72,7 +74,8 @@ function Game({
             marginTop: '1%',
             width: '98%',
             padding: '2%',
-            maxHeight: '500px',
+            minHeight: '40vh',
+            maxHeight: '40vh',
           }}
         >
           <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-Between' }}>
@@ -82,7 +85,7 @@ function Game({
                 {time}
               </div>
             )}
-            <div>
+            <div style={{ padding: '3px' }}>
               {!game.round_started && (
                 <button type="button" onClick={beginRound}>
                   start game
@@ -169,11 +172,7 @@ function Game({
             )}
           </div>
         </div>
-        <div style={{ display: 'flex', flexDirection: 'row' }}>
-          <ChatBox game={game} />
-          <RoundHistory game={game} />
-        </div>
-      </React.Fragment>
+      </div>
     );
   }
   return `${<span> LOADING </span>}`;
