@@ -7,7 +7,7 @@ import { Message } from '../images/iMessage';
 import './App.css';
 
 const Entrance = () => (
-  <div style={{ minWidth: '100vw', minHeight: '100vh' }}>
+  <div className="entrance" style={{ minWidth: '100vw', minHeight: '100vh' }}>
     <HalfRectangle color="#70D6FF" />
     <div style={{ textAlign: 'center' }}>
       <span className="entrance-title">Selfies 2020</span>
