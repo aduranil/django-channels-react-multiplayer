@@ -9,8 +9,7 @@ import RoundHistory from '../components/RoundHistory';
 import Navigation from '../components/Navigation';
 import { Phone } from '../images/iPhone';
 
-const HOST = 'localhost:8000';
-// const HOST = 'selfies-2020.herokuapp.com';
+const HOST = process.env.REACT_APP_WS_HOST;
 
 function Game({
   id, time, dispatch, game, currentPlayer,
@@ -54,13 +53,18 @@ function Game({
 
   if (id && game) {
     return (
-      <React.Fragment>
+      <div>
         <Navigation inGame />
         <h1 style={{ textAlign: 'center' }}>
           {' '}
           {game.room_name}
           {' '}
         </h1>
+
+        <div style={{ display: 'flex', flexDirection: 'row' }}>
+          <ChatBox game={game} />
+          <RoundHistory game={game} />
+        </div>
         <div
           style={{
             background: '#ff70a6',
@@ -73,7 +77,8 @@ function Game({
             marginTop: '1%',
             width: '98%',
             padding: '2%',
-            maxHeight: '500px',
+            minHeight: '40vh',
+            maxHeight: '40vh',
           }}
         >
           <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-Between' }}>
@@ -83,7 +88,7 @@ function Game({
                 {time}
               </div>
             )}
-            <div>
+            <div style={{ padding: '3px' }}>
               {!game.round_started && (
                 <button type="button" onClick={beginRound}>
                   start game
@@ -170,11 +175,7 @@ function Game({
             )}
           </div>
         </div>
-        <div style={{ display: 'flex', flexDirection: 'row' }}>
-          <ChatBox game={game} />
-          <RoundHistory game={game} />
-        </div>
-      </React.Fragment>
+      </div>
     );
   }
   return `${<span> LOADING </span>}`;
