@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { wsConnect } from '../modules/websocket';
@@ -9,6 +9,7 @@ import RoundHistory from '../components/RoundHistory';
 import Navigation from '../components/Navigation';
 import GameInfo from '../components/GameInfo';
 import GameMoves from '../components/GameMoves';
+import { leaveGame } from '../modules/game';
 
 const HOST = process.env.REACT_APP_WS_HOST;
 
@@ -19,21 +20,41 @@ function Game({
 
   useEffect(() => dispatch(wsConnect(host)), [dispatch, host]);
 
+  useEffect(() => {
+    const exitGame = () => dispatch(leaveGame());
+    window.addEventListener('beforeunload', exitGame);
+
+    return () => window.removeEventListener('beforeunload', exitGame);
+  }, []);
+
   if (id && game) {
     return (
-      <div style={{ height: '100vh', width: '100vw', backgroundColor: '#E1EFF6' }}>
-        <Navigation inGame />
-        <h1 style={{ textAlign: 'center' }}>
-          {' '}
-          {game.room_name}
-          {' '}
-        </h1>
-        <div style={{ display: 'flex', flexDirection: 'row' }}>
-          <ChatBox game={game} />
-          <RoundHistory game={game} />
+      <div
+        style={{
+          height: '100vh',
+          maxHeight: '100vh',
+          width: '100vw',
+          backgroundColor: '#E1EFF6',
+          display: 'flex',
+          flexDirection: 'column',
+        }}
+      >
+        <div>
+          <Navigation inGame />
         </div>
-        <div style={{ display: 'flex', flexDirection: 'row' }}>
-          <GameInfo time={time} game={game} />
+        <div>
+          <h1 style={{ textAlign: 'center', marginBottom: '5px' }}>{game.room_name}</h1>
+        </div>
+        <div style={{ display: 'flex', flexDirection: 'row', width: '100%' }}>
+          <div className="game-card">
+            <ChatBox game={game} />
+          </div>
+          <div className="game-card">
+            <RoundHistory game={game} />
+          </div>
+        </div>
+        <div style={{ display: 'flex', flexDirection: 'row', flexGrow: 1 }} className="game-card">
+          <GameInfo time={time} currentPlayer={currentPlayer} game={game} />
           <GameMoves time={time} currentPlayer={currentPlayer} game={game} />
           <GameBox time={time} currentPlayer={currentPlayer} game={game} />
         </div>
