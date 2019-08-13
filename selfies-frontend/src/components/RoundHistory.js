@@ -15,25 +15,36 @@ function RoundHistory({ game }) {
         flexDirection: 'column',
         boxShadow: '0 2px 10px 0 rgba(0, 0, 0, 0.5), inset 0 1px 3px 0 rgba(0, 0, 0, 0.5)',
         borderRadius: '20px',
-        marginRight: '1%',
-        marginLeft: '1%',
-        marginBottom: '1%',
-        marginTop: '1%',
         padding: '2%',
-        maxHeight: '40vh',
-        width: '60vw',
+        // width: '60vw',
+        height: '100%',
+        maxHeight: '100%',
       }}
     >
       {' '}
-      <h3 style={{ textAlign: 'center' }}>Round History</h3>
+      <h3 style={{ textAlign: 'center' }}>News Feed</h3>
       <div
         style={{
           overflowY: 'scroll',
           marginTop: '5px',
-          minHeight: '30vh',
-          maxHeight: '40vh',
         }}
       >
+        {!game.round_started && (
+          <React.Fragment>
+            <div key="instruction">
+              <span style={{ color: 'white' }}>
+                {' '}
+                Click on any girl's iPhone to leave a mean comment
+              </span>
+            </div>
+            <div key="exclamation">
+              <span style={{ color: 'white' }}>
+                {' '}
+                When the ? turns to !, that means the player has started
+              </span>
+            </div>
+          </React.Fragment>
+        )}
         {game.round_history.map(msg => (
           <div key={msg.id}>
             <span>{msg.message}</span>
