@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { wsConnect } from '../modules/websocket';
@@ -9,6 +9,7 @@ import RoundHistory from '../components/RoundHistory';
 import Navigation from '../components/Navigation';
 import GameInfo from '../components/GameInfo';
 import GameMoves from '../components/GameMoves';
+import { leaveGame } from '../modules/game';
 
 const HOST = process.env.REACT_APP_WS_HOST;
 
@@ -18,6 +19,13 @@ function Game({
   const host = `ws://${HOST}/ws/game/${id}?token=${localStorage.getItem('token')}`;
 
   useEffect(() => dispatch(wsConnect(host)), [dispatch, host]);
+
+  useEffect(() => {
+    const exitGame = () => dispatch(leaveGame());
+    window.addEventListener('beforeunload', exitGame);
+
+    return () => window.removeEventListener('beforeunload', exitGame);
+  }, []);
 
   if (id && game) {
     return (
@@ -46,7 +54,7 @@ function Game({
           </div>
         </div>
         <div style={{ display: 'flex', flexDirection: 'row', flexGrow: 1 }} className="game-card">
-          <GameInfo time={time} game={game} />
+          <GameInfo time={time} currentPlayer={currentPlayer} game={game} />
           <GameMoves time={time} currentPlayer={currentPlayer} game={game} />
           <GameBox time={time} currentPlayer={currentPlayer} game={game} />
         </div>
