@@ -17,6 +17,8 @@ class GameConsumer(WebsocketConsumer):
         self.id = game_id
         self.room_group_name = "game_%s" % self.id
         self.game = Game.objects.get(id=game_id)
+        self.user = self.scope["user"]
+        self.game_player = GamePlayer.objects.get_or_none(user=self.user, game=self.game)
         async_to_sync(self.channel_layer.group_add)(
             self.room_group_name, self.channel_name
         )
@@ -28,15 +30,12 @@ class GameConsumer(WebsocketConsumer):
 
     # GAME MOVE ACTIONS
     def join_game(self):
-        user = self.scope["user"]
-        game_player = GamePlayer.objects.get_or_none(user=user, game=self.game)
-        if not game_player and self.game.is_joinable:
-            GamePlayer.objects.create(user=user, game=self.game)
-            message = "{} joined".format(user.username)
+        if not self.game_player and self.game.is_joinable:
+            GamePlayer.objects.create(user=self.user, game=self.game)
             Message.objects.create(
-                message=message,
+                message="{} joined".format(self.user.username),
                 game=self.game,
-                username=user.username,
+                username=self.user.username,
                 message_type="action",
             )
             self.game.check_joinability()
@@ -44,21 +43,17 @@ class GameConsumer(WebsocketConsumer):
         self.send_update_game_players()
 
     def leave_game(self, data=None):
-        user = self.scope["user"]
-        game_player = GamePlayer.objects.get(user=user, game=self.game)
-        # retrieve the updated game
         if self.game.game_players.all().count() <= 1:
-            game_player.delete()
+            self.game_player.delete()
             self.game.delete()
         else:
-            message = "{} left".format(user.username)
             Message.objects.create(
-                message=message,
+                message="{} left".format(self.user.username),
                 game=self.game,
-                username=user.username,
+                username=self.user.username,
                 message_type="action",
             )
-            game_player.delete()
+            self.game_player.delete()
             self.game.check_joinability()
             self.send_update_game_players()
             async_to_sync(self.channel_layer.group_discard)(
@@ -70,7 +65,7 @@ class GameConsumer(WebsocketConsumer):
             message=data["message"],
             message_type="user_message",
             game=self.game,
-            username=self.scope["user"].username,
+            username=self.user.username,
         )
         self.send_update_game_players()
 
@@ -113,11 +108,10 @@ class GameConsumer(WebsocketConsumer):
 
     def new_round_or_determine_winner(self):
         "determines a winner or loops through again"
-        # TODO i need to move this somewhere else
         round = Round.objects.get_or_none(game=self.game, started=True)
         if round:
             player_points = round.tabulate_round()
-            winner = None
+            winners = []
             for player in self.game.game_players.all():
                 points = player_points[player.id]
                 updated_points = points + player.followers
@@ -126,7 +120,7 @@ class GameConsumer(WebsocketConsumer):
                 if updated_points < 0:
                     updated_points = 0
                 if updated_points >= 100:
-                    winner = player
+                    winners.append(player)
                 player.followers = updated_points
                 player.save()
 
@@ -145,15 +139,23 @@ class GameConsumer(WebsocketConsumer):
             round.started = False
             round.save()
             Round.objects.create(game=self.game, started=True)
-            if not winner:
+            if len(winners) == 0:
                 self.start_round_and_timer()
             else:
-                # TODO disconnect when this happens
-                self.when_someone_wins()
+                self.game.game_status = "inactive"
+                self.game.save()
+                for winner in winners:
+                    Message.objects.create(
+                        message="{} won!".format(winner.user.username),
+                        message_type="round_recap",
+                        game=self.game,
+                        username=winner.user.username,
+                    )
+                self.send_update_game_players()
+                async_to_sync(self.channel_layer.group_discard)(
+                    self.room_group_name, self.channel_name
+                )
 
-    def when_someone_wins(self):
-        # placeholder method for now
-        return
 
     def make_move(self, data):
         user = self.scope["user"]
