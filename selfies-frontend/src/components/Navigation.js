@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { withRouter, Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
+import * as Cookies from 'js-cookie';
 import { logoutUser, getCurrentUser } from '../modules/account';
 import { leaveGame } from '../modules/game';
 
@@ -18,11 +19,14 @@ function Navigation({
     history.push('/games');
   };
 
-  useEffect(() => {
-    if (localStorage.getItem('token')) {
-      dispatch(getCurrentUser());
-    }
-  }, [dispatch]);
+  useEffect(
+    () => {
+      if (Cookies.get('token')) {
+        dispatch(getCurrentUser());
+      }
+    },
+    [dispatch],
+  );
 
   return (
     <div
@@ -35,11 +39,11 @@ function Navigation({
     >
       <div>
         <Link to="/">
-          <h1 style={{ paddingRight: '5px' }}>Selfies 2020 </h1>
+          <h3 style={{ paddingRight: '5px' }}>Selfies 2020 </h3>
         </Link>
       </div>
       <div>
-        <div style={{ marginRight: '30px', display: 'inline-block' }}>
+        <div style={{ marginRight: '10px', display: 'inline-block' }}>
           {path !== 'rules' && (
             <Link to="/rules">
               <span>Rules </span>
@@ -48,27 +52,31 @@ function Navigation({
         </div>
 
         <div style={{ display: 'inline-block' }}>
-          {loggedIn && path === 'rules' && (
-            <Link to="/games">
-              {' '}
-              <span>Games </span>
-            </Link>
+          {loggedIn
+            && path === 'rules' && (
+              <Link to="/games">
+                {' '}
+                <span>Games </span>
+              </Link>
           )}
-          {loggedIn && !inGame && (
-            <button type="button" className="linkbutton" onClick={onLogout}>
-              Logout
-            </button>
+          {loggedIn
+            && !inGame && (
+              <button type="button" className="linkbutton" onClick={onLogout}>
+                Logout
+              </button>
           )}
-          {loggedIn && inGame && (
-            <button type="button" className="linkbutton" onClick={exitGame}>
-              Exit Game
-            </button>
+          {loggedIn
+            && inGame && (
+              <button type="button" className="linkbutton" onClick={exitGame}>
+                Exit Game
+              </button>
           )}
-          {!loggedIn && path !== 'login' && (
-            <Link to="/signup">
-              {' '}
-              <span style={{ fontColor: 'black' }}>Signup </span>
-            </Link>
+          {!loggedIn
+            && path !== 'login' && (
+              <Link to="/signup">
+                {' '}
+                <span style={{ fontColor: 'black' }}>Signup </span>
+              </Link>
           )}
         </div>
       </div>

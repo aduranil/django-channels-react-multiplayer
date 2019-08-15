@@ -29,6 +29,9 @@ a {
   .entrance-title {
     font-size: 70px !important;
   }
+  .phone-time {
+    font-size: 20px !important;
+  }
   .phone-signup {
     min-width: 85vw;
   }
@@ -112,7 +115,6 @@ button[disabled] {
   width: 50%;
   min-width: 50%;
   height: 80vh;
-
   padding: 3%;
 }
 
@@ -195,4 +197,8 @@ input {
 .game-card {
   padding: 0.5%;
   flex-grow: 1;
+}
+
+.rulespage {
+  margin-bottom: 10px;
 }
