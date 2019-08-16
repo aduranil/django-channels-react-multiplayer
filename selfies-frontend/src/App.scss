@@ -16,6 +16,7 @@
   outline: 1px solid slategrey;
 }
 
+
 a {
   text-decoration: none;
   color: white;
@@ -54,10 +55,6 @@ html {
   overflow: hidden;
 }
 
-.entrance {
-  overflow: hidden !important;
-}
-
 button {
   border-radius: 20px;
   cursor: pointer;
@@ -70,11 +67,10 @@ button {
   &:hover {
     background-color: lighten(#44ffd1, 10%);
   }
-}
-
-button[disabled] {
-  opacity: 0.5;
-  cursor: default;
+  &:disabled {
+    opacity: 0.5;
+    cursor: default;
+  }
 }
 
 .linkbutton {
