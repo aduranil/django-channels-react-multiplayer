@@ -20,7 +20,7 @@ const Entrance = ({ dispatch, loggedIn }) => {
     }
   }, [dispatch]);
   return (
-    <div>
+    <div style={{ overflow: 'hidden' }}>
       <HalfRectangle color="#70D6FF" />
       <div style={{ textAlign: 'center' }}>
         <span className="entrance-title">Selfies 2020</span>

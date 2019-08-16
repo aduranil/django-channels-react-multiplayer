@@ -8,9 +8,6 @@ function Rules() {
       <div
         style={{
           padding: '2%',
-          height: '95vh',
-          width: '100vw',
-          overflow: 'scroll',
         }}
       >
         {' '}
@@ -20,15 +17,16 @@ function Rules() {
           The goal of the game is to get to 100 followers first. Use the chat to make strategic
           partnerships. The game starts when everyone clicks the 'START GAME' button. Each round is
           90 seconds but the counter goes down to 10 seconds once everyone moves. You can change
-          your move as many times as you want before the timer runs out.
+          your move as many times as you want before the timer runs out. Three players are needed to
+          start the round.
         </div>
         <h3> Moves </h3>
         <div className="rulespage">
           {' '}
           <b style={{ color: '#ff70a6' }}>Post a selfie</b>
-          . Move that gains 10 followers. But if someone leaves a mean comment when you post a
-          selfie, you lose 5 followers. If two girls leave a mean comment, you lose 10 followers,
-          and so on.
+. Move that gains 10 followers. But if
+          someone leaves a mean comment when you post a selfie, you lose 5 followers. If two girls
+          leave a mean comment, you lose 10 followers, and so on.
         </div>
         {' '}
         <div className="rulespage">
@@ -75,13 +73,15 @@ Nothing happens to you. Defense against Go
         <div className="rulespage">
           Star this project on
           {' '}
-          <a style={{ color: '#44ffd1' }} href="github.com/aduranil/selfies">
+          <a style={{ color: '#44ffd1' }} href="https://www.github.com/aduranil/selfies">
             github.
           </a>
           {' '}
           Email lina.rudashevski@gmail.com with any questions or comments.
           {' '}
           <b style={{ color: '#ff70a6' }}>This game works best in Chrome.</b>
+          <br />
+          <br />
         </div>
       </div>
     </React.Fragment>

@@ -26,8 +26,7 @@ function ChatBox({ game, dispatch }) {
         boxShadow: '0 2px 10px 0 rgba(0, 0, 0, 0.5), inset 0 1px 3px 0 rgba(0, 0, 0, 0.5)',
         borderRadius: '20px',
         padding: '2%',
-        maxHeight: '36vh',
-        minHeight: '36vh',
+        height: '36vh',
         minWidth: '40vw',
       }}
     >
@@ -36,7 +35,7 @@ function ChatBox({ game, dispatch }) {
         style={{
           overflowY: 'scroll',
           marginRight: '2px',
-          minHeight: '22vh',
+          height: '28vh',
         }}
       >
         {game.messages.map(msg => (
@@ -48,27 +47,24 @@ function ChatBox({ game, dispatch }) {
             </span>
           </div>
         ))}
-        <div style={{ float: 'left', clear: 'both' }} ref={messagesRef} />
+        <div ref={messagesRef} />
       </div>
       <div
         style={{
           display: 'flex',
           marginTop: '5px',
-          padding: '5px',
-          width: '100%',
         }}
       >
         <input
           style={{
-            marginRight: '10px',
-            display: 'block',
+            marginRight: '5px',
             flexGrow: 1,
           }}
           onChange={e => setMessage(e.target.value)}
           value={message}
           onKeyPress={e => e.key === 'Enter' && handleSubmit()}
         />
-        <button style={{ padding: '10px', display: 'block' }} type="button" onClick={handleSubmit}>
+        <button type="button" onClick={handleSubmit}>
           send
         </button>
       </div>

@@ -43,7 +43,7 @@ function RoundHistory({ game }) {
                 -When the ? turns to !, that means the player has started
               </span>
             </div>
-            <div key="exclamation">
+            <div key="time">
               <span style={{ color: 'white' }}>
                 {' '}
                 -There are 90 seconds per round. The timer goes down to 10 seconds once everyone has

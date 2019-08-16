@@ -12,23 +12,21 @@ import GameInfo from '../components/GameInfo';
 import { leaveGame } from '../modules/game';
 
 const HOST = process.env.REACT_APP_WS_HOST;
+const PREFIX = process.env.REACT_APP_PREFIX;
 
 function Game({
   id, time, dispatch, game, currentPlayer,
 }) {
-  const host = `wss://${HOST}/ws/game/${id}?token=${Cookies.get('token')}`;
+  const host = `${PREFIX}://${HOST}/ws/game/${id}?token=${Cookies.get('token')}`;
 
   useEffect(() => dispatch(wsConnect(host)), [dispatch, host]);
 
-  useEffect(
-    () => {
-      const exitGame = () => dispatch(leaveGame());
-      window.addEventListener('beforeunload', exitGame);
+  useEffect(() => {
+    const exitGame = () => dispatch(leaveGame());
+    window.addEventListener('beforeunload', exitGame);
 
-      return () => window.removeEventListener('beforeunload', exitGame);
-    },
-    [dispatch],
-  );
+    return () => window.removeEventListener('beforeunload', exitGame);
+  }, [dispatch]);
 
   if (id && game) {
     return (

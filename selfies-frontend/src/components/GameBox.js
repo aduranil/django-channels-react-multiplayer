@@ -5,7 +5,7 @@ import CurrentMoveUpdate from '../hooks/CurrentMove';
 
 const Phone = () => (
   <img
-    className="animated rollIn"
+    className="animated rollIn phone-game"
     src={require('../images/purpleiphone.png')}
     alt="entrance-phone"
   />
@@ -37,6 +37,7 @@ function GameBox({
           {['post_selfie', 'post_group_selfie', 'post_story', 'dont_post', 'go_live'].map(item => (
             <button
               className={currentMove === item ? 'button-color' : null}
+              key={item}
               type="button"
               value={item}
               onClick={newMove}
