@@ -16,7 +16,7 @@ const HOST = process.env.REACT_APP_WS_HOST;
 function Game({
   id, time, dispatch, game, currentPlayer,
 }) {
-  const host = `ws://${HOST}/ws/game/${id}?token=${Cookies.get('token')}`;
+  const host = `wss://${HOST}/ws/game/${id}?token=${Cookies.get('token')}`;
 
   useEffect(() => dispatch(wsConnect(host)), [dispatch, host]);
 
