@@ -78,10 +78,6 @@ Nothing happens to you. Defense against Go
           </a>
           {' '}
           Email lina.rudashevski@gmail.com with any questions or comments.
-          {' '}
-          <b style={{ color: '#ff70a6' }}>This game works best in Chrome.</b>
-          <br />
-          <br />
         </div>
       </div>
     </React.Fragment>

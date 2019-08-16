@@ -37,7 +37,7 @@ function Games({
       <Navigation />
       <h1 style={{ textAlign: 'center' }}>Active Games</h1>
       <div className="landingbox">
-        <div style={{ display: 'flex', padding: '2px' }}>
+        <div style={{ display: 'flex' }}>
           <button type="button" style={{ marginRight: '10px' }} onClick={onClick}>
             create game
           </button>

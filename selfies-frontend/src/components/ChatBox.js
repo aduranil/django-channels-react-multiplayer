@@ -27,7 +27,7 @@ function ChatBox({ game, dispatch }) {
         borderRadius: '20px',
         padding: '2%',
         height: '36vh',
-        minWidth: '40vw',
+        flexGrow: '1',
       }}
     >
       <h3 style={{ textAlign: 'center' }}>Group Chat</h3>
@@ -47,7 +47,7 @@ function ChatBox({ game, dispatch }) {
             </span>
           </div>
         ))}
-        <div ref={messagesRef} />
+        <div style={{ float: 'left', clear: 'both' }} ref={messagesRef} />
       </div>
       <div
         style={{

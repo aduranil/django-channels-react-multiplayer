@@ -16,8 +16,7 @@ function RoundHistory({ game }) {
         boxShadow: '0 2px 10px 0 rgba(0, 0, 0, 0.5), inset 0 1px 3px 0 rgba(0, 0, 0, 0.5)',
         borderRadius: '20px',
         padding: '2%',
-        maxHeight: '36vh',
-        minHeight: '36vh',
+        height: '36vh',
       }}
     >
       {' '}
