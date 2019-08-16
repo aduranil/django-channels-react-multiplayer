@@ -95,7 +95,10 @@ class GameConsumer(WebsocketConsumer):
             time.sleep(1)
             self.send_time(str(i))
             i -= 1
-            round = Round.objects.get_or_none(game=self.game, started=True)
+            try:
+                round = Round.objects.get_or_none(game=self.game, started=True)
+            except Exception:
+                round = Round.objects.filter(game=self.game, started=True).latest('created_at')
             if round.everyone_moved():
                 i = 0
                 j = 10
@@ -110,7 +113,10 @@ class GameConsumer(WebsocketConsumer):
 
     def new_round_or_determine_winner(self):
         "determines a winner or loops through again"
-        round = Round.objects.get_or_none(game=self.game, started=True)
+        try:
+            round = Round.objects.get_or_none(game=self.game, started=True)
+        except Exception:
+            round = Round.objects.filter(game=self.game, started=True).latest('created_at')
         if round:
             player_points = round.tabulate_round()
             winners = []

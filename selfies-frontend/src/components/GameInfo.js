@@ -2,13 +2,9 @@ import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import { startRound } from '../modules/game';
 
-function GameInfo({
-  game, dispatch, time, currentPlayer,
-}) {
-  const [className, setCurrentClassName] = useState('bounce animated infinite');
+function GameInfo({ game, dispatch, time }) {
   const beginRound = () => {
     dispatch(startRound());
-    setCurrentClassName('');
   };
 
   return (
@@ -21,12 +17,10 @@ function GameInfo({
         marginRight: '5px',
       }}
     >
-      {!game.round_started
-        && currentPlayer
-        && !currentPlayer.started && (
-          <button className={className} type="button" onClick={beginRound}>
-            START GAME!
-          </button>
+      {!game.round_started && (
+        <button type="button" onClick={beginRound}>
+          START GAME!
+        </button>
       )}
       {game.round_started && (
         <div style={{ textAlign: 'center' }}>

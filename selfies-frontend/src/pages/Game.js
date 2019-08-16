@@ -61,7 +61,7 @@ function Game({
             flexWrap: 'wrap',
           }}
         >
-          <GameInfo time={time} currentPlayer={currentPlayer} game={game} />
+          <GameInfo time={time} game={game} />
           <GameBox time={time} currentPlayer={currentPlayer} game={game} />
         </div>
       </div>
