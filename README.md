@@ -1,4 +1,4 @@
-![SELFIES](https://i.imgur.com/0oZKbIf.png)
+![SELFIES](https://firebasestorage.googleapis.com/v0/b/selfies-22b79.appspot.com/o/Screen%20Shot%202019-08-16%20at%204.33.17%20PM.png?alt=media&token=30442490-ab4a-4249-9272-722a30bfd0ec)
 
 ## About
 
@@ -12,8 +12,6 @@ cd selfies-frontend
 yarn start
 ```
 
-![game_screen](https://firebasestorage.googleapis.com/v0/b/selfies-22b79.appspot.com/o/Screen%20Shot%202019-08-16%20at%204.33.17%20PM.png?)
-
 ![all_games](https://thepracticaldev.s3.amazonaws.com/i/43ot9t2h2lt4ogexfllw.png)
 
-![game](https://firebasestorage.googleapis.com/v0/b/selfies-22b79.appspot.com/o/Screen%20Shot%202019-08-16%20at%204.28.20%20PM.png?)
+![game](https://firebasestorage.googleapis.com/v0/b/selfies-22b79.appspot.com/o/Screen%20Shot%202019-08-16%20at%204.28.20%20PM.png?alt=media&token=e00ecbb6-e143-44da-af4b-dc8dbbe699af)
