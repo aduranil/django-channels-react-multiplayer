@@ -10,7 +10,7 @@ function ChatBox({ game, dispatch }) {
     if (messagesRef) {
       messagesRef.current.scrollIntoView(false);
     }
-  }, []);
+  });
 
   const handleSubmit = () => {
     dispatch(newMessage(message));
@@ -84,7 +84,7 @@ ChatBox.propTypes = {
       PropTypes.shape({
         id: PropTypes.number.isRequired,
         followers: PropTypes.number.isRequired,
-        stories: PropTypes.number.isRequired,
+        selfies: PropTypes.number.isRequired,
         username: PropTypes.string.isRequired,
         started: PropTypes.bool.isRequired,
       }),

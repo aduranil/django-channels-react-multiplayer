@@ -7,6 +7,7 @@ from asgiref.sync import async_to_sync
 from channels.generic.websocket import WebsocketConsumer
 
 from .models import Game, Message, GamePlayer, Round, Move
+from app.services.round_service import RoundTabulation
 
 
 class GameConsumer(WebsocketConsumer):
@@ -18,7 +19,9 @@ class GameConsumer(WebsocketConsumer):
         self.room_group_name = "game_%s" % self.id
         self.game = Game.objects.get(id=game_id)
         self.user = self.scope["user"]
-        self.game_player = GamePlayer.objects.get_or_none(user=self.user, game=self.game)
+        self.game_player = GamePlayer.objects.get_or_none(
+            user=self.user, game=self.game
+        )
         async_to_sync(self.channel_layer.group_add)(
             self.room_group_name, self.channel_name
         )
@@ -43,9 +46,9 @@ class GameConsumer(WebsocketConsumer):
         self.send_update_game_players()
 
     def leave_game(self, data=None):
-        print('in leave game')
+        print("in leave game")
         game_player = GamePlayer.objects.get_or_none(user=self.user, game=self.game)
-        if self.game.game_players.all().count() <= 1:
+        if self.game.game_players.all().count() == 0:
             game_player.delete()
             self.game.delete()
         else:
@@ -58,9 +61,9 @@ class GameConsumer(WebsocketConsumer):
             game_player.delete()
             self.game.check_joinability()
             self.send_update_game_players()
-            async_to_sync(self.channel_layer.group_discard)(
-                self.room_group_name, self.channel_name
-            )
+        async_to_sync(self.channel_layer.group_discard)(
+            self.room_group_name, self.channel_name
+        )
 
     def new_message(self, data):
         Message.objects.create(
@@ -98,7 +101,9 @@ class GameConsumer(WebsocketConsumer):
             try:
                 round = Round.objects.get_or_none(game=self.game, started=True)
             except Exception:
-                round = Round.objects.filter(game=self.game, started=True).latest('created_at')
+                round = Round.objects.filter(game=self.game, started=True).latest(
+                    "created_at"
+                )
             if round.everyone_moved():
                 i = 0
                 j = 10
@@ -116,21 +121,12 @@ class GameConsumer(WebsocketConsumer):
         try:
             round = Round.objects.get_or_none(game=self.game, started=True)
         except Exception:
-            round = Round.objects.filter(game=self.game, started=True).latest('created_at')
+            round = Round.objects.filter(game=self.game, started=True).latest(
+                "created_at"
+            )
         if round:
-            player_points = round.tabulate_round()
-            winners = []
-            for player in self.game.game_players.all():
-                points = player_points[player.id]
-                updated_points = points + player.followers
-
-                # the floor is zero
-                if updated_points < 0:
-                    updated_points = 0
-                if updated_points >= 100:
-                    winners.append(player)
-                player.followers = updated_points
-                player.save()
+            player_points = RoundTabulation(round).tabulate()
+            winners = self.game.update_player_status(player_points)
 
             if round.no_one_moved():
                 print("no one moved")
@@ -147,7 +143,7 @@ class GameConsumer(WebsocketConsumer):
             round.started = False
             round.save()
             Round.objects.create(game=self.game, started=True)
-            if len(winners) == 0:
+            if len(winners) != 2:
                 self.start_round_and_timer()
             else:
                 self.game.game_status = "inactive"
@@ -163,7 +159,6 @@ class GameConsumer(WebsocketConsumer):
                 async_to_sync(self.channel_layer.group_discard)(
                     self.room_group_name, self.channel_name
                 )
-
 
     def make_move(self, data):
         user = self.scope["user"]
@@ -195,12 +190,12 @@ class GameConsumer(WebsocketConsumer):
         game = Game.objects.get(id=self.id)
         game_player = GamePlayer.objects.get_or_none(user=self.scope["user"], game=game)
         current_player = game_player.as_json() if game_player else None
+        self.update_game_players({'type': 'update_game_player', 'current_player': current_player})
         async_to_sync(self.channel_layer.group_send)(
             self.room_group_name,
             {
                 "type": "update_game_players",
                 "game": game.as_json(),
-                "current_player": current_player,
             },
         )
 
@@ -211,11 +206,10 @@ class GameConsumer(WebsocketConsumer):
         )
 
     # SEND DATA ACTIONS
-    def update_game_players(self, username):
-        self.send(text_data=json.dumps(username))
+    def update_game_players(self, current_player):
+        self.send(text_data=json.dumps(current_player))
 
     def update_timer(self, timedata):
-        """send timer data to the frontend"""
         self.send(text_data=json.dumps(timedata))
 
     def receive(self, text_data):
@@ -224,7 +218,6 @@ class GameConsumer(WebsocketConsumer):
         self.commands[data["command"]](self, data)
 
     commands = {
-        "update_game_players": update_game_players,
         "update_timer": update_timer,
         "LEAVE_GAME": leave_game,
         "NEW_MESSAGE": new_message,
