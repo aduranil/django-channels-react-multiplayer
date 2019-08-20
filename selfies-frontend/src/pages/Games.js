@@ -11,11 +11,14 @@ function Games({
 }) {
   const [roomName, setRoomName] = useState('');
 
-  useEffect(() => {
-    if (loggedIn) {
-      dispatch(getGames());
-    }
-  }, [dispatch, loggedIn]);
+  useEffect(
+    () => {
+      if (loggedIn) {
+        dispatch(getGames());
+      }
+    },
+    [dispatch, loggedIn],
+  );
 
   const onClick = () => {
     if (roomName.length === 0) {
@@ -76,14 +79,14 @@ function Games({
                 </button>
                 <span>
                   {game.room_name}
-, players:
+                  , players:
                   {' '}
                 </span>
                 {game.users.map(user => (
                   <span key={user.username}>
                     {' '}
                     {user.username}
-,
+                    ,
                   </span>
                 ))}
               </div>

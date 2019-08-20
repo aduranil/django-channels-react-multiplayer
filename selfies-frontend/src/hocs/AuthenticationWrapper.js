@@ -30,7 +30,7 @@ const WithAuth = (WrappedComponent) => {
       const { authCompleted } = this.state;
       const { loggedIn } = this.props;
       if (authCompleted) {
-        return loggedIn ? <WrappedComponent {...this.props} /> : <Redirect to="/loginorsignup" />;
+        return loggedIn && <WrappedComponent {...this.props} />;
       }
       return (
         <React.Fragment>
