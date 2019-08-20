@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import CurrentMoveUpdate from '../hooks/CurrentMove';
+import useMoveUpdate from '../hooks/CurrentMove';
 
 const Phone = () => (
   <img
@@ -14,7 +14,7 @@ const Phone = () => (
 function GameBox({
   game, dispatch, time, currentPlayer,
 }) {
-  const [currentMove, newMove] = CurrentMoveUpdate(dispatch, time);
+  const [currentMove, newMove] = useMoveUpdate(dispatch, time);
 
   return (
     <React.Fragment>
@@ -46,6 +46,7 @@ function GameBox({
                 (item === 'post_selfie' && currentPlayer && currentPlayer.selfies === 0)
                 || (item === 'go_live' && currentPlayer && currentPlayer.go_live === 0)
                 || !game.round_started
+                || (currentPlayer && currentPlayer.loser === true)
               }
             >
               {item.replace(/_/g, ' ')}
@@ -74,7 +75,9 @@ function GameBox({
                     onClick={newMove}
                     id={player.id}
                     style={{ width: '100%' }}
-                    disabled={!game.round_started}
+                    disabled={
+                      !game.round_started || player.loser || (currentPlayer && currentPlayer.loser)
+                    }
                     value={`${item}_${player.id}`}
                     className={
                       currentMove === `${item}_${player.id}` ? 'button-color' : 'gamebutton'
@@ -89,25 +92,26 @@ function GameBox({
 
               <Phone />
 
-              <div>
-                {player.followers}
-                {' '}
-                {player.followers === 1 ? 'follower' : 'followers'}
-              </div>
-              {currentPlayer
-                && currentPlayer.id === player.id && (
-                  <React.Fragment>
-                    <div style={{ marginBottom: '3px' }}>
-                      {player.selfies}
-                      {' '}
-                      {player.selfies === 1 ? 'selfie' : 'selfies'}
-                    </div>
-                    <div style={{ marginBottom: '3px' }}>
-                      {player.go_live}
-                      {' '}
-                      {player.go_live === 1 ? 'go live' : 'go lives'}
-                    </div>
-                  </React.Fragment>
+              {!player.loser && (
+                <div>
+                  {player.followers}
+                  {' '}
+                  {player.followers === 1 ? 'follower' : 'followers'}
+                </div>
+              )}
+              {currentPlayer && currentPlayer.id === player.id && (
+                <React.Fragment>
+                  <div style={{ marginBottom: '3px' }}>
+                    {player.selfies}
+                    {' '}
+                    {player.selfies === 1 ? 'selfie' : 'selfies'}
+                  </div>
+                  <div style={{ marginBottom: '3px' }}>
+                    {player.go_live}
+                    {' '}
+                    {player.go_live === 1 ? 'go live' : 'go lives'}
+                  </div>
+                </React.Fragment>
               )}
             </div>
           ))}
