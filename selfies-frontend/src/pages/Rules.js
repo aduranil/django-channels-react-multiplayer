@@ -79,7 +79,7 @@ Gives you twenty followers. If you Post
             github.
           </a>
           {' '}
-          Email lina.rudashevski@gmail.com with any questions or comments. This game was inspired by
+          This game was inspired by
           {' '}
           <a style={{ color: '#44ffd1' }} href="http://play.sissyfight.com/main">
             {' '}
