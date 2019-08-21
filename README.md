@@ -1,6 +1,6 @@
 ## Selfies 2020
 
-![SELFIES](https://firebasestorage.googleapis.com/v0/b/selfies-22b79.appspot.com/o/Screen%20Shot%202019-08-21%20at%2010.49.43%20AM.png?alt=media&token=3cbbaa83-4f2e-47fb-9315-0e774805ec62)
+![SELFIES](https://media.giphy.com/media/VFAgDWqvQ8nU37Gsrq/giphy.gif)
 
 ## About
 
