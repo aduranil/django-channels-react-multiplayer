@@ -1,5 +1,7 @@
 ## Selfies 2020
 
+video demo [here](https://youtu.be/xyoPOfHdvA4)
+
 ![SELFIES](https://media.giphy.com/media/VFAgDWqvQ8nU37Gsrq/giphy.gif)
 
 ## About
@@ -40,7 +42,3 @@ yarn start
 ```
 
 or go to the [live](http://selfies-22b79.firebaseapp.com) version!
-
-![video](https://youtu.be/xyoPOfHdvA4)
-
-
