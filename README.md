@@ -40,3 +40,7 @@ yarn start
 ```
 
 or go to the [live](http://selfies-22b79.firebaseapp.com) version!
+
+![video](https://youtu.be/xyoPOfHdvA4)
+
+
