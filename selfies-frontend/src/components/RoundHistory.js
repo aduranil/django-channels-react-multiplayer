@@ -30,18 +30,18 @@ function RoundHistory({ game }) {
         {!game.round_started && (
           <React.Fragment>
             {' '}
-            <div key="exclamation">
-              <span style={{ color: 'white' }}>
-                {' '}
-                ◆ When the ? turns to !, that means the player has started 👸🏾
-              </span>
+            <div>
+              <span> ◆ When the ? turns to !, that means the player has started 👸🏾</span>
             </div>
-            <div key="time">
-              <span style={{ color: 'white' }}>
+            <div>
+              <span>
                 {' '}
                 ◆ There are 90 seconds per round. The timer goes down to 10 seconds once everyone
                 has moved 👠
               </span>
+            </div>
+            <div>
+              <span> ◆ You need 3 players to start a game 💅</span>
             </div>
           </React.Fragment>
         )}

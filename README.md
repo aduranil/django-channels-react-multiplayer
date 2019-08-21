@@ -1,6 +1,6 @@
 ## Selfies 2020
 
-![SELFIES](https://firebasestorage.googleapis.com/v0/b/selfies-22b79.appspot.com/o/Screen%20Shot%202019-08-16%20at%204.33.17%20PM.png?alt=media&token=30442490-ab4a-4249-9272-722a30bfd0ec)
+![SELFIES](https://firebasestorage.googleapis.com/v0/b/selfies-22b79.appspot.com/o/Screen%20Shot%202019-08-21%20at%2010.49.43%20AM.png?alt=media&token=3cbbaa83-4f2e-47fb-9315-0e774805ec62)
 
 ## About
 
@@ -26,6 +26,7 @@ another girl's social media, she loses 10 followers. It doesn't work if she sele
 **Post a Selfie.** Gives you twenty followers. If you Post a Selfie while someone is Going Live, there is no damage done to you. You get three selfies per game. It doesn't work if someone Calls your iPhone or Leaves a Mean Comment though, in which case you lose 0 and 20 followers, respectively, and are susceptible to Go Live damage.
 
 ## Support
+
 Show your support by 🌟ing the project and playing the game! Also feel free to contribute, especially graphics.
 
 ## How to Run
@@ -37,4 +38,5 @@ cd selfies-frontend
 yarn install
 yarn start
 ```
+
 or go to the [live](http://selfies-22b79.firebaseapp.com) version!
