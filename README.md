@@ -1,8 +1,6 @@
 ## Selfies 2020
 
-video demo [here](https://youtu.be/xyoPOfHdvA4)
-
-![SELFIES](https://media.giphy.com/media/VFAgDWqvQ8nU37Gsrq/giphy.gif)
+This is a remake of the popular 1999 game Sissyfight 2000
 
 ## About
 
